@@ -332,27 +332,64 @@
       }
     },
     "neural": {
+      "tensor-runtime-architecture": {
+        "hard": [],
+        "optional": [
+          "optimization",
+          "architecture",
+          "training"
+        ],
+        "contextual": [
+          "gpu-pipeline-architecture",
+          "gpu-compute",
+          "memory-arenas",
+          "data-oriented-design",
+          "measurement-profiling"
+        ]
+      },
       "architecture": {
         "hard": [
+          "tensor-runtime-architecture",
           "optimization"
         ],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "training"
+        ],
+        "contextual": [
+          "gpu-compute",
+          "data-oriented-design",
+          "measurement-profiling"
+        ]
       },
       "optimization": {
         "hard": [
+          "tensor-runtime-architecture",
           "memory-management"
         ],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "memory-arenas",
+          "measurement-profiling"
+        ],
+        "contextual": [
+          "gpu-compute",
+          "gpu-pipeline-architecture",
+          "data-oriented-design"
+        ]
       },
       "training": {
         "hard": [
+          "tensor-runtime-architecture",
           "architecture",
           "optimization"
         ],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "measurement-profiling",
+          "memory-arenas"
+        ],
+        "contextual": [
+          "gpu-compute",
+          "data-oriented-design"
+        ]
       }
     },
     "performance": {
@@ -602,6 +639,9 @@
       "dump-pipeline"
     ],
     "architecture": [
+      "loader-integration"
+    ],
+    "tensor-runtime-architecture": [
       "loader-integration"
     ],
     "training": [

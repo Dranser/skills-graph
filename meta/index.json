@@ -62,6 +62,7 @@
       "entry": "knowledge/neural/neural_entry.json",
       "manifest": "knowledge/neural/neural_manifest.json",
       "skills": [
+        "tensor-runtime-architecture.json",
         "architecture.json",
         "optimization.json",
         "training.json"

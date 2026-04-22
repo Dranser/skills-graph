@@ -11,13 +11,17 @@
       "backprop",
       "optimizer",
       "gradient",
-      "batch"
+      "batch",
+      "loss",
+      "checkpoint"
     ],
     "weak": [
-      "loss",
       "update step",
       "training loop",
-      "targets"
+      "targets",
+      "epoch",
+      "telemetry",
+      "dataset"
     ]
   },
   "use_for": [
@@ -25,7 +29,9 @@
     "weight update flow",
     "gradient propagation",
     "batch processing",
-    "optimizer application"
+    "optimizer application",
+    "loss and metric computation",
+    "checkpoint and training telemetry design"
   ],
   "do_not_use_for": [
     "UI rendering",
@@ -35,42 +41,183 @@
   ],
   "rules": [
     "keep training state explicit",
-    "separate forward, backward, and update phases",
-    "keep parameter ownership clear",
+    "separate forward, loss, backward, accumulation, optimizer, checkpoint, and telemetry phases",
+    "keep parameter, gradient, accumulator, and optimizer-state ownership clear",
     "keep batch handling deterministic",
-    "do not mix training orchestration with unrelated runtime systems"
+    "do not mix training orchestration with unrelated runtime systems",
+    "treat diagnostic readback as optional and bounded"
   ],
   "procedure": [
-    "Define training inputs and targets.",
+    "Define dataset samples, batch layout, inputs, targets, and masks.",
+    "Map batch buffers into runtime tensor contracts.",
     "Run forward pass.",
-    "Compute loss.",
+    "Compute loss and write output gradients.",
     "Run backward pass.",
-    "Apply update step.",
-    "Record training metrics if needed."
+    "Accumulate or normalize gradients.",
+    "Apply optimizer step.",
+    "Clear or preserve state according to the accumulation policy.",
+    "Record telemetry and checkpoint only through explicit boundaries."
   ],
   "output": [
     "training loop code",
     "update path",
-    "optimizer integration"
+    "optimizer integration",
+    "batch/loss/gradient tensor contract",
+    "telemetry and checkpoint policy"
   ],
   "dependencies": {
     "hard": [
+      "tensor-runtime-architecture",
       "architecture",
       "optimization"
     ],
-    "optional": [],
-    "contextual": []
+    "optional": [
+      "measurement-profiling",
+      "memory-arenas"
+    ],
+    "contextual": [
+      "gpu-compute",
+      "data-oriented-design"
+    ]
   },
   "conflicts": [],
   "ownership": {
     "can_be_primary": true,
     "default_mode": "primary",
     "primary_when": [
-      "request is about neural training loops, backpropagation, optimizer application, or batch processing",
+      "request is about neural training loops, backpropagation, optimizer application, batch processing, loss, gradients, checkpoints, or training telemetry",
       "request is about updating model weights from loss and gradients"
     ],
     "must_not_own_when": [
       "request is mainly about UI rendering, runtime patching, or non-neural CPU task systems"
     ]
-  }
+  },
+  "problem_space": {
+    "solves": [
+      "how to run training through explicit tensor ownership instead of hidden framework state",
+      "how to keep batch, target, loss, gradient, optimizer, and telemetry phases reviewable",
+      "how to prevent diagnostics and checkpointing from becoming hidden training bottlenecks"
+    ],
+    "does_not_solve": [
+      "dataset curation quality by itself",
+      "choosing pretrained model families",
+      "generic job scheduling outside neural training"
+    ]
+  },
+  "core_principles": [
+    "Training is a sequence of tensor state transitions.",
+    "Parameters, gradients, accumulators, optimizer moments, activations, targets, and masks must be distinct tensor roles.",
+    "Batch shape is part of the runtime contract, not just loop metadata.",
+    "Loss computation owns both scalar reporting and output-gradient production.",
+    "Optimizer state belongs to the same runtime ownership model as parameters.",
+    "Telemetry should explain cost without forcing synchronization every batch."
+  ],
+  "constraints": [
+    "Do not allocate new hot-path tensors per batch when arena reuse is possible.",
+    "Do not download gradients for logging by default in performance-sensitive runs.",
+    "Do not clear accumulators, optimizer state, or activations implicitly without a phase rule.",
+    "Do not mix target masks and prediction tensors without an explicit shape contract.",
+    "Do not save checkpoints from stale CPU mirrors if GPU-resident state is the source of truth."
+  ],
+  "decision_rules": [
+    "Use training as primary when the request mentions backprop, loss, optimizer, gradient, batch, epoch, checkpoint, or training telemetry.",
+    "Attach tensor-runtime-architecture for every training task because training correctness depends on tensor roles and ownership.",
+    "Attach optimization when the issue involves throughput, stability, gradient norm, precision, or transfer cost.",
+    "Attach architecture when layer forward/backward contracts need to change.",
+    "Use CPU fallback as a correctness reference only when the runtime boundary is explicit."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "phase-separated training loop: apply inputs, forward, loss, backward, accumulate, optimize, clear, telemetry",
+      "batch provider that owns CPU staging but not runtime tensor lifetime",
+      "loss functions that write gradients into explicit gradient tensors",
+      "optimizer state tensors allocated in the arena",
+      "deterministic small-sample CPU/GPU consistency checks",
+      "bounded telemetry frames with arena usage, phase timings, token metrics, and optional gradient stats"
+    ],
+    "avoid_patterns": [
+      "loss functions returning only scalars while hiding gradient writes",
+      "optimizer moments stored in unrelated arrays",
+      "gradient monitoring that downloads all parameter gradients every batch by default",
+      "batch-size changes that leak old tensor slices",
+      "checkpoint code that ignores tensor residency state"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a training phase contract",
+      "when": "Use when adding or reviewing a custom training loop.",
+      "steps": [
+        "List every phase and the tensor roles it reads or writes.",
+        "Define input, target, mask, prediction, loss-gradient, parameter-gradient, accumulator, and optimizer-state shapes.",
+        "Define which tensors persist across batches and which are scratch.",
+        "Define when gradients are cleared, accumulated, clipped, or logged.",
+        "Define telemetry fields and ensure they do not force hidden full-state readback."
+      ]
+    },
+    {
+      "name": "Add a new optimizer",
+      "when": "Use when implementing SGD, Adam, or another update rule in the custom runtime.",
+      "steps": [
+        "Define parameter and gradient tensor inputs.",
+        "Allocate optimizer state tensors through the arena.",
+        "Represent the update as command-stream or backend-executable operations.",
+        "Keep weight decay, momentum, bias correction, epsilon, and precision behavior explicit.",
+        "Add a deterministic correctness comparison on a small tensor."
+      ]
+    },
+    {
+      "name": "Checkpoint runtime-owned training state",
+      "when": "Use when saving or restoring parameters from a GPU-resident or hybrid runtime.",
+      "steps": [
+        "Identify the source of truth for parameters and optimizer state.",
+        "Schedule explicit download or staging only for tensors required by the checkpoint.",
+        "Record shape, precision, optimizer metadata, backend label, and dataset/training context.",
+        "Avoid using stale CPU mirrors unless the mirror is marked current.",
+        "Validate restored tensors against expected runtime shapes before training resumes."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Assuming batch buffers and runtime tensors share ownership.",
+    "Letting loss metrics trigger prediction downloads in the hot path.",
+    "Using gradient clipping that silently mutates downloaded CPU copies without syncing back.",
+    "Clearing accumulators before optimizer commands consume them.",
+    "Treating checkpoint serialization as a harmless read when tensors are GPU-resident."
+  ],
+  "review_checklist": [
+    "Are all training phases explicit?",
+    "Are parameter, gradient, accumulator, optimizer-state, activation, input, target, and mask tensors separate?",
+    "Does loss computation write gradients through a documented tensor contract?",
+    "Are gradient logging and clipping bounded and synchronized deliberately?",
+    "Does the optimizer operate on runtime-owned tensors?",
+    "Are batch-size changes and arena reservations handled?",
+    "Can checkpointing identify the current source of truth?"
+  ],
+  "references": [
+    {
+      "title": "Neural Training Runtime",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/neural/references/training-runtime.md",
+      "interpretation": "Use this first for phase contracts, tensor roles, gradients, optimizers, telemetry, and checkpoints.",
+      "why": "Training is the domain's primary stress test for tensor ownership."
+    },
+    {
+      "title": "Neural Tensor Runtime Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/neural/references/tensor-runtime-architecture.md",
+      "interpretation": "Use for tensor layout and arena ownership behind training phases.",
+      "why": "Training correctness depends on the tensor runtime."
+    },
+    {
+      "title": "Neural GPU Residency",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/neural/references/gpu-residency.md",
+      "interpretation": "Use when training state is GPU-resident or hybrid.",
+      "why": "Checkpoints, telemetry, and gradients must respect the data source of truth."
+    }
+  ]
 }

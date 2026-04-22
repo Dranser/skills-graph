@@ -200,15 +200,19 @@
       "entry": "knowledge/neural/neural_entry.json",
       "manifest": "knowledge/neural/neural_manifest.json",
       "skills": [
+        "knowledge/neural/tensor-runtime-architecture.json",
         "knowledge/neural/architecture.json",
         "knowledge/neural/optimization.json",
         "knowledge/neural/training.json"
       ],
       "default_primary_candidates": [
+        "tensor-runtime-architecture",
         "architecture",
         "training"
       ],
-      "default_support_candidates": []
+      "default_support_candidates": [
+        "optimization"
+      ]
     },
     "performance": {
       "entry": "knowledge/performance/performance_entry.json",

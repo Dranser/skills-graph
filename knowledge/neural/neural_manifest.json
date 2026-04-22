@@ -3,6 +3,7 @@
   "kind": "domain_manifest",
   "domain": "neural",
   "files": [
+    "tensor-runtime-architecture",
     "architecture",
     "optimization",
     "training"

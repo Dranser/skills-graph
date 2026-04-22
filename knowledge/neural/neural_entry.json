@@ -3,11 +3,19 @@
   "kind": "domain_entry",
   "domain": "neural",
   "entry_points": [
+    "tensor-runtime-architecture",
     "architecture",
     "training",
     "optimization"
   ],
   "signals": [
+    "tensor runtime",
+    "3d tensor",
+    "tensor arena",
+    "tensor layout",
+    "batch sequence feature",
+    "gpu tensor",
+    "command stream",
     "neural architecture",
     "network structure",
     "forward pass",
@@ -20,6 +28,10 @@
     "numerical stability"
   ],
   "use_for": [
+    "custom neural tensor runtime design",
+    "3D tensor layout and arena ownership",
+    "batch/sequence/feature data architecture",
+    "command-compatible tensor memory planning",
     "neural model design",
     "forward graph design",
     "training loop design",
@@ -27,6 +39,7 @@
     "neural performance and stability tuning"
   ],
   "priority_order": [
+    "tensor-runtime-architecture",
     "architecture",
     "training",
     "optimization"
