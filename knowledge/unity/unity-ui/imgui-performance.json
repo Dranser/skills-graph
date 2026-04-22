@@ -1,0 +1,177 @@
+{
+  "id": "imgui-performance",
+  "kind": "skill",
+  "title": "IMGUI Performance",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "imgui performance",
+      "ongui allocations",
+      "repaint cost",
+      "guicontent cache"
+    ],
+    "weak": [
+      "layout overhead",
+      "draw hot path",
+      "allocation discipline"
+    ]
+  },
+  "use_for": [
+    "keeping IMGUI framework code allocation-aware",
+    "identifying repaint and layout hot paths",
+    "designing caching policy for GUIContent, styles, and labels",
+    "planning resource reuse, binding invalidation cost, and subtree-level update efficiency"
+  ],
+  "do_not_use_for": [
+    "generic job scheduling",
+    "non-UI memory tuning",
+    "tool architecture without runtime concerns"
+  ],
+  "rules": [
+    "treat OnGUI paths as hot paths until proven otherwise",
+    "avoid per-pass allocation of GUIContent, strings, and style helpers",
+    "keep layout structure stable to reduce hidden work",
+    "cache only where ownership and invalidation remain explicit",
+    "prefer prebuilt presentation resources over repeated regeneration",
+    "evaluate whether binding checks are cheaper than eager recomputation"
+  ],
+  "procedure": [
+    "Identify frequently repainted hosts and panels.",
+    "List per-pass allocations and repeated formatting work.",
+    "Move reusable GUI data into retained caches with explicit invalidation.",
+    "Simplify draw flow before adding optimization layers."
+  ],
+  "output": [
+    "IMGUI performance policy",
+    "allocation and caching rules",
+    "hot-path review checklist"
+  ],
+  "dependencies": {
+    "hard": [
+      "memory-management"
+    ],
+    "optional": [
+      "cache-optimization"
+    ],
+    "contextual": [
+      "imgui-core"
+    ]
+  },
+  "conflicts": [
+    "scheduler"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about IMGUI runtime cost, allocations, repaint frequency, or caching strategy"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about framework ownership or window composition"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "where IMGUI frameworks usually pay avoidable allocation and repaint cost",
+      "how to optimize hot paths without hiding control flow",
+      "how to minimize the work done for local state changes by combining caches, bindings, and dirty propagation"
+    ],
+    "does_not_solve": [
+      "feature architecture without performance pressure",
+      "cross-thread scheduling"
+    ]
+  },
+  "core_principles": [
+    "Favor simpler draw code before adding caches.",
+    "Cache only data with clear ownership and invalidation.",
+    "Do not trade event-flow clarity for micro-optimizations without evidence.",
+    "Spend CPU on targeted invalidation only when it costs less than rebuilding whole presentation paths.",
+    "Resource reuse, binding checks, and subtree updates should cooperate rather than compete."
+  ],
+  "constraints": [
+    "Caching must not desynchronize visual output from retained state.",
+    "Per-pass string formatting and style construction are suspect by default.",
+    "High-frequency panels require tighter review than occasional tool windows.",
+    "Binding and dirty-check logic must remain cheaper than the work it is skipping.",
+    "Selective updates must not hide stale presentation state behind incorrect invalidation."
+  ],
+  "decision_rules": [
+    "Add caching when the same labels, content, or style variants recur every pass.",
+    "Prefer stable host-level caches over many widget-local caches.",
+    "Instrument repaint and allocation behavior before inventing larger abstractions.",
+    "Use one-time resource generation for expensive derived presentation artifacts that change rarely.",
+    "Use subtree invalidation when the affected region is smaller than the cost of whole-host recomputation."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "host-owned GUIContent caches",
+      "explicit invalidation tied to state changes",
+      "small draw helpers with predictable data access",
+      "derived presentation caches keyed by stable identities and version stamps",
+      "incremental refresh paths that stop at clean subtree boundaries"
+    ],
+    "avoid_patterns": [
+      "string building inside loops every pass",
+      "style cloning per widget draw",
+      "optimizations that obscure where cost is actually incurred",
+      "binding systems that recompute every node each pass",
+      "resource regeneration that ignores whether inputs changed"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Cache repeated labels for a frequently repainted panel",
+      "when": "Use when the same text and icon combinations are emitted on every frame.",
+      "steps": [
+        "Move label construction into retained cache owned by the host or panel state.",
+        "Invalidate the cache only when source data changes.",
+        "Keep cache population outside the hottest draw path where practical.",
+        "Restrict refresh to the panel or subtree whose bound data changed."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Caching everything without invalidation strategy.",
+    "Blaming IMGUI broadly instead of isolating the real hot path.",
+    "Adding performance layers before stabilizing state and layout structure.",
+    "Using dirty propagation so broadly that everything is effectively always dirty.",
+    "Paying more for binding comparison than the skipped presentation work would have cost."
+  ],
+  "review_checklist": [
+    "Are hot paths identified concretely?",
+    "Are repeated allocations removed or justified?",
+    "Is cache ownership explicit?",
+    "Does optimization preserve readable event flow?",
+    "Are expensive resources generated once and reused?",
+    "Can dirty propagation stop at subtree boundaries?",
+    "Are binding checks cheaper than the recomputation they avoid?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Performance Guidelines",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-performance-guidelines.md",
+      "interpretation": "Use this first for the domain's own hot-path rules, cache discipline, and allocation guidance.",
+      "why": "Use as the primary local checklist for hot-path discipline, caching, and allocation control."
+    },
+    {
+      "title": "Local Reference: IMGUI Incremental Update Model",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-incremental-update-model.md",
+      "interpretation": "Use this first when deciding how far resource reuse, bindings, and dirty propagation should go in the optimized update model.",
+      "why": "Use for deciding when to rebuild, rebind, or stop at a clean subtree boundary."
+    },
+    {
+      "title": "Unity Manual: Immediate Mode GUI (IMGUI)",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/2018.3/Manual/GUIScriptingGuide.html",
+      "interpretation": "Use this to confirm where IMGUI executes and why repeated draw-path work matters, not as a performance strategy by itself.",
+      "why": "Use as the baseline for understanding where IMGUI executes and why hot-path discipline matters."
+    }
+  ]
+}

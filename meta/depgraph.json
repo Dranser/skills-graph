@@ -1,655 +1,667 @@
 {
-  "version": "1.1",
-  "description": "Central dependency graph for Skills Graph. Used only for capability expansion, never for primary routing.",
+  "version": "2.0",
+  "description": "Central stack-aware dependency graph for Skills Graph. Used only for capability expansion, never for primary routing.",
   "rules": {
     "dependencies_expand_capability_not_authority": true,
     "never_use_depgraph_for_primary_selection": true,
+    "never_use_depgraph_for_stack_selection": true,
     "support_skills_cannot_override_primary": true,
     "cross_cutting_skills_cannot_override_primary": true
   },
-  "domains": {
-    "assembly-analysis": {
-      "assembly-reading": {
-        "hard": [
-          "metadata-parsing"
-        ],
-        "optional": [],
-        "contextual": []
-      },
-      "dump-pipeline": {
-        "hard": [
-          "assembly-reading",
-          "metadata-parsing"
-        ],
-        "optional": [
-          "integration-surface-mapping"
-        ],
-        "contextual": []
-      },
-      "metadata-parsing": {
-        "hard": [],
-        "optional": [],
-        "contextual": []
-      },
-      "integration-surface-mapping": {
-        "hard": [
-          "assembly-reading",
-          "metadata-parsing"
-        ],
-        "optional": [
-          "dump-pipeline"
-        ],
-        "contextual": [
-          "harmony-patching",
-          "plugin-lifecycle",
-          "diagnostics",
-          "contracts"
-        ]
+  "stacks": {
+    "csharp-shared": {
+      "domains": {
+        "assembly-analysis": {
+          "assembly-reading": {
+            "hard": [
+              "metadata-parsing"
+            ],
+            "optional": [],
+            "contextual": []
+          },
+          "dump-pipeline": {
+            "hard": [
+              "assembly-reading",
+              "metadata-parsing"
+            ],
+            "optional": [
+              "integration-surface-mapping"
+            ],
+            "contextual": []
+          },
+          "metadata-parsing": {
+            "hard": [],
+            "optional": [],
+            "contextual": []
+          },
+          "integration-surface-mapping": {
+            "hard": [
+              "assembly-reading",
+              "metadata-parsing"
+            ],
+            "optional": [
+              "dump-pipeline"
+            ],
+            "contextual": [
+              "unity:modding:harmony-patching",
+              "unity:modding:plugin-lifecycle",
+              "csharp-shared:framework:diagnostics",
+              "csharp-shared:framework:contracts"
+            ]
+          }
+        },
+        "code-maintenance": {
+          "bug-investigation": {
+            "hard": [],
+            "optional": [
+              "refactoring",
+              "csharp-shared:performance:measurement-profiling",
+              "csharp-shared:framework:diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:framework:runtime-lifecycle",
+              "csharp-shared:framework:contracts",
+              "csharp-shared:data-oriented-pipeline:stage-contracts",
+              "csharp-shared:data-oriented-pipeline:dataflow-state"
+            ]
+          },
+          "refactoring": {
+            "hard": [],
+            "optional": [
+              "bug-investigation",
+              "csharp-shared:framework:contracts",
+              "csharp-shared:framework:diagnostics",
+              "csharp-shared:performance:measurement-profiling"
+            ],
+            "contextual": [
+              "csharp-shared:framework:runtime-lifecycle",
+              "csharp-shared:framework:composition-boundaries",
+              "csharp-shared:data-oriented-pipeline:stage-contracts",
+              "csharp-shared:data-oriented-pipeline:dataflow-state"
+            ]
+          }
+        },
+        "data-oriented-pipeline": {
+          "pipeline-architecture": {
+            "hard": [
+              "stage-boundaries",
+              "dataflow-state"
+            ],
+            "optional": [
+              "execution-model",
+              "incremental-recompute"
+            ],
+            "contextual": [
+              "invalidation-propagation",
+              "csharp-shared:performance:data-oriented-design",
+              "csharp-shared:performance:scheduler",
+              "csharp-shared:performance:memory-management"
+            ]
+          },
+          "stage-boundaries": {
+            "hard": [],
+            "optional": [
+              "dataflow-state",
+              "stage-contracts"
+            ],
+            "contextual": [
+              "pipeline-architecture"
+            ]
+          },
+          "dataflow-state": {
+            "hard": [],
+            "optional": [
+              "invalidation-propagation"
+            ],
+            "contextual": [
+              "csharp-shared:performance:memory-management",
+              "incremental-recompute"
+            ]
+          },
+          "invalidation-propagation": {
+            "hard": [
+              "dataflow-state"
+            ],
+            "optional": [
+              "incremental-recompute"
+            ],
+            "contextual": [
+              "pipeline-architecture",
+              "csharp-shared:performance:scheduler"
+            ]
+          },
+          "execution-model": {
+            "hard": [
+              "stage-boundaries"
+            ],
+            "optional": [
+              "invalidation-propagation",
+              "incremental-recompute",
+              "change-batching"
+            ],
+            "contextual": [
+              "csharp-shared:performance:scheduler",
+              "csharp-shared:performance:data-oriented-design",
+              "csharp-shared:performance:work-budgeting"
+            ]
+          },
+          "incremental-recompute": {
+            "hard": [
+              "dataflow-state",
+              "invalidation-propagation"
+            ],
+            "optional": [
+              "execution-model",
+              "change-batching"
+            ],
+            "contextual": [
+              "csharp-shared:performance:work-budgeting",
+              "csharp-shared:performance:scheduler"
+            ]
+          },
+          "change-batching": {
+            "hard": [
+              "incremental-recompute"
+            ],
+            "optional": [
+              "execution-model"
+            ],
+            "contextual": [
+              "csharp-shared:performance:work-budgeting",
+              "csharp-shared:performance:scheduler",
+              "invalidation-propagation",
+              "structural-rerun-policy"
+            ]
+          },
+          "structural-rerun-policy": {
+            "hard": [
+              "incremental-recompute"
+            ],
+            "optional": [
+              "change-batching"
+            ],
+            "contextual": [
+              "pipeline-architecture",
+              "execution-model",
+              "csharp-shared:performance:work-budgeting",
+              "stage-contracts"
+            ]
+          },
+          "stage-contracts": {
+            "hard": [
+              "stage-boundaries"
+            ],
+            "optional": [
+              "dataflow-state"
+            ],
+            "contextual": [
+              "pipeline-architecture",
+              "incremental-recompute"
+            ]
+          }
+        },
+        "framework": {
+          "bootstrap": {
+            "hard": [
+              "diagnostics",
+              "di"
+            ],
+            "optional": [],
+            "contextual": [
+              "runtime-lifecycle"
+            ]
+          },
+          "contracts": {
+            "hard": [],
+            "optional": [
+              "extension-points"
+            ],
+            "contextual": []
+          },
+          "di": {
+            "hard": [
+              "contracts",
+              "bootstrap"
+            ],
+            "optional": [
+              "composition-boundaries",
+              "service-lifetimes"
+            ],
+            "contextual": []
+          },
+          "diagnostics": {
+            "hard": [],
+            "optional": [],
+            "contextual": []
+          },
+          "runtime-lifecycle": {
+            "hard": [
+              "bootstrap",
+              "contracts"
+            ],
+            "optional": [
+              "diagnostics",
+              "extension-points"
+            ],
+            "contextual": [
+              "di"
+            ]
+          },
+          "extension-points": {
+            "hard": [
+              "contracts"
+            ],
+            "optional": [
+              "runtime-lifecycle",
+              "di"
+            ],
+            "contextual": [
+              "bootstrap",
+              "diagnostics",
+              "composition-boundaries"
+            ]
+          },
+          "composition-boundaries": {
+            "hard": [
+              "contracts"
+            ],
+            "optional": [
+              "di",
+              "extension-points",
+              "service-lifetimes"
+            ],
+            "contextual": [
+              "bootstrap",
+              "runtime-lifecycle"
+            ]
+          },
+          "service-lifetimes": {
+            "hard": [
+              "di"
+            ],
+            "optional": [
+              "composition-boundaries",
+              "runtime-lifecycle"
+            ],
+            "contextual": [
+              "bootstrap"
+            ]
+          }
+        },
+        "neural": {
+          "tensor-runtime-architecture": {
+            "hard": [],
+            "optional": [
+              "optimization",
+              "architecture",
+              "training"
+            ],
+            "contextual": [
+              "unity:gpu:gpu-pipeline-architecture",
+              "unity:gpu:gpu-compute",
+              "csharp-shared:performance:memory-arenas",
+              "csharp-shared:performance:data-oriented-design",
+              "csharp-shared:performance:measurement-profiling"
+            ]
+          },
+          "architecture": {
+            "hard": [
+              "tensor-runtime-architecture",
+              "optimization"
+            ],
+            "optional": [
+              "training"
+            ],
+            "contextual": [
+              "unity:gpu:gpu-compute",
+              "csharp-shared:performance:data-oriented-design",
+              "csharp-shared:performance:measurement-profiling"
+            ]
+          },
+          "optimization": {
+            "hard": [
+              "tensor-runtime-architecture",
+              "csharp-shared:performance:memory-management"
+            ],
+            "optional": [
+              "csharp-shared:performance:memory-arenas",
+              "csharp-shared:performance:measurement-profiling"
+            ],
+            "contextual": [
+              "unity:gpu:gpu-compute",
+              "unity:gpu:gpu-pipeline-architecture",
+              "csharp-shared:performance:data-oriented-design"
+            ]
+          },
+          "training": {
+            "hard": [
+              "tensor-runtime-architecture",
+              "architecture",
+              "optimization"
+            ],
+            "optional": [
+              "csharp-shared:performance:measurement-profiling",
+              "csharp-shared:performance:memory-arenas"
+            ],
+            "contextual": [
+              "unity:gpu:gpu-compute",
+              "csharp-shared:performance:data-oriented-design"
+            ]
+          }
+        },
+        "performance": {
+          "runtime-performance-architecture": {
+            "hard": [
+              "scheduler",
+              "data-oriented-design",
+              "measurement-profiling"
+            ],
+            "optional": [
+              "memory-management",
+              "memory-arenas",
+              "contention-shaping",
+              "work-budgeting",
+              "cache-optimization"
+            ],
+            "contextual": [
+              "csharp-shared:data-oriented-pipeline:pipeline-architecture",
+              "csharp-shared:data-oriented-pipeline:execution-model",
+              "csharp-shared:data-oriented-pipeline:stage-contracts",
+              "csharp-shared:framework:diagnostics",
+              "csharp-shared:framework:runtime-lifecycle"
+            ]
+          },
+          "memory-management": {
+            "hard": [],
+            "optional": [
+              "memory-arenas"
+            ],
+            "contextual": []
+          },
+          "cache-optimization": {
+            "hard": [
+              "data-oriented-design"
+            ],
+            "optional": [],
+            "contextual": []
+          },
+          "data-oriented-design": {
+            "hard": [
+              "cache-optimization",
+              "memory-management"
+            ],
+            "optional": [],
+            "contextual": []
+          },
+          "scheduler": {
+            "hard": [
+              "data-oriented-design",
+              "memory-management",
+              "cache-optimization"
+            ],
+            "optional": [
+              "work-budgeting",
+              "contention-shaping"
+            ],
+            "contextual": [
+              "measurement-profiling"
+            ]
+          },
+          "work-budgeting": {
+            "hard": [
+              "scheduler"
+            ],
+            "optional": [
+              "memory-management",
+              "measurement-profiling"
+            ],
+            "contextual": [
+              "data-oriented-design"
+            ]
+          },
+          "measurement-profiling": {
+            "hard": [],
+            "optional": [
+              "work-budgeting"
+            ],
+            "contextual": [
+              "scheduler",
+              "memory-management",
+              "memory-arenas",
+              "contention-shaping",
+              "cache-optimization",
+              "data-oriented-design"
+            ]
+          },
+          "contention-shaping": {
+            "hard": [
+              "scheduler"
+            ],
+            "optional": [
+              "measurement-profiling"
+            ],
+            "contextual": [
+              "cache-optimization",
+              "work-budgeting",
+              "data-oriented-design"
+            ]
+          },
+          "memory-arenas": {
+            "hard": [
+              "memory-management"
+            ],
+            "optional": [
+              "work-budgeting"
+            ],
+            "contextual": [
+              "data-oriented-design",
+              "scheduler"
+            ]
+          }
+        }
       }
     },
-    "code-maintenance": {
-      "bug-investigation": {
-        "hard": [],
-        "optional": [
-          "refactoring",
-          "measurement-profiling",
-          "diagnostics"
-        ],
-        "contextual": [
-          "runtime-lifecycle",
-          "contracts",
-          "stage-contracts",
-          "dataflow-state"
-        ]
-      },
-      "refactoring": {
-        "hard": [],
-        "optional": [
-          "bug-investigation",
-          "contracts",
-          "diagnostics",
-          "measurement-profiling"
-        ],
-        "contextual": [
-          "runtime-lifecycle",
-          "composition-boundaries",
-          "stage-contracts",
-          "dataflow-state"
-        ]
-      }
-    },
-    "data-oriented-pipeline": {
-      "pipeline-architecture": {
-        "hard": [
-          "stage-boundaries",
-          "dataflow-state"
-        ],
-        "optional": [
-          "execution-model",
-          "incremental-recompute"
-        ],
-        "contextual": [
-          "invalidation-propagation",
-          "data-oriented-design",
-          "scheduler",
-          "memory-management"
-        ]
-      },
-      "stage-boundaries": {
-        "hard": [],
-        "optional": [
-          "dataflow-state",
-          "stage-contracts"
-        ],
-        "contextual": [
-          "pipeline-architecture"
-        ]
-      },
-      "dataflow-state": {
-        "hard": [],
-        "optional": [
-          "invalidation-propagation"
-        ],
-        "contextual": [
-          "memory-management",
-          "incremental-recompute"
-        ]
-      },
-      "invalidation-propagation": {
-        "hard": [
-          "dataflow-state"
-        ],
-        "optional": [
-          "incremental-recompute"
-        ],
-        "contextual": [
-          "pipeline-architecture",
-          "scheduler"
-        ]
-      },
-      "execution-model": {
-        "hard": [
-          "stage-boundaries"
-        ],
-        "optional": [
-          "invalidation-propagation",
-          "incremental-recompute",
-          "change-batching"
-        ],
-        "contextual": [
-          "scheduler",
-          "data-oriented-design",
-          "work-budgeting"
-        ]
-      },
-      "incremental-recompute": {
-        "hard": [
-          "dataflow-state",
-          "invalidation-propagation"
-        ],
-        "optional": [
-          "execution-model",
-          "change-batching"
-        ],
-        "contextual": [
-          "work-budgeting",
-          "scheduler"
-        ]
-      },
-      "change-batching": {
-        "hard": [
-          "incremental-recompute"
-        ],
-        "optional": [
-          "execution-model"
-        ],
-        "contextual": [
-          "work-budgeting",
-          "scheduler",
-          "invalidation-propagation",
-          "structural-rerun-policy"
-        ]
-      },
-      "structural-rerun-policy": {
-        "hard": [
-          "incremental-recompute"
-        ],
-        "optional": [
-          "change-batching"
-        ],
-        "contextual": [
-          "pipeline-architecture",
-          "execution-model",
-          "work-budgeting",
-          "stage-contracts"
-        ]
-      },
-      "stage-contracts": {
-        "hard": [
-          "stage-boundaries"
-        ],
-        "optional": [
-          "dataflow-state"
-        ],
-        "contextual": [
-          "pipeline-architecture",
-          "incremental-recompute"
-        ]
-      }
-    },
-    "framework": {
-      "bootstrap": {
-        "hard": [
-          "diagnostics",
-          "di"
-        ],
-        "optional": [],
-        "contextual": [
-          "runtime-lifecycle"
-        ]
-      },
-      "contracts": {
-        "hard": [],
-        "optional": [
-          "extension-points"
-        ],
-        "contextual": []
-      },
-      "di": {
-        "hard": [
-          "contracts",
-          "bootstrap"
-        ],
-        "optional": [
-          "composition-boundaries",
-          "service-lifetimes"
-        ],
-        "contextual": []
-      },
-      "diagnostics": {
-        "hard": [],
-        "optional": [],
-        "contextual": []
-      },
-      "runtime-lifecycle": {
-        "hard": [
-          "bootstrap",
-          "contracts"
-        ],
-        "optional": [
-          "diagnostics",
-          "extension-points"
-        ],
-        "contextual": [
-          "di"
-        ]
-      },
-      "extension-points": {
-        "hard": [
-          "contracts"
-        ],
-        "optional": [
-          "runtime-lifecycle",
-          "di"
-        ],
-        "contextual": [
-          "bootstrap",
-          "diagnostics",
-          "composition-boundaries"
-        ]
-      },
-      "composition-boundaries": {
-        "hard": [
-          "contracts"
-        ],
-        "optional": [
-          "di",
-          "extension-points",
-          "service-lifetimes"
-        ],
-        "contextual": [
-          "bootstrap",
-          "runtime-lifecycle"
-        ]
-      },
-      "service-lifetimes": {
-        "hard": [
-          "di"
-        ],
-        "optional": [
-          "composition-boundaries",
-          "runtime-lifecycle"
-        ],
-        "contextual": [
-          "bootstrap"
-        ]
-      }
-    },
-    "gpu": {
-      "gpu-pipeline-architecture": {
-        "hard": [
-          "gpu-compute"
-        ],
-        "optional": [
-          "gpu-instancing",
-          "gpu-diagnostics"
-        ],
-        "contextual": [
-          "pipeline-architecture",
-          "execution-model",
-          "memory-management",
-          "measurement-profiling"
-        ]
-      },
-      "gpu-compute": {
-        "hard": [],
-        "optional": [
-          "gpu-pipeline-architecture",
-          "gpu-diagnostics"
-        ],
-        "contextual": [
-          "memory-management",
-          "measurement-profiling"
-        ]
-      },
-      "gpu-instancing": {
-        "hard": [],
-        "optional": [
-          "gpu-compute",
-          "gpu-pipeline-architecture",
-          "gpu-diagnostics"
-        ],
-        "contextual": [
-          "measurement-profiling"
-        ]
-      },
-      "gpu-diagnostics": {
-        "hard": [],
-        "optional": [
-          "gpu-pipeline-architecture",
-          "gpu-compute",
-          "gpu-instancing"
-        ],
-        "contextual": [
-          "measurement-profiling",
-          "diagnostics"
-        ]
-      }
-    },
-    "modding": {
-      "harmony-patching": {
-        "hard": [
-          "loader-integration"
-        ],
-        "optional": [],
-        "contextual": []
-      },
-      "loader-integration": {
-        "hard": [
-          "diagnostics",
-          "plugin-lifecycle"
-        ],
-        "optional": [],
-        "contextual": []
-      },
-      "plugin-lifecycle": {
-        "hard": [
-          "diagnostics"
-        ],
-        "optional": [
-          "loader-integration"
-        ],
-        "contextual": []
-      }
-    },
-    "neural": {
-      "tensor-runtime-architecture": {
-        "hard": [],
-        "optional": [
-          "optimization",
-          "architecture",
-          "training"
-        ],
-        "contextual": [
-          "gpu-pipeline-architecture",
-          "gpu-compute",
-          "memory-arenas",
-          "data-oriented-design",
-          "measurement-profiling"
-        ]
-      },
-      "architecture": {
-        "hard": [
-          "tensor-runtime-architecture",
-          "optimization"
-        ],
-        "optional": [
-          "training"
-        ],
-        "contextual": [
-          "gpu-compute",
-          "data-oriented-design",
-          "measurement-profiling"
-        ]
-      },
-      "optimization": {
-        "hard": [
-          "tensor-runtime-architecture",
-          "memory-management"
-        ],
-        "optional": [
-          "memory-arenas",
-          "measurement-profiling"
-        ],
-        "contextual": [
-          "gpu-compute",
-          "gpu-pipeline-architecture",
-          "data-oriented-design"
-        ]
-      },
-      "training": {
-        "hard": [
-          "tensor-runtime-architecture",
-          "architecture",
-          "optimization"
-        ],
-        "optional": [
-          "measurement-profiling",
-          "memory-arenas"
-        ],
-        "contextual": [
-          "gpu-compute",
-          "data-oriented-design"
-        ]
-      }
-    },
-    "performance": {
-      "runtime-performance-architecture": {
-        "hard": [
-          "scheduler",
-          "data-oriented-design",
-          "measurement-profiling"
-        ],
-        "optional": [
-          "memory-management",
-          "memory-arenas",
-          "contention-shaping",
-          "work-budgeting",
-          "cache-optimization"
-        ],
-        "contextual": [
-          "pipeline-architecture",
-          "execution-model",
-          "stage-contracts",
-          "diagnostics",
-          "runtime-lifecycle"
-        ]
-      },
-      "memory-management": {
-        "hard": [],
-        "optional": [
-          "memory-arenas"
-        ],
-        "contextual": []
-      },
-      "cache-optimization": {
-        "hard": [
-          "data-oriented-design"
-        ],
-        "optional": [],
-        "contextual": []
-      },
-      "data-oriented-design": {
-        "hard": [
-          "cache-optimization",
-          "memory-management"
-        ],
-        "optional": [],
-        "contextual": []
-      },
-      "scheduler": {
-        "hard": [
-          "data-oriented-design",
-          "memory-management",
-          "cache-optimization"
-        ],
-        "optional": [
-          "work-budgeting",
-          "contention-shaping"
-        ],
-        "contextual": [
-          "measurement-profiling"
-        ]
-      },
-      "work-budgeting": {
-        "hard": [
-          "scheduler"
-        ],
-        "optional": [
-          "memory-management",
-          "measurement-profiling"
-        ],
-        "contextual": [
-          "data-oriented-design"
-        ]
-      },
-      "measurement-profiling": {
-        "hard": [],
-        "optional": [
-          "work-budgeting"
-        ],
-        "contextual": [
-          "scheduler",
-          "memory-management",
-          "memory-arenas",
-          "contention-shaping",
-          "cache-optimization",
-          "data-oriented-design"
-        ]
-      },
-      "contention-shaping": {
-        "hard": [
-          "scheduler"
-        ],
-        "optional": [
-          "measurement-profiling"
-        ],
-        "contextual": [
-          "cache-optimization",
-          "work-budgeting",
-          "data-oriented-design"
-        ]
-      },
-      "memory-arenas": {
-        "hard": [
-          "memory-management"
-        ],
-        "optional": [
-          "work-budgeting"
-        ],
-        "contextual": [
-          "data-oriented-design",
-          "scheduler"
-        ]
-      }
-    },
-    "unity-ui": {
-      "imgui-core": {
-        "hard": [
-          "imgui-state-model",
-          "imgui-layout-composition",
-          "imgui-manual-layout",
-          "imgui-incremental-update"
-        ],
-        "optional": [
-          "imgui-input-routing",
-          "imgui-windowing",
-          "imgui-styling"
-        ],
-        "contextual": [
-          "imgui-performance",
-          "imgui-debugging",
-          "pipeline-architecture",
-          "execution-model",
-          "contracts",
-          "bootstrap",
-          "diagnostics"
-        ]
-      },
-      "imgui-state-model": {
-        "hard": [],
-        "optional": [
-          "imgui-performance"
-        ],
-        "contextual": [
-          "memory-management"
-        ]
-      },
-      "imgui-layout-composition": {
-        "hard": [
-          "imgui-state-model",
-          "imgui-manual-layout"
-        ],
-        "optional": [
-          "imgui-windowing",
-          "imgui-styling"
-        ],
-        "contextual": [
-          "imgui-performance"
-        ]
-      },
-      "imgui-manual-layout": {
-        "hard": [],
-        "optional": [
-          "imgui-performance"
-        ],
-        "contextual": [
-          "imgui-layout-composition"
-        ]
-      },
-      "imgui-incremental-update": {
-        "hard": [
-          "imgui-state-model"
-        ],
-        "optional": [
-          "imgui-performance",
-          "invalidation-propagation"
-        ],
-        "contextual": [
-          "imgui-core",
-          "imgui-manual-layout",
-          "pipeline-architecture",
-          "dataflow-state",
-          "execution-model"
-        ]
-      },
-      "imgui-input-routing": {
-        "hard": [
-          "imgui-state-model"
-        ],
-        "optional": [],
-        "contextual": [
-          "imgui-debugging"
-        ]
-      },
-      "imgui-windowing": {
-        "hard": [
-          "imgui-state-model",
-          "imgui-layout-composition"
-        ],
-        "optional": [
-          "imgui-input-routing"
-        ],
-        "contextual": [
-          "imgui-styling",
-          "imgui-debugging"
-        ]
-      },
-      "imgui-styling": {
-        "hard": [],
-        "optional": [],
-        "contextual": []
-      },
-      "imgui-performance": {
-        "hard": [
-          "memory-management"
-        ],
-        "optional": [
-          "cache-optimization"
-        ],
-        "contextual": [
-          "imgui-core"
-        ]
-      },
-      "imgui-debugging": {
-        "hard": [
-          "diagnostics"
-        ],
-        "optional": [],
-        "contextual": [
-          "imgui-input-routing",
-          "imgui-windowing"
-        ]
+    "unity": {
+      "inherits": [
+        "csharp-shared"
+      ],
+      "domains": {
+        "gpu": {
+          "gpu-pipeline-architecture": {
+            "hard": [
+              "gpu-compute"
+            ],
+            "optional": [
+              "gpu-instancing",
+              "gpu-diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:data-oriented-pipeline:pipeline-architecture",
+              "csharp-shared:data-oriented-pipeline:execution-model",
+              "csharp-shared:performance:memory-management",
+              "csharp-shared:performance:measurement-profiling"
+            ]
+          },
+          "gpu-compute": {
+            "hard": [],
+            "optional": [
+              "gpu-pipeline-architecture",
+              "gpu-diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:performance:memory-management",
+              "csharp-shared:performance:measurement-profiling"
+            ]
+          },
+          "gpu-instancing": {
+            "hard": [],
+            "optional": [
+              "gpu-compute",
+              "gpu-pipeline-architecture",
+              "gpu-diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:performance:measurement-profiling"
+            ]
+          },
+          "gpu-diagnostics": {
+            "hard": [],
+            "optional": [
+              "gpu-pipeline-architecture",
+              "gpu-compute",
+              "gpu-instancing"
+            ],
+            "contextual": [
+              "csharp-shared:performance:measurement-profiling",
+              "csharp-shared:framework:diagnostics"
+            ]
+          }
+        },
+        "modding": {
+          "harmony-patching": {
+            "hard": [
+              "loader-integration"
+            ],
+            "optional": [],
+            "contextual": []
+          },
+          "loader-integration": {
+            "hard": [
+              "csharp-shared:framework:diagnostics",
+              "plugin-lifecycle"
+            ],
+            "optional": [],
+            "contextual": []
+          },
+          "plugin-lifecycle": {
+            "hard": [
+              "csharp-shared:framework:diagnostics"
+            ],
+            "optional": [
+              "loader-integration"
+            ],
+            "contextual": []
+          }
+        },
+        "unity-ui": {
+          "imgui-core": {
+            "hard": [
+              "imgui-state-model",
+              "imgui-layout-composition",
+              "imgui-manual-layout",
+              "imgui-incremental-update"
+            ],
+            "optional": [
+              "imgui-input-routing",
+              "imgui-windowing",
+              "imgui-styling"
+            ],
+            "contextual": [
+              "imgui-performance",
+              "imgui-debugging",
+              "csharp-shared:data-oriented-pipeline:pipeline-architecture",
+              "csharp-shared:data-oriented-pipeline:execution-model",
+              "csharp-shared:framework:contracts",
+              "csharp-shared:framework:bootstrap",
+              "csharp-shared:framework:diagnostics"
+            ]
+          },
+          "imgui-state-model": {
+            "hard": [],
+            "optional": [
+              "imgui-performance"
+            ],
+            "contextual": [
+              "csharp-shared:performance:memory-management"
+            ]
+          },
+          "imgui-layout-composition": {
+            "hard": [
+              "imgui-state-model",
+              "imgui-manual-layout"
+            ],
+            "optional": [
+              "imgui-windowing",
+              "imgui-styling"
+            ],
+            "contextual": [
+              "imgui-performance"
+            ]
+          },
+          "imgui-manual-layout": {
+            "hard": [],
+            "optional": [
+              "imgui-performance"
+            ],
+            "contextual": [
+              "imgui-layout-composition"
+            ]
+          },
+          "imgui-incremental-update": {
+            "hard": [
+              "imgui-state-model"
+            ],
+            "optional": [
+              "imgui-performance",
+              "csharp-shared:data-oriented-pipeline:invalidation-propagation"
+            ],
+            "contextual": [
+              "imgui-core",
+              "imgui-manual-layout",
+              "csharp-shared:data-oriented-pipeline:pipeline-architecture",
+              "csharp-shared:data-oriented-pipeline:dataflow-state",
+              "csharp-shared:data-oriented-pipeline:execution-model"
+            ]
+          },
+          "imgui-input-routing": {
+            "hard": [
+              "imgui-state-model"
+            ],
+            "optional": [],
+            "contextual": [
+              "imgui-debugging"
+            ]
+          },
+          "imgui-windowing": {
+            "hard": [
+              "imgui-state-model",
+              "imgui-layout-composition"
+            ],
+            "optional": [
+              "imgui-input-routing"
+            ],
+            "contextual": [
+              "imgui-styling",
+              "imgui-debugging"
+            ]
+          },
+          "imgui-styling": {
+            "hard": [],
+            "optional": [],
+            "contextual": []
+          },
+          "imgui-performance": {
+            "hard": [
+              "csharp-shared:performance:memory-management"
+            ],
+            "optional": [
+              "csharp-shared:performance:cache-optimization"
+            ],
+            "contextual": [
+              "imgui-core"
+            ]
+          },
+          "imgui-debugging": {
+            "hard": [
+              "csharp-shared:framework:diagnostics"
+            ],
+            "optional": [],
+            "contextual": [
+              "imgui-input-routing",
+              "imgui-windowing"
+            ]
+          }
+        }
       }
     }
   },
@@ -657,63 +669,60 @@
     "framework"
   ],
   "conflict_hints": {
-    "assembly-reading": [
-      "harmony-patching"
+    "csharp-shared:assembly-analysis:assembly-reading": [
+      "unity:modding:harmony-patching"
     ],
-    "dump-pipeline": [
-      "loader-integration",
-      "harmony-patching"
+    "csharp-shared:assembly-analysis:dump-pipeline": [
+      "unity:modding:loader-integration",
+      "unity:modding:harmony-patching"
     ],
-    "integration-surface-mapping": [
-      "loader-integration"
+    "csharp-shared:assembly-analysis:integration-surface-mapping": [
+      "unity:modding:loader-integration"
     ],
-    "pipeline-architecture": [
-      "bootstrap"
+    "csharp-shared:data-oriented-pipeline:pipeline-architecture": [
+      "csharp-shared:framework:bootstrap"
     ],
-    "execution-model": [
-      "bootstrap"
+    "csharp-shared:data-oriented-pipeline:execution-model": [
+      "csharp-shared:framework:bootstrap"
     ],
-    "bootstrap": [
-      "loader-integration",
-      "harmony-patching"
+    "csharp-shared:framework:bootstrap": [
+      "unity:modding:loader-integration",
+      "unity:modding:harmony-patching"
     ],
-    "gpu-compute": [
-      "imgui-basics"
+    "unity:gpu:gpu-pipeline-architecture": [
+      "unity:unity-ui:imgui-core"
     ],
-    "gpu-pipeline-architecture": [
-      "imgui-core"
+    "unity:modding:loader-integration": [
+      "csharp-shared:assembly-analysis:assembly-reading"
     ],
-    "loader-integration": [
-      "assembly-reading"
+    "unity:modding:harmony-patching": [
+      "csharp-shared:framework:contracts",
+      "csharp-shared:assembly-analysis:dump-pipeline"
     ],
-    "harmony-patching": [
-      "contracts",
-      "dump-pipeline"
+    "csharp-shared:neural:architecture": [
+      "unity:modding:loader-integration"
     ],
-    "architecture": [
-      "loader-integration"
+    "csharp-shared:neural:tensor-runtime-architecture": [
+      "unity:modding:loader-integration"
     ],
-    "tensor-runtime-architecture": [
-      "loader-integration"
+    "csharp-shared:neural:training": [
+      "unity:modding:loader-integration"
     ],
-    "training": [
-      "loader-integration"
+    "unity:unity-ui:imgui-core": [
+      "csharp-shared:framework:bootstrap",
+      "csharp-shared:framework:di"
     ],
-    "imgui-core": [
-      "bootstrap",
-      "di"
+    "unity:unity-ui:imgui-windowing": [
+      "csharp-shared:framework:bootstrap"
     ],
-    "imgui-windowing": [
-      "bootstrap"
+    "unity:unity-ui:imgui-manual-layout": [
+      "csharp-shared:performance:scheduler"
     ],
-    "imgui-manual-layout": [
-      "scheduler"
+    "unity:unity-ui:imgui-incremental-update": [
+      "csharp-shared:performance:scheduler"
     ],
-    "imgui-incremental-update": [
-      "scheduler"
-    ],
-    "imgui-performance": [
-      "scheduler"
+    "unity:unity-ui:imgui-performance": [
+      "csharp-shared:performance:scheduler"
     ]
   }
 }

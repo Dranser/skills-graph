@@ -22,6 +22,8 @@ Preferred positioning:
 - structured skill system for agents
 - reusable domain knowledge graph
 - routing plus execution guidance format
+- currently strongest on `.NET`, `C#`, and Unity-oriented coding and architecture work
+- adaptable to other stacks, including web, when the same explicit engineering philosophy is preserved
 
 Avoid narrow positioning:
 - "skills only for Codex"
@@ -105,6 +107,7 @@ Primary audience:
 Secondary audience:
 - researchers exploring structured agent context
 - teams building internal knowledge systems for LLM agents
+- teams working in `.NET` and Unity stacks who want reusable agent-facing engineering guidance
 
 ## Public Messaging
 
@@ -114,6 +117,8 @@ Use these messages consistently:
 - Skills contain routing and execution guidance.
 - Domains can own tasks, attach supporting skills, and expand through dependencies.
 - The format is model-agnostic.
+- The current shipped skill set is most mature for `.NET C# / Unity` engineering tasks.
+- The skills can be adapted to other stacks, including web, but are not meant for framework-first or third-party-library-first project styles.
 
 ## Messaging Hierarchy
 

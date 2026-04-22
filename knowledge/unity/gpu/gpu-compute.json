@@ -1,0 +1,211 @@
+{
+  "id": "gpu-compute",
+  "kind": "skill",
+  "title": "GPU Compute",
+  "stack": "unity",
+  "domain": "gpu",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "compute shader",
+      "dispatch",
+      "kernel",
+      "structured buffer",
+      "graphics buffer",
+      "gpu compute"
+    ],
+    "weak": [
+      "gpu-side processing",
+      "buffer-backed workload",
+      "readback"
+    ]
+  },
+  "use_for": [
+    "compute shader pipelines",
+    "dispatch logic",
+    "buffer-backed compute workloads",
+    "GPU-side data processing",
+    "kernel-driven execution"
+  ],
+  "do_not_use_for": [
+    "CPU-only scheduling",
+    "IMGUI",
+    "plugin lifecycle",
+    "assembly parsing"
+  ],
+  "rules": [
+    "keep CPU and GPU responsibilities explicit",
+    "define buffer layout before kernel logic",
+    "keep dispatch dimensions explicit",
+    "separate upload, execute, and readback stages",
+    "avoid hidden synchronization costs"
+  ],
+  "procedure": [
+    "Define compute workload.",
+    "Define buffer layout.",
+    "Bind kernel and parameters.",
+    "Upload data to GPU.",
+    "Dispatch compute work.",
+    "Read back only when required."
+  ],
+  "output": [
+    "compute shader integration code",
+    "dispatch path",
+    "buffer management flow"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "gpu-pipeline-architecture"
+    ],
+    "contextual": [
+      "memory-management",
+      "measurement-profiling"
+    ]
+  },
+  "conflicts": [
+    "imgui-basics"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about compute shaders, kernel dispatch, or GPU-side data processing",
+      "the request is about structured buffers or GPU compute workflows"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about CPU-only scheduling, IMGUI, plugin lifecycle, or assembly parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "moving bulk parallel work from CPU loops into compute kernels",
+      "defining reliable buffer-backed data flow for GPU-side transforms",
+      "controlling dispatch, indirect dispatch, readback, and synchronization cost"
+    ],
+    "does_not_solve": [
+      "draw submission architecture by itself",
+      "CPU-only scheduling problems",
+      "shader visual style without compute dataflow"
+    ]
+  },
+  "core_principles": [
+    "Buffer layout is the compute shader ABI.",
+    "Kernel contracts should name every input, output, counter, and dirty flag.",
+    "Dispatch dimensions should derive from the data count and thread-group size explicitly.",
+    "Use indirect dispatch when GPU-produced counts should drive later GPU stages.",
+    "Readback is a boundary crossing and must be deliberate.",
+    "Compute code should clear or update stage state so rerun scope remains visible."
+  ],
+  "constraints": [
+    "Do not bind kernels before required buffers and parameters are valid.",
+    "Do not let CPU struct stride and HLSL struct layout diverge.",
+    "Do not block on GPU readback in a hot path unless correctness requires it.",
+    "Do not leave append counters or dirty flags in stale state between dispatches.",
+    "Do not allocate and release large buffers every frame when reuse is possible."
+  ],
+  "decision_rules": [
+    "Use gpu-compute when the task centers on kernels, dispatch, buffers, readback, or GPU-side transformation.",
+    "Attach gpu-pipeline-architecture when the compute work has multiple stages or feeds indirect rendering.",
+    "Use structured buffers for typed records and raw buffers for compact counters or argument inputs.",
+    "Use append buffers when a stage compacts a variable visible or valid set.",
+    "Use async readback for diagnostics and reserve blocking readback for rare correctness barriers.",
+    "Require a clear resize policy whenever input counts can change."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "single owner responsible for buffer allocation and release",
+      "ensure-buffer methods keyed by count and stride",
+      "kernel validation before dispatch",
+      "explicit parameter binding per stage",
+      "append counter reset before compacting stages",
+      "GPU counters plus throttled async readback for diagnostics"
+    ],
+    "avoid_patterns": [
+      "ad hoc GraphicsBuffer creation inside unrelated feature code",
+      "magic stride values not tied to struct layout",
+      "CPU readback after every dispatch to drive the next dispatch",
+      "kernel names assumed without validation",
+      "stale dirty flags causing stages to silently skip or rerun"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a compute stage contract",
+      "when": "Use before implementing a new compute kernel or dispatch path.",
+      "steps": [
+        "Define the stage's input buffers, output buffers, and scalar parameters.",
+        "Define count, stride, and target type for every buffer.",
+        "Define dispatch group size and how group count is computed.",
+        "Define which dirty flag or state enables the stage.",
+        "Define which counters or outputs downstream stages consume.",
+        "Define validation and failure messages for missing kernels or buffers."
+      ]
+    },
+    {
+      "name": "Add an append-buffer compaction stage",
+      "when": "Use when a kernel must produce a variable-length set such as visible or valid indices.",
+      "steps": [
+        "Allocate an append buffer sized to the maximum candidate count.",
+        "Reset the append counter before dispatch.",
+        "Append only compact indices or small records from valid threads.",
+        "Copy the append count to a raw count buffer when downstream args need it.",
+        "Avoid CPU readback unless diagnostics specifically request it."
+      ]
+    },
+    {
+      "name": "Use indirect dispatch from GPU-produced count",
+      "when": "Use when one GPU stage determines the workload size for a later GPU stage.",
+      "steps": [
+        "Copy or write the source count into a count buffer.",
+        "Run a small args kernel that converts count to thread groups.",
+        "Store group counts in an indirect arguments buffer.",
+        "Dispatch the downstream kernel with DispatchIndirect.",
+        "Validate zero-count and minimum-one-dispatch behavior deliberately."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Forgetting to reset append counters.",
+    "Using CPU readback as routine stage glue.",
+    "Changing C# struct layout without updating HLSL struct layout.",
+    "Dispatching with stale group counts after input size changes.",
+    "Treating diagnostic counters as required pipeline state.",
+    "Ignoring buffer release on teardown or domain reload."
+  ],
+  "review_checklist": [
+    "Are all buffers named with role, stride, count, and target type?",
+    "Are kernels validated before dispatch?",
+    "Are dispatch dimensions explicit?",
+    "Are append counters and dirty flags reset or cleared correctly?",
+    "Does the pipeline avoid hot-path blocking readback?",
+    "Is buffer ownership and release unambiguous?",
+    "Are diagnostics non-blocking and optional?"
+  ],
+  "references": [
+    {
+      "title": "GPU Buffer Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/gpu/references/gpu-buffer-contracts.md",
+      "interpretation": "Use this first for buffer layout, count, target, and ownership decisions.",
+      "why": "Compute correctness depends on explicit buffer ABI."
+    },
+    {
+      "title": "GPU Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/gpu/references/gpu-pipeline-architecture.md",
+      "interpretation": "Use when compute stages are part of a broader staged GPU pipeline.",
+      "why": "It connects individual kernels to stage ordering and rerun policy."
+    },
+    {
+      "title": "GPU Diagnostics",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/gpu/references/gpu-diagnostics.md",
+      "interpretation": "Use when adding counters, readback, or failure reporting.",
+      "why": "It keeps debugging from introducing synchronization stalls."
+    }
+  ]
+}

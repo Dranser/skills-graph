@@ -1,0 +1,241 @@
+{
+  "id": "scheduler",
+  "kind": "skill",
+  "title": "Scheduler",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "scheduler",
+      "task system",
+      "worker",
+      "queue",
+      "parallel tasks",
+      "dispatch"
+    ],
+    "weak": [
+      "job queue",
+      "worker dispatch",
+      "contention",
+      "parallel pipeline",
+      "load balancing"
+    ]
+  },
+  "use_for": [
+    "task scheduling",
+    "worker dispatch",
+    "CPU parallel pipelines",
+    "job queue design",
+    "task system orchestration",
+    "contention-aware execution flow"
+  ],
+  "do_not_use_for": [
+    "Harmony patching",
+    "IMGUI",
+    "assembly dumps",
+    "neural architecture definitions"
+  ],
+  "rules": [
+    "align task execution with runtime phases",
+    "keep task ownership, read sets, write sets, and synchronization explicit",
+    "keep single-thread execution as a valid reference path",
+    "do not add worker complexity before workload shape justifies it",
+    "measure dispatch, planning, utilization, imbalance, and reduction cost"
+  ],
+  "procedure": [
+    "Identify the phase and work category: serial, range, tiled, grouped, island, reduction, or barrier.",
+    "Define range length, chunk policy, ownership units, write policy, and minimum useful parallel size.",
+    "Choose serial or parallel execution from workload size, relative cost, and worker count.",
+    "Validate disjoint writes, barriers, reductions, and deterministic equivalence.",
+    "Measure worker utilization, dispatch overhead, planning cost, and phase impact."
+  ],
+  "output": [
+    "scheduler task contract",
+    "dispatch and chunking policy",
+    "worker ownership and synchronization review"
+  ],
+  "dependencies": {
+    "hard": [
+      "data-oriented-design",
+      "memory-management",
+      "cache-optimization"
+    ],
+    "optional": [
+      "work-budgeting",
+      "contention-shaping"
+    ],
+    "contextual": [
+      "measurement-profiling"
+    ]
+  },
+  "conflicts": [
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about task scheduling, worker dispatch, or job queue design",
+      "request is about CPU parallel pipelines or deterministic task orchestration"
+    ],
+    "must_not_own_when": [
+      "request is mainly about Harmony patching, IMGUI, assembly dumps, or neural architecture definitions"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "explicit task scheduling and worker orchestration",
+      "making parallel execution predictable and measurable",
+      "controlling contention, batching, and synchronization boundaries",
+      "smoothing workload over time so main-thread spikes do not dominate runtime behavior",
+      "enforcing explicit work budgets and shaping latency-versus-throughput tradeoffs"
+    ],
+    "does_not_solve": [
+      "parallelizing inherently tiny or cold work without evidence",
+      "hiding poor data layout behind more worker threads",
+      "feature ownership outside scheduling and execution flow"
+    ]
+  },
+  "core_principles": [
+    "Start from strict lifecycle order and explicit execution phases.",
+    "Keep task boundaries explicit and workload-shaped.",
+    "Separate scheduling logic from task logic.",
+    "Avoid data races through ownership and sequencing first, not through after-the-fact locking everywhere.",
+    "Prefer small frequent units of work over bursty oversized main-thread work when the system can be staged safely.",
+    "Assign explicit work budgets to runtime phases instead of allowing unlimited per-tick work.",
+    "Minimize synchronization scope and shared mutable state.",
+    "Choose throughput-oriented batching only when its latency profile is acceptable for the owning runtime phase.",
+    "Prefer deterministic dispatch where correctness, debugging, or profiling benefit from it.",
+    "Scale concurrency only after task granularity and data ownership are coherent."
+  ],
+  "constraints": [
+    "Do not parallelize work units so small that scheduling overhead dominates.",
+    "Do not allow runtime methods on the main thread to accumulate large burst workloads by default.",
+    "Do not leave per-frame or per-tick work effectively unbounded when a budget can be enforced.",
+    "Do not hide shared mutable state behind convenience queue abstractions.",
+    "Avoid work-stealing or dynamic balancing complexity unless imbalance is a measured problem.",
+    "Any synchronization point must have a clear ownership and cost justification."
+  ],
+  "decision_rules": [
+    "If a runtime method can either process a large batch immediately or spread the work across multiple smaller slices, prefer the sliced model unless latency or correctness requires the burst.",
+    "If the runtime phase has a hard responsiveness requirement, bias toward lower latency and bounded work even when peak throughput drops.",
+    "If throughput is the dominant goal and latency tolerance is higher, allow larger batches only if worst-case spike behavior remains inside the phase budget.",
+    "If a stage has clear independent partitions, prefer partitioned worker ownership over shared queues first.",
+    "If work units are irregular, compare queue contention against the imbalance cost before choosing dynamic scheduling.",
+    "If no explicit budget exists for a runtime phase, define one before optimizing the queueing strategy.",
+    "If main-thread work can stall frame progression, split it into bounded incremental units with explicit carry-over state.",
+    "If tasks communicate heavily, redesign data ownership before adding more threads.",
+    "If reproducibility matters for debugging or stateful systems, prefer deterministic scheduling and stable task order.",
+    "If a pipeline already has explicit stages, align scheduling boundaries with stage boundaries instead of ad hoc task spawning."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "strict lifecycle phases with explicit ordering",
+      "explicit worker ownership and bounded queues",
+      "incremental processing with bounded per-tick work budgets",
+      "phase-specific latency and throughput targets",
+      "stage-based execution with clear handoff points",
+      "partitioned work sets with reduction or merge phases",
+      "stable instrumentation around queue depth, worker utilization, and contention points"
+    ],
+    "avoid_patterns": [
+      "burst-heavy runtime methods on the main thread",
+      "throughput-maximizing batches with no latency budget",
+      "task explosion from overly fine-grained units",
+      "shared global mutable state accessed from arbitrary workers",
+      "synchronization scattered throughout task bodies",
+      "using more threads as a substitute for coherent workload design"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Stage-Aligned Scheduler",
+      "when": "A pipeline already has stable stages with clear input and output buffers.",
+      "steps": [
+        "Define stage boundaries and handoff buffers.",
+        "Assign worker execution ownership per stage or partition.",
+        "Make synchronization explicit at stage boundaries only.",
+        "Measure queue depth, worker utilization, and latency under load."
+      ]
+    },
+    {
+      "name": "Partition-First Worker Model",
+      "when": "The workload can be split into stable independent partitions.",
+      "steps": [
+        "Define the partition key and ownership model.",
+        "Bind each partition to a worker or bounded worker set.",
+        "Avoid cross-partition writes during the main processing pass.",
+        "Merge or reduce results in an explicit follow-up step if needed."
+      ]
+    },
+    {
+      "name": "Bounded Incremental Main-Thread Work",
+      "when": "A runtime method risks performing too much work at once and stalling the main thread.",
+      "steps": [
+        "Define a strict execution phase where the work is allowed to run.",
+        "Split the total workload into bounded chunks with explicit carry-over state.",
+        "Process only the allowed budget per tick, frame, or update cycle.",
+        "Persist unfinished work for the next scheduled slice instead of forcing one burst pass.",
+        "Measure worst-case frame cost and adjust chunk size or staging model."
+      ]
+    },
+    {
+      "name": "Latency-Biased Phase Budget",
+      "when": "A runtime phase must stay responsive even if peak throughput is sacrificed.",
+      "steps": [
+        "Define the maximum allowed work budget for the phase.",
+        "Set a bounded amount of work per tick, frame, or pass.",
+        "Carry overflow work forward through explicit queues or staged state.",
+        "Track worst-case latency and visible spikes rather than average throughput alone.",
+        "Increase throughput only if the latency target remains intact."
+      ]
+    },
+    {
+      "name": "Throughput-Biased Batch Window",
+      "when": "A stage benefits from batching and can tolerate higher completion latency within a bounded budget.",
+      "steps": [
+        "Define the acceptable latency window for the batched work.",
+        "Accumulate work until the target batch size or time window is reached.",
+        "Process the batch in a predictable execution phase with explicit ownership.",
+        "Measure both throughput gain and worst-case delay introduced by batching.",
+        "Reduce batch size again if responsiveness regresses beyond the budget."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Allowing main-thread runtime methods to absorb unbounded work just because the logic is locally convenient.",
+    "Optimizing average throughput while ignoring phase budgets and worst-case latency.",
+    "Designing the scheduler before defining task granularity and data ownership.",
+    "Using dynamic queues to mask irregular or incoherent workload structure.",
+    "Allowing tasks to reach into shared global state freely.",
+    "Measuring thread count instead of actual throughput, latency, and contention."
+  ],
+  "review_checklist": [
+    "Is lifecycle order explicit and stable?",
+    "Are task units large enough to justify scheduling overhead?",
+    "Are main-thread work units bounded to avoid visible spikes?",
+    "Does each important runtime phase have an explicit work budget?",
+    "Is the latency versus throughput tradeoff chosen deliberately rather than accidentally?",
+    "Are worker ownership and synchronization boundaries explicit?",
+    "Does the scheduler avoid unnecessary shared mutable state?",
+    "Is the dispatch model aligned with the dataflow or stage model?",
+    "Are contention and queue behavior measurable in the design?"
+  ],
+  "references": [
+    {
+      "title": "Scheduler",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/scheduler.md",
+      "priority": "preferred",
+      "interpretation": "Use for task granularity, contention analysis, and scheduler review."
+    },
+    {
+      "title": "Performance Domain Foundations",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/performance-foundations.md",
+      "priority": "supporting",
+      "interpretation": "Use for optimization discipline and cost model framing."
+    }
+  ]
+}

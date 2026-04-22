@@ -33,8 +33,8 @@ Change type:
 
 - [ ] Skill JSON follows `meta/skill-schema.json`.
 - [ ] New or reworked skills include routing and execution layers.
-- [ ] `knowledge/<domain>/<domain>_entry.json` is updated when entry points or routing signals changed.
-- [ ] `knowledge/<domain>/<domain>_manifest.json` is updated when skills were added, removed, or renamed.
+- [ ] `knowledge/<stack>/<domain>/<domain>_entry.json` is updated when entry points or routing signals changed.
+- [ ] `knowledge/<stack>/<domain>/<domain>_manifest.json` is updated when skills were added, removed, or renamed.
 - [ ] `meta/index.json` is updated for new domains or skill file lists.
 - [ ] `meta/router.json` is updated for routing candidates or skill paths.
 - [ ] `meta/depgraph.json` is updated for new or changed dependencies.

@@ -1,0 +1,164 @@
+{
+  "id": "extension-points",
+  "kind": "skill",
+  "title": "Extension Points",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "extension point",
+      "plugin contract",
+      "host extension",
+      "module hook",
+      "capability extension"
+    ],
+    "weak": [
+      "extensibility boundary",
+      "host plugin API",
+      "module registration",
+      "hook surface"
+    ]
+  },
+  "use_for": [
+    "designing explicit host extension surfaces",
+    "defining plugin or module capability contracts",
+    "keeping extensibility reviewable without service locator drift",
+    "separating host-owned lifecycle from feature-provided capabilities",
+    "making extension boundaries narrow and stable"
+  ],
+  "do_not_use_for": [
+    "raw bootstrap order without extension concerns",
+    "feature-local abstractions",
+    "UI layout",
+    "assembly parsing"
+  ],
+  "rules": [
+    "define extension contracts around capabilities, not around internal host objects",
+    "keep extension surfaces narrow and versionable",
+    "host owns lifecycle while extensions supply capability",
+    "prefer explicit registration over hidden discovery",
+    "make extension failure behavior explicit"
+  ],
+  "procedure": [
+    "Identify the host capability that should be extendable.",
+    "Define the minimal extension contract.",
+    "Define registration and lifecycle ownership boundaries.",
+    "Specify failure, ordering, and compatibility rules.",
+    "Verify the extension surface does not leak host internals."
+  ],
+  "output": [
+    "extension contract",
+    "host-to-extension boundary model",
+    "explicit registration and lifecycle policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "contracts"
+    ],
+    "optional": [
+      "runtime-lifecycle",
+      "di"
+    ],
+    "contextual": [
+      "bootstrap",
+      "diagnostics",
+      "composition-boundaries"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about plugin contracts, host extensibility, module hooks, or extension-surface design",
+      "the request is about exposing capability extension without leaking host internals"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about one concrete feature implementation, UI composition, or startup sequencing with no extension surface"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to let features or modules extend a host without hidden coupling",
+      "how to keep extension APIs capability-focused and reviewable",
+      "how to separate host lifecycle ownership from extension-provided behavior"
+    ],
+    "does_not_solve": [
+      "one-off internal abstractions with no extension boundary",
+      "generic container registration by itself",
+      "runtime patching"
+    ]
+  },
+  "core_principles": [
+    "An extension point should publish capability, not host internals.",
+    "The host keeps lifecycle authority even when behavior is extensible.",
+    "Extensions should register explicitly so review can see what enters the system."
+  ],
+  "constraints": [
+    "Extension boundaries must stay narrow enough to version and review.",
+    "Registration should not become hidden discovery or reflection-driven orchestration.",
+    "Failure in one extension should have an explicit containment or reporting path."
+  ],
+  "decision_rules": [
+    "Use extension-points as the owner when the main design question is how a host exposes extensibility safely.",
+    "If extensions participate in runtime phases, attach runtime-lifecycle to keep host ownership explicit.",
+    "If extensions require registration and construction policy, attach DI or bootstrap only after the contract surface is stable.",
+    "If an extension contract mirrors host internals, redesign the boundary around the capability actually needed."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "capability-focused plugin contracts",
+      "explicit registration at known host boundaries",
+      "host-owned lifecycle with extension callbacks constrained by contract",
+      "diagnostic visibility around extension load and failure"
+    ],
+    "avoid_patterns": [
+      "broad plugin interfaces exposing host service bags",
+      "reflection-driven extension discovery as the default path",
+      "extensions mutating host internals through hidden backchannels",
+      "unbounded hook surfaces with unclear compatibility rules"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a narrow host extension API",
+      "when": "Use when a runtime host must allow modules or plugins to add behavior without leaking host internals.",
+      "steps": [
+        "Name the host capability being extended.",
+        "Define the minimal extension contract and registration point.",
+        "Specify which lifecycle phases the extension may participate in.",
+        "Define ordering and failure reporting rules explicitly."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Turning extensibility into a disguised service locator surface.",
+    "Letting extension contracts expose concrete host types and internals.",
+    "Leaving extension ordering or failure behavior implicit."
+  ],
+  "review_checklist": [
+    "Is the extension surface capability-focused?",
+    "Does the host retain lifecycle authority?",
+    "Is registration explicit and reviewable?",
+    "Are failure and ordering rules visible in the design?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Extension Points",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/extension-points.md",
+      "interpretation": "Use this first for host extensibility, plugin contract shape, and registration-boundary policy.",
+      "why": "Use as the primary local guide for explicit extensibility design."
+    },
+    {
+      "title": "Local Reference: Framework Contracts",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use this to keep extension surfaces narrow, capability-oriented, and compatible with the broader contract model.",
+      "why": "Use to align extensibility design with the framework's boundary discipline."
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "id": "invalidation-propagation",
+  "kind": "skill",
+  "title": "Invalidation Propagation",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "invalidation",
+      "dirty propagation",
+      "partial recompute",
+      "selective refresh"
+    ],
+    "weak": [
+      "stage invalidation",
+      "dirty flags",
+      "recompute scope"
+    ]
+  },
+  "use_for": [
+    "defining how local changes invalidate downstream stage outputs",
+    "controlling recompute scope through explicit propagation rules",
+    "stopping pipeline work at clean boundaries"
+  ],
+  "do_not_use_for": [
+    "source state modeling by itself",
+    "thread scheduling by itself",
+    "generic event systems"
+  ],
+  "rules": [
+    "propagate invalidation only as far as derived products are actually affected",
+    "stop work at the first clean boundary",
+    "make invalidation rules explicit and inspectable",
+    "prefer local dirty scope over whole-pipeline reruns"
+  ],
+  "procedure": [
+    "List source changes and affected products.",
+    "Map which downstream stages each change invalidates.",
+    "Define clean boundaries where work can stop.",
+    "Verify propagation cost is lower than broad recompute."
+  ],
+  "output": [
+    "invalidation map",
+    "dirty propagation rules",
+    "partial recompute plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "dataflow-state"
+    ],
+    "optional": [
+      "incremental-recompute"
+    ],
+    "contextual": [
+      "pipeline-architecture",
+      "scheduler"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about dirty propagation, invalidation scope, or selective pipeline recompute"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about stage splitting or raw execution order"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how far a change should propagate through the pipeline",
+      "how to avoid rerunning unaffected stages"
+    ],
+    "does_not_solve": [
+      "basic stage design",
+      "bootstrapping"
+    ]
+  },
+  "core_principles": [
+    "Invalidation is an architectural path, not an ad hoc optimization patch.",
+    "Only affected products should force downstream work.",
+    "Clean boundaries should be as explicit as dirty ones."
+  ],
+  "constraints": [
+    "Propagation rules must be reviewable per stage.",
+    "Dirty logic must not cost more than the work it skips."
+  ],
+  "decision_rules": [
+    "Use targeted invalidation when a local source change affects only a subset of stage outputs.",
+    "Use broad invalidation only when structural or global state truly changes.",
+    "Attach incremental-recompute when invalidation must drive a bounded partial-rerun path instead of stopping at dirtiness description."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "per-stage invalidation maps",
+      "versioned or flagged stage outputs",
+      "explicit clean stop conditions"
+    ],
+    "avoid_patterns": [
+      "whole-pipeline dirty by default",
+      "implicit invalidation through shared mutable state"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Stop recompute at a clean stage boundary",
+      "when": "Use when a local source change does not affect all downstream products.",
+      "steps": [
+        "Mark only products affected by the source change dirty.",
+        "Propagate to dependent stages only if their inputs changed.",
+        "Stop once a stage's retained outputs remain valid."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Marking everything dirty by default.",
+    "Hiding invalidation through broad shared state.",
+    "Paying more for dirty checks than recomputation."
+  ],
+  "review_checklist": [
+    "Can invalidation scope be explained per change type?",
+    "Do clean boundaries stop work early?",
+    "Is dirty logic cheaper than broad recompute?",
+    "Are stage dependencies explicit enough for propagation review?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Invalidation Propagation",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/invalidation-propagation.md",
+      "interpretation": "Use this first for selective recompute rules and clean-boundary stopping logic.",
+      "why": "Use as the primary local guide for invalidation and partial recompute."
+    }
+  ]
+}

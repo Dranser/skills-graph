@@ -1,0 +1,76 @@
+{
+  "id": "code-maintenance-entry",
+  "kind": "domain_entry",
+  "title": "Code Maintenance Domain Entry",
+  "domain": "code-maintenance",
+  "entry_points": [
+    "bug-investigation",
+    "refactoring"
+  ],
+  "signals": [
+    "bug",
+    "error",
+    "regression",
+    "broken behavior",
+    "investigate failure",
+    "debug",
+    "root cause",
+    "refactor",
+    "cleanup",
+    "overengineering",
+    "dead code",
+    "stale code",
+    "residual code",
+    "hidden coupling",
+    "legacy code",
+    "remove feature",
+    "code maintenance"
+  ],
+  "use_for": [
+    "investigating bugs and regressions",
+    "finding root causes in unfamiliar or changing code",
+    "planning and executing scoped refactors",
+    "removing residual code after feature deletion",
+    "reducing overengineering without breaking behavior",
+    "auditing hidden stale dependencies and coupling"
+  ],
+  "do_not_use_for": [
+    "new feature design without maintenance or correctness pressure",
+    "performance optimization as the primary goal",
+    "UI architecture as the primary owner",
+    "mod loader integration as the primary owner",
+    "assembly reverse engineering as the primary owner"
+  ],
+  "priority_order": [
+    "bug-investigation",
+    "refactoring"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is primarily about finding, explaining, or fixing broken behavior, regressions, failing tests, runtime errors, or incorrect state",
+      "request is primarily about refactoring existing code, reducing overengineering, removing stale code, or cleaning hidden coupling"
+    ],
+    "must_not_own_when": [
+      "request is primarily about a specialized domain and maintenance is only an implementation detail",
+      "request is about adding a new capability with no bug, regression, cleanup, or refactor concern"
+    ]
+  },
+  "references": [
+    {
+      "title": "Bug Investigation",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/code-maintenance/references/bug-investigation.md",
+      "priority": "preferred",
+      "interpretation": "Use for root-cause investigation, reproduction, narrowing, and validation."
+    },
+    {
+      "title": "Refactoring",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/code-maintenance/references/refactoring.md",
+      "priority": "preferred",
+      "interpretation": "Use for scoped refactors, simplification, stale-code removal, and hidden-coupling audits."
+    }
+  ]
+}

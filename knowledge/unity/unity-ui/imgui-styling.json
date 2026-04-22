@@ -1,0 +1,137 @@
+{
+  "id": "imgui-styling",
+  "kind": "skill",
+  "title": "IMGUI Styling",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "gui style",
+      "skin",
+      "theme",
+      "styling"
+    ],
+    "weak": [
+      "spacing tokens",
+      "visual consistency",
+      "style registry"
+    ]
+  },
+  "use_for": [
+    "organizing IMGUI styles and skins for a framework",
+    "defining semantic style tokens and spacing rules",
+    "keeping tool UI visually consistent without style sprawl"
+  ],
+  "do_not_use_for": [
+    "overall framework architecture",
+    "input routing",
+    "state ownership"
+  ],
+  "rules": [
+    "prefer semantic style names over ad hoc per-widget style creation",
+    "separate spacing metrics from feature code",
+    "treat style selection as framework policy, not leaf-widget improvisation"
+  ],
+  "procedure": [
+    "Define semantic style roles and metrics.",
+    "Group styles by host, panel, and leaf usage.",
+    "Expose styling through explicit context or registry access.",
+    "Keep style object creation out of hot draw paths."
+  ],
+  "output": [
+    "style taxonomy",
+    "spacing and metric rules",
+    "framework-level theming policy"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about skins, GUIStyle organization, or theme policy in IMGUI"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about architecture, state, or event flow"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to prevent style duplication and inconsistent spacing",
+      "how to expose framework-level visual rules for IMGUI tools"
+    ],
+    "does_not_solve": [
+      "event routing",
+      "window lifetime"
+    ]
+  },
+  "core_principles": [
+    "Styles should communicate semantic intent, not implementation trivia.",
+    "Visual consistency should be host-managed rather than redefined per feature.",
+    "Styling decisions should not add hidden cost to every draw pass."
+  ],
+  "constraints": [
+    "GUIStyle and skin creation should not happen in hot paths.",
+    "Spacing and typography choices should be centralized enough to review."
+  ],
+  "decision_rules": [
+    "Use semantic categories like toolbar, inspector-section, and status-badge instead of one-off names.",
+    "Prefer style registries or context objects over free-form style construction inside leaf widgets."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "semantic style registry",
+      "shared metric tokens",
+      "host-provided style context"
+    ],
+    "avoid_patterns": [
+      "new GUIStyle creation inside every draw call",
+      "feature modules hardcoding spacing and colors independently"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define semantic styles for an inspector-like tool",
+      "when": "Use when multiple panels need consistent headers, body sections, and status rows.",
+      "steps": [
+        "Create semantic roles for headers, sections, rows, and status states.",
+        "Expose them through a style context owned by the host.",
+        "Apply spacing metrics consistently across panels."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Ad hoc style creation scattered across features.",
+    "Visual hierarchy encoded only through magic numbers.",
+    "Theme switching that mutates style ownership unpredictably."
+  ],
+  "review_checklist": [
+    "Are style names semantic?",
+    "Are metrics centralized?",
+    "Is style creation kept out of draw hot paths?",
+    "Can panels share visual language without duplicating style code?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Performance Guidelines",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-performance-guidelines.md",
+      "interpretation": "Use this first because style systems in IMGUI are tightly coupled to hot-path cost and allocation discipline.",
+      "why": "Use because style creation and style access patterns directly affect hot-path cost in IMGUI."
+    },
+    {
+      "title": "Unity Scripting API: GUIStyle",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/ScriptReference/GUIStyle.html",
+      "interpretation": "Use this to confirm the available style surface area after the domain's semantic styling rules are established.",
+      "why": "Use for understanding style capabilities and cost implications when designing style systems."
+    }
+  ]
+}

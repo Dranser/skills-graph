@@ -1,0 +1,174 @@
+{
+  "id": "cache-optimization",
+  "kind": "skill",
+  "title": "Cache Optimization",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "cache",
+      "locality",
+      "false sharing",
+      "cache miss",
+      "hot path"
+    ],
+    "weak": [
+      "traversal order",
+      "layout tuning",
+      "contention reduction",
+      "spatial locality",
+      "temporal locality"
+    ]
+  },
+  "use_for": [
+    "locality improvements",
+    "traversal order changes",
+    "false sharing reduction",
+    "cache miss reduction",
+    "hot path layout tuning"
+  ],
+  "do_not_use_for": [
+    "generic cleanup",
+    "plugin lifecycle",
+    "IMGUI",
+    "raw metadata parsing"
+  ],
+  "rules": [
+    "name the hot traversal before changing layout",
+    "optimize access order and ownership before instruction-level tweaks",
+    "treat false sharing as a write-ownership problem",
+    "preserve semantic and phase boundaries while improving locality",
+    "measure cache-sensitive changes against the real workload"
+  ],
+  "procedure": [
+    "Identify the hot loop or worker range.",
+    "Map read and write order to physical layout.",
+    "Check hot/cold mixing, pointer chasing, and cross-thread write adjacency.",
+    "Choose traversal reorder, staging, partitioning, or layout change.",
+    "Re-measure locality-sensitive pass cost and scaling behavior."
+  ],
+  "output": [
+    "hot traversal and locality map",
+    "cache-aware layout or traversal change",
+    "false-sharing and write-ownership review"
+  ],
+  "dependencies": {
+    "hard": [
+      "data-oriented-design"
+    ],
+    "optional": [],
+    "contextual": [
+      "scheduler"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is specifically about cache locality, false sharing, or cache miss reduction",
+      "request is about hot-path traversal order and layout"
+    ],
+    "must_not_own_when": [
+      "request is mainly about plugin lifecycle, IMGUI, or metadata parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "aligning data layout and traversal order with cache behavior",
+      "reducing wasted movement across memory on hot paths",
+      "mitigating cross-thread write contention such as false sharing"
+    ],
+    "does_not_solve": [
+      "cold-path cleanup with no measurable locality issue",
+      "instruction-level micro-optimization detached from access patterns",
+      "parallel scaling problems caused by scheduler design alone"
+    ]
+  },
+  "core_principles": [
+    "Optimize access order before micro-tuning instructions.",
+    "Keep related hot data close in memory when they are consumed together.",
+    "Reduce shared write contention and accidental cross-thread cache-line traffic.",
+    "Treat locality as a property of traversal plus layout, not of layout alone.",
+    "Re-measure after changes because cache wins are workload-dependent."
+  ],
+  "constraints": [
+    "Do not invent low-level tweaks without identifying the actual hot traversal path.",
+    "Do not trade away maintainable ownership boundaries for tiny unmeasured gains.",
+    "Avoid cache tuning on cold code or on code dominated by unrelated costs.",
+    "Keep cross-thread writes explicit so false sharing risks are inspectable."
+  ],
+  "decision_rules": [
+    "If data is consumed together in the same pass, keep it adjacent or stage it into adjacent buffers.",
+    "If multiple threads update neighboring state, inspect false sharing before adding more synchronization.",
+    "If the same loop both reads hot data and jumps into cold side structures, split the path or pre-stage the data.",
+    "If locality improvements require whole-pipeline staging, validate the extra transform cost.",
+    "If the bottleneck is dominated by synchronization or allocation, fix that first instead of forcing cache folklore."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "stable hot-path traversal over contiguous or locality-aware buffers",
+      "thread partitioning that minimizes overlapping writes",
+      "staging buffers that reshape sparse source data into dense execution order",
+      "loop ordering based on the dominant access pattern"
+    ],
+    "avoid_patterns": [
+      "interleaving unrelated hot and cold writes in the same tight loop",
+      "shared arrays with neighboring write ownership spread across workers",
+      "micro-optimizing code shape while leaving access order unchanged",
+      "assuming cache behavior can be fixed without understanding traversal"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Traversal Reordering",
+      "when": "The same data set is revisited in an order that causes unnecessary memory jumps.",
+      "steps": [
+        "Identify the dominant hot loop.",
+        "Map the current read and write order to the data layout.",
+        "Reorder the loop or reshape the working set to improve adjacency.",
+        "Re-measure the pass and verify no higher-level cost regressed."
+      ]
+    },
+    {
+      "name": "False Sharing Reduction",
+      "when": "Multiple workers update nearby memory and scaling collapses under contention.",
+      "steps": [
+        "Identify the write ownership of each worker.",
+        "Separate frequently written state by partition, stripe, or staging buffer.",
+        "Merge results through an explicit reduction step if needed.",
+        "Measure scaling again under representative worker counts."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Talking about cache friendliness without naming the actual traversal pattern.",
+    "Forcing low-level layout tricks into cold or low-impact code.",
+    "Ignoring false sharing while focusing only on read locality.",
+    "Breaking ownership clarity for locality gains that were never measured."
+  ],
+  "review_checklist": [
+    "Is the hot traversal path explicitly identified?",
+    "Does the layout reflect how the data is actually consumed?",
+    "Are cross-thread writes partitioned to avoid accidental cache-line contention?",
+    "Were locality changes measured against the real workload?",
+    "Did the optimization preserve explicit ownership and inspectable control flow?"
+  ],
+  "references": [
+    {
+      "title": "Cache Optimization",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/cache-optimization.md",
+      "priority": "preferred",
+      "interpretation": "Use for locality heuristics, false-sharing analysis, and cache-focused review."
+    },
+    {
+      "title": "Data-Oriented Design",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/data-oriented-design.md",
+      "priority": "supporting",
+      "interpretation": "Use when cache behavior depends on broader layout and staging decisions."
+    }
+  ]
+}

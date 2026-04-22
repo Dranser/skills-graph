@@ -2,6 +2,7 @@
   "id": "skill-id",
   "kind": "skill",
   "title": "Human Readable Skill Title",
+  "stack": "csharp-shared",
   "domain": "domain-name",
   "role": "primary",
   "signals": {
@@ -90,7 +91,7 @@
       "title": "Local Reference Title",
       "type": "local-reference",
       "priority": "preferred",
-      "path": "knowledge/domain/references/example.md",
+      "path": "knowledge/<stack>/<domain>/references/example.md",
       "interpretation": "Use this first for practical domain guidance.",
       "why": "why this local reference matters"
     },

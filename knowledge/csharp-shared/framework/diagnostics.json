@@ -1,0 +1,152 @@
+{
+  "id": "diagnostics",
+  "kind": "skill",
+  "title": "Diagnostics",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "diagnostics",
+      "logging",
+      "session log",
+      "trace",
+      "startup logs"
+    ],
+    "weak": [
+      "failure reporting",
+      "runtime trace output",
+      "startup visibility"
+    ]
+  },
+  "use_for": [
+    "session logging",
+    "early diagnostics initialization",
+    "runtime trace output",
+    "startup visibility",
+    "failure reporting"
+  ],
+  "do_not_use_for": [
+    "console-first logging",
+    "UI rendering",
+    "performance tuning",
+    "assembly parsing"
+  ],
+  "rules": [
+    "initialize diagnostics before non-essential systems",
+    "write logs to session-scoped file",
+    "use short timestamps with time only",
+    "keep log output structured and compact",
+    "do not depend on console as primary sink"
+  ],
+  "procedure": [
+    "Resolve session log path.",
+    "Create or open session log file.",
+    "Bind time-only timestamp formatter.",
+    "Register primary log writer.",
+    "Expose minimal logging interface.",
+    "Record startup and failure events."
+  ],
+  "output": [
+    "file-backed diagnostics setup",
+    "session log initialization code",
+    "compact log writing path"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about diagnostics initialization, session logging, or failure reporting",
+      "the request is about setting up runtime trace output or startup visibility"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about UI rendering, performance tuning, or assembly parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to make startup and runtime failures visible early",
+      "how to keep diagnostics available even when console access is weak or absent",
+      "how to record compact runtime traces without bloated infrastructure"
+    ],
+    "does_not_solve": [
+      "full observability platforms",
+      "performance profiling strategy by itself",
+      "UI rendering details"
+    ]
+  },
+  "core_principles": [
+    "Diagnostics should exist before optional runtime systems start.",
+    "Primary diagnostics output should be structured, compact, and file-backed.",
+    "Failure visibility matters more than logging feature breadth."
+  ],
+  "constraints": [
+    "Diagnostics setup must be available early in startup.",
+    "Log output should remain compact enough for repeated runtime sessions.",
+    "Failure reporting paths must not depend on optional subsystems."
+  ],
+  "decision_rules": [
+    "Use diagnostics as the owner when visibility, trace output, or failure reporting dominates the task.",
+    "Prefer file-backed logging when console presence is unreliable or secondary.",
+    "Keep diagnostics interfaces minimal so they can initialize early and stay available under failure."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "early file-backed diagnostics initialization",
+      "compact structured messages",
+      "minimal logging interface exposed to the rest of the runtime"
+    ],
+    "avoid_patterns": [
+      "console-only diagnostics",
+      "late diagnostics initialization after optional systems",
+      "heavy diagnostics dependencies in early bootstrap"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Bring up session diagnostics early",
+      "when": "Use when startup visibility and failure traces matter from the first runtime phase.",
+      "steps": [
+        "Resolve session log location first.",
+        "Open or create the log before optional systems start.",
+        "Bind a compact formatter and writer.",
+        "Record startup milestones and failures explicitly."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Relying on console output as the only diagnostic sink.",
+    "Initializing diagnostics too late to capture startup failures.",
+    "Making early diagnostics depend on optional infrastructure."
+  ],
+  "review_checklist": [
+    "Does diagnostics initialize early enough?",
+    "Is the primary sink file-backed or otherwise durable?",
+    "Are messages compact and structured?",
+    "Can failure paths log without optional systems being alive?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Framework Diagnostics",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/diagnostics.md",
+      "interpretation": "Use this first for early diagnostics policy, file-backed logging, and failure visibility rules.",
+      "why": "Use as the primary local guide for diagnostics setup and runtime trace design."
+    },
+    {
+      "title": "Local Reference: Framework Bootstrap",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/bootstrap.md",
+      "interpretation": "Use this to align diagnostics startup timing with the broader bootstrap sequence.",
+      "why": "Use to place diagnostics correctly in the startup order."
+    }
+  ]
+}

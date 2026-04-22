@@ -1,0 +1,164 @@
+{
+  "id": "contention-shaping",
+  "kind": "skill",
+  "title": "Contention Shaping",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "contention",
+      "lock contention",
+      "queue contention",
+      "shared mutable state",
+      "worker contention"
+    ],
+    "weak": [
+      "backpressure",
+      "serialization point",
+      "contention hot spot",
+      "shared write bottleneck",
+      "coordination overhead"
+    ]
+  },
+  "use_for": [
+    "reducing worker contention and queue hot spots",
+    "reshaping shared-state coordination",
+    "moving from shared mutation to partitioned ownership",
+    "identifying serialization points in a supposedly parallel path",
+    "controlling backpressure created by coordination bottlenecks"
+  ],
+  "do_not_use_for": [
+    "generic multithreading without measured contention",
+    "UI architecture as a primary owner",
+    "assembly tooling",
+    "cold-path cleanup"
+  ],
+  "rules": [
+    "treat contention as a shape-of-ownership problem before a lock-implementation problem",
+    "reduce shared write regions before tuning synchronization primitives",
+    "make serialization points explicit and measurable",
+    "prefer partitioned ownership or staged merge over arbitrary shared mutation",
+    "tie backpressure to explicit queue or phase boundaries"
+  ],
+  "procedure": [
+    "Identify the shared state or queue that bottlenecks workers.",
+    "Measure where time is spent waiting, spinning, or serializing.",
+    "Rework ownership toward partitioned writes, staged merge, or reduced coordination scope.",
+    "Define backpressure behavior if contention can build backlog.",
+    "Re-measure throughput, latency, and contention under representative load."
+  ],
+  "output": [
+    "contention map",
+    "ownership reshape plan",
+    "backpressure-aware coordination policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "scheduler"
+    ],
+    "optional": [
+      "measurement-profiling"
+    ],
+    "contextual": [
+      "cache-optimization",
+      "work-budgeting",
+      "data-oriented-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about lock contention, queue hot spots, or shared-state coordination bottlenecks",
+      "the request is about poor scaling caused by shared mutable ownership or serialization points"
+    ],
+    "must_not_own_when": [
+      "the main issue is unbounded work, general scheduling policy, or cache locality with no measured contention problem"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to identify and reshape contention bottlenecks",
+      "how to turn shared-state coordination into partitioned or staged ownership",
+      "how to prevent coordination bottlenecks from dominating runtime latency"
+    ],
+    "does_not_solve": [
+      "generic scheduler design by itself",
+      "allocation control by itself",
+      "feature-domain ownership outside concurrency cost"
+    ]
+  },
+  "core_principles": [
+    "Contention usually reflects ownership shape before it reflects primitive choice.",
+    "A parallel design with one hidden serialization point is still mostly serial.",
+    "Backpressure belongs in the design, not as an accidental consequence of a hot queue."
+  ],
+  "constraints": [
+    "Contention diagnosis must be tied to real measured waiting or serialization behavior.",
+    "Reshaping ownership must preserve correctness before chasing scaling gains.",
+    "Backpressure and queue growth should remain observable."
+  ],
+  "decision_rules": [
+    "Use contention-shaping as the owner when the central issue is coordination bottlenecks rather than raw dispatch policy.",
+    "If workers fight over one shared structure, prefer partitioning or staged reduction before lock micro-tuning.",
+    "If queue contention creates visible spikes, attach work-budgeting to keep overflow and backpressure explicit.",
+    "If the bottleneck is really false sharing or adjacency, attach cache-optimization after ownership shape is clear."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "partitioned worker ownership",
+      "explicit reduction or merge stages",
+      "bounded queues with visible backpressure",
+      "contention metrics around known coordination points"
+    ],
+    "avoid_patterns": [
+      "many workers writing to one broad shared structure",
+      "lock tuning without ownership redesign",
+      "hidden serialization points inside convenience abstractions",
+      "queue buildup with no explicit backpressure policy"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Reshape a shared-state bottleneck",
+      "when": "Use when worker scaling collapses because too much work funnels through one shared structure.",
+      "steps": [
+        "Measure the contested queue, lock, or shared write region.",
+        "Split ownership by partition or stage where possible.",
+        "Introduce an explicit merge or reduction step.",
+        "Track scaling, latency, and queue buildup after the redesign."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Assuming the right lock primitive will solve broad ownership contention.",
+    "Ignoring backpressure while chasing worker throughput.",
+    "Treating serialization points as harmless because average throughput still looks acceptable."
+  ],
+  "review_checklist": [
+    "Is the contention point explicitly identified and measured?",
+    "Was ownership reshaped before synchronization was micro-tuned?",
+    "Are backpressure and queue growth visible in the design?",
+    "Did the redesign preserve correctness as well as scaling?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Contention Shaping",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/performance/references/contention-shaping.md",
+      "interpretation": "Use this first for shared-state bottlenecks, partitioned ownership, and backpressure-aware contention reduction.",
+      "why": "Use as the primary local guide for contention-focused runtime shaping."
+    },
+    {
+      "title": "Scheduler",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/performance/references/scheduler.md",
+      "interpretation": "Use this to keep contention fixes aligned with explicit worker ownership and stage-based dispatch.",
+      "why": "Use to connect contention reshaping with the broader scheduler model."
+    }
+  ]
+}

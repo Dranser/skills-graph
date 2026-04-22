@@ -1,0 +1,156 @@
+{
+  "id": "contracts",
+  "kind": "skill",
+  "title": "Contracts",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "interface",
+      "contract",
+      "boundary",
+      "abstraction",
+      "extensibility"
+    ],
+    "weak": [
+      "service abstraction",
+      "extension point",
+      "decoupling"
+    ]
+  },
+  "use_for": [
+    "defining interfaces",
+    "boundary design",
+    "service abstractions",
+    "extension points",
+    "decoupling runtime systems"
+  ],
+  "do_not_use_for": [
+    "concrete startup logic",
+    "runtime patching",
+    "direct UI layout",
+    "metadata parsing"
+  ],
+  "rules": [
+    "define contracts before implementation coupling",
+    "keep interfaces minimal",
+    "expose capabilities, not internals",
+    "separate read-only and mutating responsibilities when needed",
+    "avoid speculative abstractions"
+  ],
+  "procedure": [
+    "Identify system boundary.",
+    "Define required responsibilities.",
+    "Split responsibilities if needed.",
+    "Declare minimal interfaces.",
+    "Bind implementations later in bootstrap or DI.",
+    "Keep consumers dependent on contracts only."
+  ],
+  "output": [
+    "interface definitions",
+    "boundary contracts",
+    "extension point contracts"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "extension-points"
+    ],
+    "contextual": []
+  },
+  "conflicts": [
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about interface design, service contracts, or system boundaries",
+      "the request is about extension points or decoupling consumers from implementations"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about runtime patching, direct UI layout, or metadata parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to define explicit runtime boundaries between consumers and implementations",
+      "how to expose extension points without leaking internals",
+      "how to keep dependencies pointed at capabilities rather than concrete types"
+    ],
+    "does_not_solve": [
+      "startup ordering by itself",
+      "container registration mechanics by itself",
+      "UI rendering details"
+    ]
+  },
+  "core_principles": [
+    "Contracts should expose capabilities, not implementation detail.",
+    "Boundaries should be as narrow as the real integration requires.",
+    "Read and write responsibilities should split when they change for different reasons."
+  ],
+  "constraints": [
+    "Contracts must remain stable enough to support composition without speculative overgrowth.",
+    "Consumers should not need concrete implementation knowledge to use a capability.",
+    "Extension points must not become hidden service locator channels."
+  ],
+  "decision_rules": [
+    "Use contracts as the owner when the main question is boundary design or capability exposure.",
+    "Split interfaces when mutating and read-only responsibilities evolve independently.",
+    "Reject abstractions that exist only to imitate layering without real runtime value."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "minimal capability-focused interfaces",
+      "explicit extension point contracts",
+      "read and write boundary separation where justified"
+    ],
+    "avoid_patterns": [
+      "speculative abstraction layers",
+      "contracts that mirror implementation classes one-to-one",
+      "service locator hidden behind broad interfaces"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define a stable consumer boundary",
+      "when": "Use when multiple runtime systems need to collaborate without direct implementation coupling.",
+      "steps": [
+        "Identify the capability the consumer actually needs.",
+        "Separate read and mutate responsibilities if they differ.",
+        "Define the minimal contract surface.",
+        "Bind the implementation later in bootstrap or DI."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Designing contracts that simply mirror concrete classes.",
+    "Adding interfaces for code style rather than boundary need.",
+    "Letting extension points expose internals accidentally."
+  ],
+  "review_checklist": [
+    "Is each contract capability-focused?",
+    "Can consumers remain ignorant of implementation detail?",
+    "Were responsibilities split only where justified?",
+    "Did the design avoid speculative abstraction?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Framework Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use this first for boundary design, capability slicing, and extension-point policy.",
+      "why": "Use as the primary local guide for runtime contract design."
+    },
+    {
+      "title": "Local Reference: Framework DI",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/di.md",
+      "interpretation": "Use this to ensure contract choices remain compatible with explicit registration and lifetime policy.",
+      "why": "Use to align contract shape with container and composition decisions."
+    }
+  ]
+}

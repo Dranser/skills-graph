@@ -1,0 +1,223 @@
+{
+  "id": "gpu-pipeline-architecture",
+  "kind": "skill",
+  "title": "GPU Pipeline Architecture",
+  "stack": "unity",
+  "domain": "gpu",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "gpu pipeline",
+      "gpu driven pipeline",
+      "compute pipeline",
+      "gpu stage",
+      "buffer contract",
+      "indirect dispatch chain",
+      "gpu dirty flags",
+      "gpu state machine"
+    ],
+    "weak": [
+      "stage ordering",
+      "gpu diagnostics",
+      "buffer lifecycle",
+      "cpu gpu boundary",
+      "append buffer pipeline"
+    ]
+  },
+  "use_for": [
+    "designing GPU-driven stage pipelines",
+    "defining CPU/GPU ownership boundaries",
+    "structuring compute stages, buffer contracts, dirty flags, indirect dispatch, and indirect draw",
+    "turning GPU work into predictable staged runtime architecture"
+  ],
+  "do_not_use_for": [
+    "simple one-off shader material work",
+    "CPU-only data-oriented pipeline design",
+    "Unity UI rendering",
+    "neural training"
+  ],
+  "rules": [
+    "define stage contracts before writing kernels",
+    "define buffer contracts before dispatch logic",
+    "keep CPU orchestration and GPU bulk execution separate",
+    "prefer GPU-produced counts and args over CPU readback in hot paths",
+    "make invalidation and rerun scope explicit",
+    "make diagnostics optional and asynchronous unless correctness requires blocking"
+  ],
+  "procedure": [
+    "Name the pipeline product.",
+    "Split work into GPU stages with explicit inputs and outputs.",
+    "Define buffers, strides, counts, owners, and resize policies.",
+    "Define stage dirty flags or state transitions.",
+    "Define dispatch and indirect dispatch arguments.",
+    "Define rendering or readback handoff.",
+    "Define diagnostics and failure behavior."
+  ],
+  "output": [
+    "GPU stage map",
+    "buffer contract table",
+    "CPU/GPU ownership boundary",
+    "invalidation and diagnostics plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "gpu-compute"
+    ],
+    "optional": [
+      "gpu-instancing"
+    ],
+    "contextual": [
+      "pipeline-architecture",
+      "execution-model",
+      "memory-management",
+      "measurement-profiling"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about a multi-stage GPU-driven pipeline",
+      "the request is about buffer contracts, dirty flags, indirect dispatch, or CPU/GPU synchronization boundaries",
+      "the request combines compute stages with indirect rendering or GPU-side visibility"
+    ],
+    "must_not_own_when": [
+      "the request is only about CPU-side pipeline architecture with no GPU buffer or dispatch concern",
+      "the request is only about UI or mod loader behavior"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to design a GPU workflow as explicit stages rather than scattered dispatch calls",
+      "how to keep buffer ownership, stage dependencies, and invalidation reviewable",
+      "how to avoid hidden CPU/GPU synchronization and unnecessary full-pipeline reruns"
+    ],
+    "does_not_solve": [
+      "low-level graphics API portability by itself",
+      "artistic shader look development",
+      "CPU feature architecture outside GPU handoff boundaries"
+    ]
+  },
+  "core_principles": [
+    "A GPU pipeline is a dataflow graph with GPU buffers as products.",
+    "The CPU should orchestrate work; the GPU should own bulk parallel transforms.",
+    "Every kernel should have a documented input and output buffer contract.",
+    "Dirty flags and stage state should bound rerun cost.",
+    "Indirect dispatch and draw args should be generated close to the data that owns the count.",
+    "Diagnostics should expose pipeline health without forcing per-frame stalls."
+  ],
+  "constraints": [
+    "Do not dispatch kernels without validating required buffers and kernels.",
+    "Do not read back GPU counters in hot paths when indirect args can keep the work on GPU.",
+    "Do not rebuild spawn or source buffers when only visibility or LOD changed.",
+    "Do not let shader struct layouts drift from CPU-side struct stride definitions.",
+    "Do not hide allocation and release ownership across unrelated systems.",
+    "Do not allow optional diagnostic buffers to become required for rendering correctness."
+  ],
+  "decision_rules": [
+    "Use gpu-pipeline-architecture when a task has more than one GPU stage or crosses compute and rendering.",
+    "Attach gpu-compute for kernel dispatch, buffer layout, and GPU-side stage execution details.",
+    "Attach gpu-instancing when the pipeline ends in instanced or indirect rendering.",
+    "Attach data-oriented-pipeline support when the GPU stages mirror a broader staged data model.",
+    "Attach performance support when the main risk is dispatch cost, memory bandwidth, allocation churn, or readback stalls.",
+    "Introduce dirty flags when different changes require different stage rerun scopes."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "stage contract table with named buffer products",
+      "per-chunk or per-batch buffer ownership",
+      "structured source buffers, append visibility buffers, raw count buffers, and indirect args buffers",
+      "dirty flags or explicit state enum per pipeline unit",
+      "GPU-built dispatch and draw args",
+      "throttled async readback for diagnostics"
+    ],
+    "avoid_patterns": [
+      "single broad rebuild path for all changes",
+      "CPU readback to decide every draw or dispatch count",
+      "buffer allocation hidden in multiple unrelated callers",
+      "kernel parameter binding scattered across feature code",
+      "render shaders assuming buffers exist without safe binding policy"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a GPU stage pipeline",
+      "when": "Use when a feature transforms source data through several GPU stages before rendering or readback.",
+      "steps": [
+        "Name each stage and the data product it creates.",
+        "Define input and output buffers for each stage.",
+        "Define dirty flags that identify which stages must rerun after a change.",
+        "Define dispatch dimensions and when indirect dispatch args are generated.",
+        "Define the render or readback handoff.",
+        "Add diagnostics counters for stage throughput and rejected work."
+      ]
+    },
+    {
+      "name": "Bound visibility-only refresh cost",
+      "when": "Use when camera movement should update culling or LOD without respawning source data.",
+      "steps": [
+        "Keep source and instance buffers alive across visibility updates.",
+        "Mark only cull or LOD dirty flags.",
+        "Reset append counters before visibility kernels.",
+        "Build draw args from visible counts on GPU.",
+        "Throttle refresh by movement, rotation, or time thresholds if camera motion is noisy."
+      ]
+    },
+    {
+      "name": "Add non-blocking diagnostics",
+      "when": "Use when debugging GPU stages without stalling gameplay.",
+      "steps": [
+        "Create a small debug counter buffer owned by the pipeline unit.",
+        "Increment counters in kernels for spawned, valid, visible, or rejected items.",
+        "Request async readback at a bounded interval.",
+        "Track in-flight requests to avoid piling up readbacks.",
+        "Treat readback failure as diagnostic loss, not pipeline failure."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Re-running spawn and quantize when only camera visibility changed.",
+    "Using CPU-visible counts as the control path for every frame.",
+    "Forgetting to reset append counters before visibility stages.",
+    "Letting draw bounds clip valid indirect instances.",
+    "Allocating new buffers every update after counts have stabilized.",
+    "Debugging with blocking readback and mistaking the result for real runtime cost."
+  ],
+  "review_checklist": [
+    "Are CPU and GPU responsibilities explicit?",
+    "Does each stage have named input and output buffers?",
+    "Are buffer strides, counts, and owners documented?",
+    "Can rerun scope be explained from dirty flags or stage state?",
+    "Are indirect args generated without hot-path CPU readback?",
+    "Are append counters reset before use?",
+    "Are diagnostics optional, bounded, and non-blocking?",
+    "Is buffer release handled for domain reload, teardown, or chunk unload?"
+  ],
+  "references": [
+    {
+      "title": "GPU Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/gpu/references/gpu-pipeline-architecture.md",
+      "interpretation": "Use this first for staged GPU pipeline design, CPU/GPU boundaries, and rerun policy.",
+      "why": "It defines the domain's main architecture lens."
+    },
+    {
+      "title": "GPU Buffer Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/gpu/references/gpu-buffer-contracts.md",
+      "interpretation": "Use this for buffer roles, ownership, stride, count, and lifecycle policy.",
+      "why": "GPU pipelines fail when buffers are implicit or underspecified."
+    },
+    {
+      "title": "GPU Diagnostics",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/gpu/references/gpu-diagnostics.md",
+      "interpretation": "Use when adding counters, async readback, health state, or failure policy.",
+      "why": "It keeps observability from becoming a synchronization bottleneck."
+    }
+  ]
+}

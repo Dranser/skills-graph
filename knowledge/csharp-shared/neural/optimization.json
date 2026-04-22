@@ -1,0 +1,202 @@
+{
+  "id": "optimization",
+  "kind": "skill",
+  "title": "Neural Optimization",
+  "stack": "csharp-shared",
+  "domain": "neural",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "neural optimization",
+      "inference speed",
+      "training throughput",
+      "numerical stability",
+      "memory layout",
+      "gpu residency",
+      "tensor transfer",
+      "dispatch overhead"
+    ],
+    "weak": [
+      "stability",
+      "throughput",
+      "forward-path optimization",
+      "update-path optimization",
+      "readback",
+      "precision"
+    ]
+  },
+  "use_for": [
+    "numerical stability",
+    "training throughput",
+    "inference cost reduction",
+    "memory layout tuning for networks",
+    "custom optimization paths",
+    "GPU-resident tensor execution",
+    "reducing tensor transfer, dispatch, allocation, and readback cost"
+  ],
+  "do_not_use_for": [
+    "general project optimization without neural intent",
+    "loader integration",
+    "IMGUI",
+    "assembly parsing"
+  ],
+  "rules": [
+    "preserve correctness before speed",
+    "optimize tensor layout and data movement before micro-tuning kernels",
+    "separate stability fixes from throughput changes",
+    "keep optimization tied to forward, training, or tensor-runtime path explicitly",
+    "avoid hidden precision changes without intent",
+    "measure arena usage, transfer volume, dispatch count, and readback cost"
+  ],
+  "procedure": [
+    "Identify neural bottleneck and the tensor group it affects.",
+    "Classify it as layout, data movement, dispatch, math, allocation, precision, or update-path issue.",
+    "Check whether the source of truth is CPU, GPU, or hybrid.",
+    "Apply targeted optimization with explicit ownership and synchronization rules.",
+    "Preserve network correctness and numerical stability.",
+    "Re-evaluate throughput, transfer volume, and stability.",
+    "Keep optimized path explicit and observable."
+  ],
+  "output": [
+    "targeted neural optimization code",
+    "layout or stability improvements",
+    "explicit optimized execution path",
+    "measurement and regression checklist"
+  ],
+  "dependencies": {
+    "hard": [
+      "tensor-runtime-architecture",
+      "memory-management"
+    ],
+    "optional": [
+      "memory-arenas",
+      "measurement-profiling"
+    ],
+    "contextual": [
+      "gpu-compute",
+      "gpu-pipeline-architecture",
+      "data-oriented-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is specifically about neural throughput, numerical stability, network layout optimization, GPU residency, or tensor transfer cost",
+      "request is about optimizing inference or training paths for neural systems"
+    ],
+    "must_not_own_when": [
+      "request is mainly about loader integration, IMGUI, or assembly parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to find the real neural runtime bottleneck instead of optimizing layers blindly",
+      "how to reduce CPU/GPU synchronization, full-arena transfers, and dispatch overhead",
+      "how to treat precision, stability, and throughput as separate review axes"
+    ],
+    "does_not_solve": [
+      "non-neural application performance tuning",
+      "model quality improvements without runtime or numerical implications",
+      "adopting external accelerators as a replacement for local architecture"
+    ]
+  },
+  "core_principles": [
+    "The first neural performance question is where tensor data lives.",
+    "A full tensor-arena upload/download per phase dominates many kernel-level improvements.",
+    "Dispatch count and command grouping matter when operations are small or phase-split.",
+    "Precision changes are architecture changes, not harmless optimizations.",
+    "Diagnostic downloads must be separated from normal throughput paths.",
+    "Numerical stability should have explicit checks, thresholds, and failure policy."
+  ],
+  "constraints": [
+    "Do not optimize kernels while hidden CPU/GPU transfers remain unmeasured.",
+    "Do not enable gradient downloads or full prediction downloads in training throughput measurements unless they are the measured feature.",
+    "Do not change precision, scaling, loss normalization, or optimizer math without a correctness comparison.",
+    "Do not conflate CPU fallback performance with GPU backend performance.",
+    "Do not add allocation-heavy telemetry to hot paths."
+  ],
+  "decision_rules": [
+    "If GPU utilization is low, inspect residency, transfers, dispatch grouping, and CPU batch preparation before shader math.",
+    "If numerical instability appears, inspect loss scale, activation derivative, gradient norm, clipping, optimizer state, and precision conversion separately.",
+    "If batch size changes hurt performance, inspect arena resizing, reservations, and planner fallback policy.",
+    "If inference is slow for small batches, compare CPU fallback, dispatch overhead, and transfer cost explicitly.",
+    "If transformer code is CPU-side, do not attribute its cost to the GPU backend."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "baseline profiles that split apply input, forward, loss, backward, optimizer, upload, download, and diagnostics",
+      "GPU-resident hot tensors with explicit checkpoint/readback paths",
+      "dirty range tracking for selective upload and download",
+      "batched or grouped command execution for linear operations",
+      "arena reservations for typical batch sizes",
+      "bounded telemetry and regression tests for numerical equivalence"
+    ],
+    "avoid_patterns": [
+      "full-arena synchronization after every backend execute",
+      "blocking readback used as a normal control path",
+      "precision conversion hidden inside generic upload/download",
+      "optimizer state stored outside the runtime tensor model",
+      "benchmarking with diagnostics enabled and treating it as production cost"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Diagnose neural GPU under-utilization",
+      "when": "Use when GPU backend exists but training or inference does not saturate the device.",
+      "steps": [
+        "Measure time spent in input apply, upload, dispatch, download, loss, backward, optimizer, and diagnostics.",
+        "Count backend Execute calls and dispatches per batch.",
+        "Classify tensor transfers as required ingestion, checkpointing, telemetry, or accidental sync.",
+        "Check whether hot parameters, activations, gradients, and optimizer state stay resident.",
+        "Prioritize residency and command grouping before shader micro-tuning."
+      ]
+    },
+    {
+      "name": "Stabilize a custom training path",
+      "when": "Use when losses diverge, gradients explode, or precision changes are considered.",
+      "steps": [
+        "Capture baseline loss, gradient norm, parameter range, and optimizer state behavior.",
+        "Validate loss normalization against batch and token weights.",
+        "Add explicit gradient clipping or norm diagnostics with bounded readback.",
+        "Compare CPU and GPU paths on small deterministic samples.",
+        "Only then adjust precision, scaling, learning rate, or optimizer math."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Optimizing tiled matmul while every phase still copies the whole arena.",
+    "Confusing planner CPU fallback with GPU speedup or regression.",
+    "Leaving gradient logging enabled during throughput tuning.",
+    "Treating command dispatch overhead as negligible for tiny batches.",
+    "Changing precision without checkpoint compatibility or validation data."
+  ],
+  "review_checklist": [
+    "Is the bottleneck classified by evidence?",
+    "Are upload/download boundaries measured and justified?",
+    "Are backend Execute and dispatch counts visible?",
+    "Are diagnostics separated from production paths?",
+    "Does the optimization preserve numerical behavior or document the intended change?",
+    "Are batch-size, arena reservation, and fallback policies considered?",
+    "Is the optimized path explicit rather than hidden behind generic abstraction?"
+  ],
+  "references": [
+    {
+      "title": "Neural GPU Residency",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/neural/references/gpu-residency.md",
+      "interpretation": "Use this first for GPU source-of-truth, transfer, dirty range, and readback decisions.",
+      "why": "Most neural performance failures in this domain are data movement failures."
+    },
+    {
+      "title": "Neural Training Runtime",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/neural/references/training-runtime.md",
+      "interpretation": "Use when throughput or stability depends on batches, losses, gradients, or optimizer state.",
+      "why": "Training exposes the cost of all tensor ownership decisions."
+    }
+  ]
+}

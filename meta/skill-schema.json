@@ -1,10 +1,10 @@
 {
   "version": "1.0",
   "description": "Canonical shape for practical skill documents in Skills Graph.",
-  "applies_to": "knowledge/*/*.json",
+  "applies_to": "knowledge/*/*/*.json",
   "excludes": [
-    "knowledge/*/*_entry.json",
-    "knowledge/*/*_manifest.json"
+    "knowledge/*/*/*_entry.json",
+    "knowledge/*/*/*_manifest.json"
   ],
   "rules": {
     "skill_json_is_canonical_instruction_source": true,
@@ -20,6 +20,7 @@
         "id": "string",
         "kind": "skill",
         "title": "string",
+        "stack": "string",
         "domain": "string",
         "role": "primary|support|cross_cutting",
         "signals": {

@@ -4,6 +4,7 @@
   "inputs": {
     "routing_result": {
       "required": [
+        "selected_stack",
         "primary_domain",
         "primary_file",
         "matched_signals",
@@ -11,7 +12,7 @@
       ]
     },
     "index_source": "meta/index.json",
-    "knowledge_source": "knowledge/*/*.json",
+    "knowledge_source": "knowledge/*/*/*.json",
     "canonical_instruction_source": "knowledge skill json files",
     "skill_schema_source": "meta/skill-schema.json",
     "skill_template_source": "meta/skill-template.json"
@@ -92,6 +93,7 @@
     "avoid_allocation_heavy_hot_paths": true
   },
   "output_contract": {
+    "selected_stack": "string",
     "primary_domain": "string",
     "primary_file": "string",
     "same_domain_skills": [
@@ -124,23 +126,25 @@
   },
   "example": {
     "input": {
+      "selected_stack": "unity",
       "primary_domain": "modding",
-      "primary_file": "knowledge/modding/loader-integration.json"
+      "primary_file": "knowledge/unity/modding/loader-integration.json"
     },
     "output": {
+      "selected_stack": "unity",
       "primary_domain": "modding",
-      "primary_file": "knowledge/modding/loader-integration.json",
+      "primary_file": "knowledge/unity/modding/loader-integration.json",
       "same_domain_skills": [
-        "knowledge/modding/plugin-lifecycle.json"
+        "knowledge/unity/modding/plugin-lifecycle.json"
       ],
       "cross_domain_skills": [],
       "cross_cutting_skills": [
-        "knowledge/framework/diagnostics.json"
+        "knowledge/csharp-shared/framework/diagnostics.json"
       ],
       "execution_order": [
-        "knowledge/modding/loader-integration.json",
-        "knowledge/modding/plugin-lifecycle.json",
-        "knowledge/framework/diagnostics.json"
+        "knowledge/unity/modding/loader-integration.json",
+        "knowledge/unity/modding/plugin-lifecycle.json",
+        "knowledge/csharp-shared/framework/diagnostics.json"
       ]
     }
   }

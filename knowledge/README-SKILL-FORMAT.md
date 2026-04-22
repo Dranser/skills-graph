@@ -2,6 +2,11 @@
 
 This repository now distinguishes between two layers inside each practical skill JSON.
 
+Repository layout note:
+- skill files now live under `knowledge/<stack>/<domain>/`
+- keep stack-specific implementation guidance inside the matching stack directory
+- only place cross-stack conceptual material in shared stack areas when the guidance really applies across hosts
+
 ## Routing Layer
 
 The routing layer decides:
@@ -10,6 +15,7 @@ The routing layer decides:
 - which signals, dependencies, and conflicts matter
 
 Typical fields:
+- `stack`
 - `signals`
 - `use_for`
 - `do_not_use_for`
@@ -48,6 +54,7 @@ Use `interpretation` to say how the source should be read. This matters when a s
 
 - New domains should use the full schema from [skill-schema.json](../meta/skill-schema.json).
 - New or heavily reworked skills should follow [skill-template.json](../meta/skill-template.json).
+- Practical skill JSON should declare `stack` explicitly so routing and execution policy do not need to infer it only from file paths.
 - Entry and manifest files remain metadata only.
 - Local references are preferred for practical guidance; official docs remain valid supporting sources.
 - When needed, references should mark whether they are `preferred`, `supporting`, or `baseline-only`.

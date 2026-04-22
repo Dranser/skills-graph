@@ -2,29 +2,19 @@
 
 Structured skill graph for LLM agents: routing, execution guidance, references, and reusable domain knowledge in JSON.
 
-`Skills Graph` is a repository format for building agent-facing skill systems that are more rigorous than prompt collections and more reusable than one-off task notes.
-
-It combines:
-- domain routing
-- execution guidance
-- dependency expansion
-- reference prioritization
-- reusable architectural knowledge
-
-The format is compatible with Codex-style agents, cloud LLM workflows, and local agent runtimes that can read structured files and apply them as policy plus domain context.
+Current practical emphasis:
+- the current skill set is strongest for `.NET`, `C#`, and Unity-oriented engineering work
+- the format itself is model-agnostic and can be adapted to other stacks
+- stacks and domains are both explicit routing dimensions
+- this is not a strong default fit for framework-first or third-party-library-first projects
 
 ## What You Will Find Here
 
 This repository contains three practical layers:
 
 - `meta/`: routing and execution policy for the graph itself
-- `knowledge/`: domain skills with ownership rules, execution guidance, and references
+- `knowledge/`: stack-aware domain skills with ownership rules, execution guidance, and references
 - `docs/`: public-facing metadata for naming and repository positioning
-
-In plain terms:
-- this is the decision layer that tells an agent which domain should own a task
-- this is the execution layer that tells the agent how to work once a domain is selected
-- this is the reusable knowledge layer that keeps domain guidance out of one-off prompts
 
 ## Why Someone Would Use It
 
@@ -35,27 +25,12 @@ Use Skills Graph when you want agent behavior to be:
 - domain-aware instead of flat keyword matching
 - execution-oriented instead of "just context"
 
-If you are building coding or architecture agents, this repo gives you a structured place to store:
-- ownership rules
-- execution heuristics
-- dependency-aware skill attachments
-- reference-backed domain guidance
-
-## Why It Exists
-
-Most "AI skills" are one of three things:
-- prompt snippets with weak structure
-- tool wrappers with little domain knowledge
-- documentation dumps that are hard to route and hard to execute from
-
-Skills Graph separates those concerns cleanly:
-- `meta/index.json` handles discovery
-- `meta/router.json` handles primary-domain ownership
-- `meta/execution-plan.json` handles attachment order
-- `meta/depgraph.json` handles capability expansion
-- `knowledge/*/*.json` holds the actual skill logic
-
-The result is a graph of skills, domains, dependencies, references, and execution rules that an agent can apply consistently.
+Core layers:
+- `meta/index.json`: discovery
+- `meta/router.json`: stack selection and primary-domain ownership
+- `meta/execution-plan.json`: attachment order
+- `meta/depgraph.json`: capability expansion
+- `knowledge/<stack>/<domain>/*.json`: actual skill logic
 
 ## What Makes It Different
 
@@ -95,13 +70,17 @@ skills-graph/
 |  `- skill-template.json
 `- knowledge/
    |- README-SKILL-FORMAT.md
-   |- framework/
-   |- unity-ui/
-   |- data-oriented-pipeline/
-   |- performance/
-   |- modding/
-   |- assembly-analysis/
-   `- neural/
+   |- csharp-shared/
+   |  |- assembly-analysis/
+   |  |- code-maintenance/
+   |  |- data-oriented-pipeline/
+   |  |- framework/
+   |  |- neural/
+   |  `- performance/
+   `- unity/
+      |- gpu/
+      |- modding/
+      `- unity-ui/
 ```
 
 ## Core Model
@@ -109,25 +88,20 @@ skills-graph/
 Skills Graph uses five layers:
 
 1. Discovery  
-   `meta/index.json` lists domains and skill files.
+   `meta/index.json` lists stacks, domains, and skill files.
 2. Routing  
-   `meta/router.json` selects a single primary domain.
+   `meta/router.json` selects a stack first, then a single primary domain.
 3. Execution Planning  
    `meta/execution-plan.json` defines attachment and execution order.
 4. Dependency Expansion  
    `meta/depgraph.json` expands capability without overriding primary ownership.
 5. Skill Knowledge  
-   `knowledge/*/*.json` contains routing logic plus execution guidance.
+   `knowledge/<stack>/<domain>/*.json` contains routing logic plus execution guidance.
 
-## Current Domains
+## Current Stack Layout
 
-- `framework`
-- `unity-ui`
-- `data-oriented-pipeline`
-- `performance`
-- `modding`
-- `assembly-analysis`
-- `neural`
+- `csharp-shared`: `assembly-analysis`, `code-maintenance`, `data-oriented-pipeline`, `framework`, `neural`, `performance`
+- `unity`: `gpu`, `modding`, `unity-ui`
 
 ## Example Use Cases
 
@@ -137,15 +111,17 @@ Skills Graph uses five layers:
 
 ## Compatibility
 
-Skills Graph is intentionally not vendor-locked.
-
 It is suitable for:
 - Codex-style coding agents
 - cloud LLM agents
 - local agent runtimes
 - custom orchestration systems that can read JSON and Markdown
 
-The project should be positioned as a structured skill system for agents, not as a repo for one model family only.
+Important scope note:
+- the repository format is general-purpose
+- the current knowledge base is optimized first for `.NET`, `C#`, and Unity coding and architecture tasks
+- when multiple stacks coexist, routing should consider stack as well as domain
+- this repository is not aimed at projects where third-party frameworks or libraries define most of the architecture
 
 ## Public Positioning
 
@@ -169,6 +145,11 @@ If you want an agent to use this repository correctly, the minimum read order is
 5. `meta/depgraph.json`
 
 Then read only the selected skill files and directly relevant references.
+
+If you are evaluating current skill coverage, assume the strongest guidance today targets:
+- `.NET` application architecture
+- `C#` implementation work
+- Unity runtime, tooling, UI, and performance-related design
 
 ## Authoring Standard
 

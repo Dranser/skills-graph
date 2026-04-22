@@ -1,0 +1,192 @@
+{
+  "id": "dump-pipeline",
+  "kind": "skill",
+  "title": "Dump Pipeline",
+  "stack": "csharp-shared",
+  "domain": "assembly-analysis",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "dump",
+      "dump pipeline",
+      "export structure",
+      "library snapshot",
+      "reverse dump"
+    ],
+    "weak": [
+      "snapshot",
+      "structured export",
+      "repeatable dump workflow"
+    ]
+  },
+  "use_for": [
+    "dump generation",
+    "structured assembly export",
+    "library snapshot creation",
+    "reverse data staging",
+    "repeatable dump workflows"
+  ],
+  "do_not_use_for": [
+    "runtime integration",
+    "Harmony patching",
+    "UI workflows",
+    "framework bootstrap"
+  ],
+  "rules": [
+    "use deterministic output structure",
+    "preserve original assembly organization",
+    "separate raw extraction from formatted output",
+    "keep repeated runs comparable",
+    "avoid mixing runtime logic into dump generation"
+  ],
+  "procedure": [
+    "Read assembly structures.",
+    "Normalize extracted data.",
+    "Build dump model.",
+    "Emit stable files or records.",
+    "Preserve naming and signatures.",
+    "Store outputs for later lookup and comparison."
+  ],
+  "output": [
+    "structured dump library",
+    "repeatable export pipeline",
+    "comparable assembly snapshots"
+  ],
+  "dependencies": {
+    "hard": [
+      "assembly-reading",
+      "metadata-parsing"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "loader-integration",
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about generating a dump or structured export",
+      "the request is about repeatable assembly snapshots",
+      "the request is about turning raw assembly data into stable dump output"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about runtime integration",
+      "the request is mainly about Harmony patching"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "making reverse engineering output repeatable and comparable",
+      "turning raw assembly reading into structured files that can be searched and diffed",
+      "preserving enough evidence for later patch, probe, and facade design"
+    ],
+    "does_not_solve": [
+      "runtime hook registration",
+      "semantic validation in the running game",
+      "feature architecture outside the reverse-engineering handoff"
+    ]
+  },
+  "core_principles": [
+    "A dump pipeline should be deterministic before it is clever.",
+    "Raw extraction, normalization, formatting, and interpretation should remain separate stages.",
+    "Repeated dumps must be comparable across game versions.",
+    "Dump output should preserve original structure while adding indexes for practical lookup.",
+    "The best dump output supports later runtime contracts without becoming runtime code."
+  ],
+  "constraints": [
+    "Do not mix Harmony patch logic into dump generation.",
+    "Do not drop unresolved references silently.",
+    "Do not reorder output unpredictably between runs.",
+    "Preserve signatures and metadata needed to identify target methods later.",
+    "Keep generated files inspectable by humans and searchable by tools."
+  ],
+  "decision_rules": [
+    "Use dump-pipeline when the user needs repeatable exports or version diffs, not one-off inspection.",
+    "Attach assembly-reading and metadata-parsing before formatting decisions.",
+    "If the dump will feed modding work, include hook-candidate and reflection-candidate indexes.",
+    "If output volume is large, prefer one file per type or namespace plus summary indexes.",
+    "If a decompiler fails, emit an explicit failure record instead of inventing source."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "extract-normalize-format pipeline",
+      "stable file layout keyed by assembly, namespace, and type",
+      "separate raw member inventory and semantic candidate indexes",
+      "diff-friendly ordering and explicit unresolved-reference records"
+    ],
+    "avoid_patterns": [
+      "single monolithic dump file for a large game assembly",
+      "manual edits to generated dump output treated as source of truth",
+      "formatting that hides signatures, overloads, or declaring type context",
+      "runtime integration decisions embedded inside dump generator code"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Create a comparable game assembly dump",
+      "when": "Use when a modding project needs a repeatable snapshot of game internals.",
+      "steps": [
+        "Read assemblies and build a raw model of modules, types, members, signatures, attributes, and references.",
+        "Normalize ordering without changing names or semantics.",
+        "Emit per-type or per-namespace records plus searchable indexes.",
+        "Emit unresolved and decompiler-failure records explicitly.",
+        "Generate optional candidate indexes for lifecycle hooks, UI contexts, network systems, and reflected state.",
+        "Keep the dump output separate from runtime integration code."
+      ]
+    },
+    {
+      "name": "Compare dumps after a game update",
+      "when": "Use when hooks, probes, or facades may have broken after a game version change.",
+      "steps": [
+        "Generate the new dump with the same output layout and ordering as the previous version.",
+        "Diff candidate hook targets by declaring type, member name, signature, and visibility.",
+        "Diff reflected fields and properties used by probe adapters.",
+        "Mark removed, renamed, overloaded, or signature-changed members as integration risks.",
+        "Hand risk records to integration-surface-mapping before changing runtime code."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Generating output that cannot be diffed reliably after a game update.",
+    "Losing metadata tokens or signatures that are needed to re-identify targets.",
+    "Treating generated decompiled code as maintainable source.",
+    "Hiding failed member extraction behind an empty section.",
+    "Letting dump tooling decide runtime patch policy."
+  ],
+  "review_checklist": [
+    "Is output deterministic between identical runs?",
+    "Are raw extraction and interpretation separated?",
+    "Can exact target signatures be recovered from the dump?",
+    "Are unresolved references and failed decompilation visible?",
+    "Does the dump support both search and version comparison?"
+  ],
+  "references": [
+    {
+      "title": "Dump Pipeline",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/dump-pipeline.md",
+      "interpretation": "Use this first for repeatable dump structure and runtime handoff guidance.",
+      "why": "It defines the practical output shape for reverse-engineering artifacts."
+    },
+    {
+      "title": "Reverse Integration Map",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/reverse-integration-map.md",
+      "interpretation": "Use when dump output must feed modding hooks, probes, and facades.",
+      "why": "It connects dump artifacts to runtime integration decisions."
+    },
+    {
+      "title": "Integration Surface Mapping",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/integration-surface-mapping.md",
+      "interpretation": "Use when dump diffs need to become runtime risk or migration decisions.",
+      "why": "It classifies changed members into hook, probe, facade, and rejected surfaces."
+    }
+  ]
+}

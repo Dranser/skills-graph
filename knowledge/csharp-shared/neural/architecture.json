@@ -1,0 +1,194 @@
+{
+  "id": "architecture",
+  "kind": "skill",
+  "title": "Neural Architecture",
+  "stack": "csharp-shared",
+  "domain": "neural",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "neural architecture",
+      "network structure",
+      "layer",
+      "forward pass",
+      "attention",
+      "transformer",
+      "embedding"
+    ],
+    "weak": [
+      "inference graph",
+      "model layout",
+      "model topology",
+      "feed forward",
+      "sequence model"
+    ]
+  },
+  "use_for": [
+    "network structure",
+    "layer composition",
+    "forward-pass organization",
+    "inference graph design",
+    "attention, embedding, normalization, and feed-forward layer boundaries",
+    "mapping model topology onto explicit tensor runtime contracts"
+  ],
+  "do_not_use_for": [
+    "plugin lifecycle",
+    "IMGUI",
+    "assembly dump",
+    "generic ML framework usage without custom runtime design"
+  ],
+  "rules": [
+    "define tensor contracts before layer responsibilities",
+    "separate layer topology from tensor ownership",
+    "keep forward execution deterministic",
+    "compile repeated forward paths into explicit command or stage sequences where possible",
+    "avoid framework assumptions and reflection-heavy graph construction"
+  ],
+  "procedure": [
+    "Define semantic inputs, outputs, and tensor axis meanings.",
+    "Map each layer's inputs, outputs, parameters, and scratch tensors to runtime tensor contracts.",
+    "Define layer graph and deterministic forward order.",
+    "Classify each operation as command-stream, CPU-side semantic transform, or unsupported prototype path.",
+    "Expose inference entrypoint and required synchronization boundaries.",
+    "Separate training hooks without letting them alter forward ownership."
+  ],
+  "output": [
+    "network structure code",
+    "forward pipeline",
+    "layer tensor contract table",
+    "prototype/runtime boundary notes"
+  ],
+  "dependencies": {
+    "hard": [
+      "tensor-runtime-architecture",
+      "optimization"
+    ],
+    "optional": [
+      "training"
+    ],
+    "contextual": [
+      "gpu-compute",
+      "data-oriented-design",
+      "measurement-profiling"
+    ]
+  },
+  "conflicts": [
+    "loader-integration"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about neural network design, layers, forward pass, attention, transformer, embedding, or inference topology",
+      "request asks how model structure should map to the custom tensor runtime"
+    ],
+    "must_not_own_when": [
+      "request is about UI, patching, loader systems, or non-neural GPU rendering"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to shape model topology around explicit tensor ownership",
+      "how to keep forward execution reviewable and deterministic",
+      "how to separate CPU-side prototype layers from backend-executable runtime layers"
+    ],
+    "does_not_solve": [
+      "general mod loader integration",
+      "choosing a third-party ML framework as the foundation",
+      "GPU buffer lifecycle without neural model context"
+    ]
+  },
+  "core_principles": [
+    "Layer architecture is secondary to tensor contracts in this domain.",
+    "Every layer must name its inputs, outputs, parameters, gradients if any, scratch tensors, and axis interpretation.",
+    "Forward execution should be a stable ordered product, not an emergent object traversal.",
+    "Prototype CPU tensor layers are allowed only when their boundary to the runtime tensor model is explicit.",
+    "Attention and transformer structures should preserve batch, sequence, head, and feature semantics until a deliberate 3D projection is chosen."
+  ],
+  "constraints": [
+    "Do not hide tensor allocations inside layer constructors without an arena policy.",
+    "Do not allow a layer to own parameter arrays outside the runtime ownership model unless it is marked prototype-only.",
+    "Do not let inference mutate training-only state.",
+    "Do not flatten sequence or head axes without recording how they are recovered by downstream operations.",
+    "Do not introduce dynamic reflection-based layer graphs for core execution."
+  ],
+  "decision_rules": [
+    "Use tensor-runtime-architecture first when model design depends on tensor layout or memory ownership.",
+    "Use architecture as primary when the user asks about layer topology, attention, transformer flow, embedding, normalization, or forward graph.",
+    "Attach training when the same structure needs backward paths, losses, optimizers, or checkpoints.",
+    "Attach optimization when layer changes are motivated by throughput, stability, precision, or data movement."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "layer contract table listing tensors, roles, shapes, and owner",
+      "compiled forward command arrays for stable dense or elementwise paths",
+      "explicit CPU prototype labels for transformer/attention code not yet backend-executable",
+      "separate parameter, activation, scratch, and output tensors",
+      "batch-size-aware resizing through the tensor runtime, not per-layer ad hoc arrays"
+    ],
+    "avoid_patterns": [
+      "layers constructing hidden temporary arrays in hot inference paths",
+      "forward graph traversal that changes based on mutable collection order",
+      "mixing inference tensors with optimizer state",
+      "semantic tensor reshapes that silently materialize or copy data",
+      "attention implementations that erase axis meaning before masking and projection rules are defined"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a runtime-backed layer",
+      "when": "Use when adding or reviewing a layer intended for the custom runtime.",
+      "steps": [
+        "Define input, output, parameter, gradient, and scratch tensor roles.",
+        "Map each tensor into a 3D runtime shape.",
+        "Define forward commands or kernel stages and the order they execute.",
+        "Define whether batch-size changes resize, reuse, or reallocate each tensor.",
+        "Add diagnostics for output shape, arena usage, and unsupported fallback paths."
+      ]
+    },
+    {
+      "name": "Classify a transformer component",
+      "when": "Use when attention, embedding, normalization, or feed-forward code exists but may not be runtime-backed.",
+      "steps": [
+        "Identify semantic axes: batch, sequence, model dimension, heads, head dimension, vocabulary, or mask.",
+        "Mark the component as runtime-backed, CPU prototype, or hybrid.",
+        "Define the 3D projection needed for backend execution.",
+        "List missing commands or kernels that prevent runtime execution.",
+        "Keep the CPU prototype isolated from training throughput assumptions."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Mistaking a correct CPU prototype for a backend-ready runtime layer.",
+    "Adding layer abstractions before tensor ownership is stable.",
+    "Treating batch-size changes as simple metadata while tensors need reallocation.",
+    "Losing mask semantics during flattening.",
+    "Letting hidden arrays bypass arena telemetry."
+  ],
+  "review_checklist": [
+    "Does every layer have an explicit tensor contract?",
+    "Is the forward order deterministic and reviewable?",
+    "Are runtime-backed and prototype-only operations clearly separated?",
+    "Are batch, sequence, feature, head, and vocabulary axes preserved or deliberately projected?",
+    "Are allocations routed through the runtime ownership model?",
+    "Can inference run without touching training-only state?"
+  ],
+  "references": [
+    {
+      "title": "Neural Tensor Runtime Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/neural/references/tensor-runtime-architecture.md",
+      "interpretation": "Use this before layer design when tensor layout or ownership is relevant.",
+      "why": "Layer architecture depends on the runtime data model."
+    },
+    {
+      "title": "Neural Model Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/neural/references/model-architecture.md",
+      "interpretation": "Use this for forward graph, layer contract, and prototype/runtime boundary guidance.",
+      "why": "It keeps model design aligned with explicit tensor runtime constraints."
+    }
+  ]
+}

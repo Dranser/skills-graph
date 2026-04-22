@@ -1,0 +1,176 @@
+{
+  "id": "data-oriented-design",
+  "kind": "skill",
+  "title": "Data-Oriented Design",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "data-oriented",
+      "dod",
+      "throughput",
+      "layout",
+      "cache-friendly",
+      "hot/cold split"
+    ],
+    "weak": [
+      "linear traversal",
+      "contiguous storage",
+      "pointer chasing",
+      "batch processing"
+    ]
+  },
+  "use_for": [
+    "data layout design",
+    "cache-friendly structures",
+    "linear traversal",
+    "throughput-oriented systems",
+    "low-overhead data processing",
+    "workload-shaped data models"
+  ],
+  "do_not_use_for": [
+    "generic code cleanup",
+    "plugin bootstrap",
+    "IMGUI rendering",
+    "assembly metadata parsing"
+  ],
+  "rules": [
+    "shape data around the real access pattern",
+    "separate logical identity from dense execution location when needed",
+    "prefer contiguous traversal for hot paths",
+    "split hot and cold state when the workload justifies it",
+    "keep staging, invalidation, and ownership boundaries explicit"
+  ],
+  "procedure": [
+    "Identify the workload, hot fields, and traversal order.",
+    "Classify data as hot, cold, identity, derived, scratch, or published output.",
+    "Choose packed, staged, split, indexed, or sparse representation based on access pattern.",
+    "Define update, invalidation, and recompute boundaries.",
+    "Validate traversal cost, cache behavior, and ownership clarity."
+  ],
+  "output": [
+    "data layout and traversal contract",
+    "hot/cold split or staging plan",
+    "data-oriented ownership and invalidation review"
+  ],
+  "dependencies": {
+    "hard": [
+      "cache-optimization",
+      "memory-management"
+    ],
+    "optional": [
+      "scheduler"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about data layout, cache-friendly traversal, batch processing, or throughput-oriented structure design",
+      "request is about minimizing pointer chasing or separating hot and cold data"
+    ],
+    "must_not_own_when": [
+      "request is mainly about plugin bootstrap, IMGUI, or assembly metadata parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "mapping workload shape to data layout",
+      "reducing overhead from object-centric decomposition on hot paths",
+      "making traversal, invalidation, and batching predictable"
+    ],
+    "does_not_solve": [
+      "feature-domain ownership by itself",
+      "algorithmic complexity problems unrelated to layout or traversal",
+      "user-facing architecture concerns that only incidentally affect performance"
+    ]
+  },
+  "core_principles": [
+    "Shape data around access patterns, not around conceptual object boundaries.",
+    "Prefer linear, predictable traversal over scattered pointer-heavy access.",
+    "Keep hot data compact and physically close to the code paths that consume it.",
+    "Separate hot and cold state so infrequent data does not bloat hot loops.",
+    "Use explicit batch boundaries and staged transforms when they make cost predictable."
+  ],
+  "constraints": [
+    "Do not add abstraction layers that hide actual traversal cost.",
+    "Do not introduce data transformations that cost more than the layout win they claim to provide.",
+    "Keep ownership and update boundaries explicit so layout decisions remain inspectable.",
+    "Validate proposed layouts against real access patterns rather than intuition alone."
+  ],
+  "decision_rules": [
+    "If the same data is processed in long linear loops, prefer contiguous storage and index-based traversal.",
+    "If most fields are rarely accessed, split cold state away from the hot path.",
+    "If a system spends time chasing references across heterogeneous objects, flatten or stage the data flow.",
+    "If batching can turn many tiny updates into one predictable pass, prefer the staged pass.",
+    "If the workload is sparse and irregular, design explicit indirection boundaries instead of pretending it is dense."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "struct-of-arrays or hybrid layouts shaped by traversal needs",
+      "explicit stage passes over stable buffers",
+      "versioned or dirty-marked data blocks when recomputation must be selective",
+      "batch-oriented transforms between cold control data and hot execution data"
+    ],
+    "avoid_patterns": [
+      "object graphs on hot paths with deep pointer chasing",
+      "per-element virtual dispatch inside tight loops",
+      "layout choices based on conceptual neatness rather than measured access patterns",
+      "whole-system scans when dirty subsets can be isolated"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Hot/Cold Split",
+      "when": "A frequently executed loop touches only a subset of each record's fields.",
+      "steps": [
+        "Identify the fields read or written in the hot loop.",
+        "Move infrequently accessed state into a separate cold structure.",
+        "Keep stable identifiers or indices to reconnect cold state only when needed.",
+        "Re-measure cache behavior and traversal time after the split."
+      ]
+    },
+    {
+      "name": "Batch-Oriented Execution Buffer",
+      "when": "Feature code emits many fine-grained updates that can be processed together.",
+      "steps": [
+        "Collect source changes into an explicit buffer or queue.",
+        "Transform the buffered data into a linear execution representation.",
+        "Run one predictable pass over the execution buffer.",
+        "Apply results back through explicit ownership boundaries."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Calling anything data-oriented without defining the actual traversal pattern.",
+    "Flattening everything indiscriminately, including cold or irregular state.",
+    "Creating conversion passes that erase the performance gained from the new layout.",
+    "Confusing data-oriented layout with mandatory multithreading."
+  ],
+  "review_checklist": [
+    "Is the layout shaped by measured access patterns rather than abstract modeling?",
+    "Are hot and cold fields separated where the workload justifies it?",
+    "Does the design reduce pointer chasing on the real hot path?",
+    "Are batch and traversal boundaries explicit and inspectable?",
+    "Is recomputation scoped to the data that actually changed?"
+  ],
+  "references": [
+    {
+      "title": "Data-Oriented Design",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/data-oriented-design.md",
+      "priority": "preferred",
+      "interpretation": "Use for layout heuristics, stage design, and anti-pattern review."
+    },
+    {
+      "title": "Performance Domain Foundations",
+      "type": "local-reference",
+      "path": "knowledge/csharp-shared/performance/references/performance-foundations.md",
+      "priority": "supporting",
+      "interpretation": "Use for the broader cost model and measurement discipline around layout decisions."
+    }
+  ]
+}

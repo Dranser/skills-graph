@@ -1,111 +1,124 @@
 {
-  "knowledge": {
-    "assembly-analysis": {
-      "entry": "knowledge/assembly-analysis/assembly-analysis_entry.json",
-      "manifest": "knowledge/assembly-analysis/assembly-analysis_manifest.json",
-      "skills": [
-        "assembly-reading.json",
-        "dump-pipeline.json",
-        "metadata-parsing.json",
-        "integration-surface-mapping.json"
-      ]
+  "stacks": {
+    "csharp-shared": {
+      "description": "Shared C# engineering knowledge applicable across plain .NET and Unity-hosted work when runtime constraints do not diverge materially.",
+      "domains": {
+        "assembly-analysis": {
+          "entry": "knowledge/csharp-shared/assembly-analysis/assembly-analysis_entry.json",
+          "manifest": "knowledge/csharp-shared/assembly-analysis/assembly-analysis_manifest.json",
+          "skills": [
+            "assembly-reading.json",
+            "dump-pipeline.json",
+            "metadata-parsing.json",
+            "integration-surface-mapping.json"
+          ]
+        },
+        "code-maintenance": {
+          "entry": "knowledge/csharp-shared/code-maintenance/code-maintenance_entry.json",
+          "manifest": "knowledge/csharp-shared/code-maintenance/code-maintenance_manifest.json",
+          "skills": [
+            "bug-investigation.json",
+            "refactoring.json"
+          ]
+        },
+        "data-oriented-pipeline": {
+          "entry": "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-pipeline_entry.json",
+          "manifest": "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
+          "skills": [
+            "pipeline-architecture.json",
+            "stage-boundaries.json",
+            "dataflow-state.json",
+            "invalidation-propagation.json",
+            "execution-model.json",
+            "incremental-recompute.json",
+            "change-batching.json",
+            "structural-rerun-policy.json",
+            "stage-contracts.json"
+          ]
+        },
+        "framework": {
+          "entry": "knowledge/csharp-shared/framework/framework_entry.json",
+          "manifest": "knowledge/csharp-shared/framework/framework_manifest.json",
+          "skills": [
+            "bootstrap.json",
+            "contracts.json",
+            "di.json",
+            "diagnostics.json",
+            "runtime-lifecycle.json",
+            "extension-points.json",
+            "composition-boundaries.json",
+            "service-lifetimes.json"
+          ]
+        },
+        "neural": {
+          "entry": "knowledge/csharp-shared/neural/neural_entry.json",
+          "manifest": "knowledge/csharp-shared/neural/neural_manifest.json",
+          "skills": [
+            "tensor-runtime-architecture.json",
+            "architecture.json",
+            "optimization.json",
+            "training.json"
+          ]
+        },
+        "performance": {
+          "entry": "knowledge/csharp-shared/performance/performance_entry.json",
+          "manifest": "knowledge/csharp-shared/performance/performance_manifest.json",
+          "skills": [
+            "runtime-performance-architecture.json",
+            "cache-optimization.json",
+            "data-oriented-design.json",
+            "memory-management.json",
+            "scheduler.json",
+            "work-budgeting.json",
+            "measurement-profiling.json",
+            "memory-arenas.json",
+            "contention-shaping.json"
+          ]
+        }
+      }
     },
-    "code-maintenance": {
-      "entry": "knowledge/code-maintenance/code-maintenance_entry.json",
-      "manifest": "knowledge/code-maintenance/code-maintenance_manifest.json",
-      "skills": [
-        "bug-investigation.json",
-        "refactoring.json"
-      ]
-    },
-    "data-oriented-pipeline": {
-      "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
-      "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
-      "skills": [
-        "pipeline-architecture.json",
-        "stage-boundaries.json",
-        "dataflow-state.json",
-        "invalidation-propagation.json",
-        "execution-model.json",
-        "incremental-recompute.json",
-        "change-batching.json",
-        "structural-rerun-policy.json",
-        "stage-contracts.json"
-      ]
-    },
-    "framework": {
-      "entry": "knowledge/framework/framework_entry.json",
-      "manifest": "knowledge/framework/framework_manifest.json",
-      "skills": [
-        "bootstrap.json",
-        "contracts.json",
-        "di.json",
-        "diagnostics.json",
-        "runtime-lifecycle.json",
-        "extension-points.json",
-        "composition-boundaries.json",
-        "service-lifetimes.json"
-      ]
-    },
-    "gpu": {
-      "entry": "knowledge/gpu/gpu_entry.json",
-      "manifest": "knowledge/gpu/gpu_manifest.json",
-      "skills": [
-        "gpu-pipeline-architecture.json",
-        "gpu-compute.json",
-        "gpu-instancing.json",
-        "gpu-diagnostics.json"
-      ]
-    },
-    "modding": {
-      "entry": "knowledge/modding/modding_entry.json",
-      "manifest": "knowledge/modding/modding_manifest.json",
-      "skills": [
-        "harmony-patching.json",
-        "loader-integration.json",
-        "plugin-lifecycle.json"
-      ]
-    },
-    "neural": {
-      "entry": "knowledge/neural/neural_entry.json",
-      "manifest": "knowledge/neural/neural_manifest.json",
-      "skills": [
-        "tensor-runtime-architecture.json",
-        "architecture.json",
-        "optimization.json",
-        "training.json"
-      ]
-    },
-    "performance": {
-      "entry": "knowledge/performance/performance_entry.json",
-      "manifest": "knowledge/performance/performance_manifest.json",
-      "skills": [
-        "runtime-performance-architecture.json",
-        "cache-optimization.json",
-        "data-oriented-design.json",
-        "memory-management.json",
-        "scheduler.json",
-        "work-budgeting.json",
-        "measurement-profiling.json",
-        "memory-arenas.json",
-        "contention-shaping.json"
-      ]
-    },
-    "unity-ui": {
-      "entry": "knowledge/unity-ui/unity-ui_entry.json",
-      "manifest": "knowledge/unity-ui/unity-ui_manifest.json",
-      "skills": [
-        "imgui-core.json",
-        "imgui-state-model.json",
-        "imgui-layout-composition.json",
-        "imgui-manual-layout.json",
-        "imgui-incremental-update.json",
-        "imgui-input-routing.json",
-        "imgui-windowing.json",
-        "imgui-styling.json",
-        "imgui-performance.json",
-        "imgui-debugging.json"
-      ]
+    "unity": {
+      "description": "Unity-specific engineering knowledge for domains whose lifecycle, serialization, rendering, tooling, or modding constraints materially diverge from shared C# guidance.",
+      "inherits": [
+        "csharp-shared"
+      ],
+      "domains": {
+        "gpu": {
+          "entry": "knowledge/unity/gpu/gpu_entry.json",
+          "manifest": "knowledge/unity/gpu/gpu_manifest.json",
+          "skills": [
+            "gpu-pipeline-architecture.json",
+            "gpu-compute.json",
+            "gpu-instancing.json",
+            "gpu-diagnostics.json"
+          ]
+        },
+        "modding": {
+          "entry": "knowledge/unity/modding/modding_entry.json",
+          "manifest": "knowledge/unity/modding/modding_manifest.json",
+          "skills": [
+            "harmony-patching.json",
+            "loader-integration.json",
+            "plugin-lifecycle.json"
+          ]
+        },
+        "unity-ui": {
+          "entry": "knowledge/unity/unity-ui/unity-ui_entry.json",
+          "manifest": "knowledge/unity/unity-ui/unity-ui_manifest.json",
+          "skills": [
+            "imgui-core.json",
+            "imgui-state-model.json",
+            "imgui-layout-composition.json",
+            "imgui-manual-layout.json",
+            "imgui-incremental-update.json",
+            "imgui-input-routing.json",
+            "imgui-windowing.json",
+            "imgui-styling.json",
+            "imgui-performance.json",
+            "imgui-debugging.json"
+          ]
+        }
+      }
     }
   }
 }

@@ -1,0 +1,230 @@
+{
+  "id": "tensor-runtime-architecture",
+  "kind": "skill",
+  "title": "Tensor Runtime Architecture",
+  "stack": "csharp-shared",
+  "domain": "neural",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "tensor runtime",
+      "3d tensor",
+      "tensor arena",
+      "tensor layout",
+      "gpu tensor",
+      "tensor slice",
+      "batch sequence feature",
+      "command stream"
+    ],
+    "weak": [
+      "shape layout",
+      "tensor memory",
+      "arena allocation",
+      "neural data layout",
+      "runtime tensor",
+      "contiguous tensor"
+    ]
+  },
+  "use_for": [
+    "designing custom neural tensor runtimes",
+    "mapping neural data into explicit 3D tensor layouts",
+    "defining tensor arena ownership, slices, precision, and lifetime",
+    "separating CPU-side shape/view tensors from runtime GPU-compatible tensors",
+    "planning command-stream friendly tensor memory contracts"
+  ],
+  "do_not_use_for": [
+    "using off-the-shelf ML frameworks as the default answer",
+    "generic GPU rendering without neural tensor ownership",
+    "plugin lifecycle",
+    "IMGUI",
+    "assembly dump"
+  ],
+  "rules": [
+    "treat data architecture as the primary neural design surface",
+    "define tensor shape semantics before layer composition",
+    "map high-rank or semantic tensors into explicit 3D runtime slices",
+    "keep CPU-side views and runtime slices separate unless a single owner is deliberately chosen",
+    "make arena ownership, precision, offset, and lifetime explicit",
+    "avoid hidden copies, implicit reshapes, and framework-owned tensor lifetimes"
+  ],
+  "procedure": [
+    "Name the tensor roles and semantic axes.",
+    "Choose the runtime 3D projection for each tensor.",
+    "Define contiguous layout, offset ownership, precision, and resize policy.",
+    "Define which tensors are CPU-side views, runtime slices, parameters, activations, gradients, or scratch.",
+    "Define command compatibility: offsets, lengths, shape fields, broadcast rules, and dispatch dimensions.",
+    "Define upload/download/readback boundaries and telemetry.",
+    "Review batch-size changes, checkpointing, and diagnostics against the same tensor contracts."
+  ],
+  "output": [
+    "3D tensor layout contract",
+    "tensor arena ownership map",
+    "runtime tensor and command-stream compatibility plan",
+    "CPU/GPU data boundary and telemetry plan"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "optimization",
+      "architecture",
+      "training"
+    ],
+    "contextual": [
+      "gpu-pipeline-architecture",
+      "gpu-compute",
+      "memory-arenas",
+      "data-oriented-design",
+      "measurement-profiling"
+    ]
+  },
+  "conflicts": [
+    "loader-integration"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about neural tensor layout, tensor arena, runtime data architecture, or 3D tensor representation",
+      "the request is about making neural data command-stream or GPU-backend compatible",
+      "the request treats data ownership and memory layout as more important than model layer selection"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about UI, mod loader behavior, assembly parsing, or non-neural GPU rendering"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to design neural data as explicit tensor memory instead of framework-managed objects",
+      "how to preserve semantic axes while executing on compact 3D runtime slices",
+      "how to make tensor allocation, resizing, precision, upload, download, and command fields reviewable",
+      "how to prevent training and inference code from hiding costly CPU/GPU data movement"
+    ],
+    "does_not_solve": [
+      "choosing a pretrained model family by popularity",
+      "delegating tensor lifetime to PyTorch, TensorFlow, Barracuda, or similar frameworks",
+      "GPU rendering pipelines that do not own neural tensor data"
+    ]
+  },
+  "core_principles": [
+    "The tensor layout is the neural runtime architecture.",
+    "A 3D runtime tensor should encode the execution shape: batch, sequence/space, and feature/channel where possible.",
+    "High-rank CPU-side tensor views are acceptable at boundaries, but hot runtime execution needs explicit contiguous slices.",
+    "Arena slices should expose offset, length, dimensions, chunk count, and precision without hidden ownership.",
+    "Commands should carry enough shape and offset data to run without reconstructing object graphs.",
+    "GPU residency is an ownership decision, not a backend detail.",
+    "Telemetry should measure arena use, transfer volume, dispatch count, and readback cost."
+  ],
+  "constraints": [
+    "Do not introduce a third-party ML framework as the foundation for core tensor runtime decisions.",
+    "Do not let layer code allocate unmanaged temporary tensors without an arena or lifetime contract.",
+    "Do not make shape transforms implicit if they change contiguity, axis meaning, or command compatibility.",
+    "Do not download full arena or gradient state in hot paths unless the operation is explicitly diagnostic or checkpointing.",
+    "Do not mix CPU view tensors and GPU runtime tensors without documenting the synchronization point.",
+    "Do not hide precision conversion behind generic upload or download calls."
+  ],
+  "decision_rules": [
+    "Use tensor-runtime-architecture as primary when the request mentions tensor layout, arena, GPU tensor, 3D tensor, batch/sequence/feature layout, or runtime data ownership.",
+    "Attach architecture when layer composition, forward graph, attention, embeddings, or model topology is also in scope.",
+    "Attach training when batches, targets, losses, gradients, optimizers, or checkpoints are in scope.",
+    "Attach optimization when throughput, numerical stability, memory movement, precision, or GPU residency is in scope.",
+    "Attach gpu support when tensor slices are executed by compute kernels or command streams.",
+    "Attach performance memory arena support when allocation, pooling, chunking, or fragmentation is the main risk."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "two-layer tensor model: semantic CPU tensor views and explicit runtime tensor slices",
+      "3D projection table for batch/sequence/feature, batch/classes/sequence, or x/y/z volume tensors",
+      "arena-owned offsets with explicit chunk, precision, and resize policy",
+      "command structs that reference tensor offsets and dimensions instead of object graphs",
+      "separate tensors for parameters, activations, gradients, accumulators, optimizer state, and scratch",
+      "dirty range or residency state for selective upload, download, and checkpointing"
+    ],
+    "avoid_patterns": [
+      "layer objects owning hidden arrays outside the arena",
+      "shape-only abstractions that do not define memory order",
+      "implicit flattening that loses batch or sequence semantics",
+      "full-arena upload/download on every operation",
+      "runtime dispatch that depends on reconstructing high-level model objects",
+      "diagnostic gradient downloads enabled by default in throughput tests"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define a 3D neural tensor contract",
+      "when": "Use before implementing a neural layer, dataset handoff, loss, or GPU command path.",
+      "steps": [
+        "Name each semantic axis and decide how it maps into SizeX, SizeY, and SizeZ.",
+        "Record the flat memory order and contiguous requirement.",
+        "Record the arena owner, slice lifetime, precision, and resize policy.",
+        "Record whether the tensor is parameter, activation, gradient, optimizer state, scratch, input, target, or diagnostic.",
+        "Record which commands or kernels may read and write the slice."
+      ]
+    },
+    {
+      "name": "Separate semantic tensor views from runtime slices",
+      "when": "Use when dataset, tokenizer, or transformer code needs rich shape operations but backend execution requires compact slices.",
+      "steps": [
+        "Keep CPU-side view tensors responsible for rank, strides, reshape, transpose, and validation.",
+        "Convert to runtime slices at explicit ingestion, compile, or upload boundaries.",
+        "Reject non-contiguous views unless a materialization step is explicitly scheduled.",
+        "Store the resulting 3D runtime dimensions with the slice.",
+        "Make synchronization explicit before backend execution or checkpointing."
+      ]
+    },
+    {
+      "name": "Review GPU residency readiness",
+      "when": "Use when a CPU-backed tensor arena becomes a bottleneck for GPU training or inference.",
+      "steps": [
+        "Identify the current source of truth for each tensor group.",
+        "Classify uploads and downloads as input ingestion, diagnostics, checkpointing, loss readback, or accidental sync.",
+        "Add dirty range or residency state before changing backend behavior.",
+        "Move hot activations, parameters, gradients, and optimizer state to GPU-resident ownership first.",
+        "Keep explicit download paths for checkpoints, validation, and bounded telemetry."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating 3D tensor dimensions as cosmetic metadata instead of dispatch and memory contracts.",
+    "Flattening sequence data into one dimension and then rebuilding semantics inside every layer.",
+    "Letting CPU-side `Tensor` and runtime `GpuTensor` drift into two unrelated data models.",
+    "Optimizing kernels before eliminating full-arena transfers.",
+    "Allowing diagnostic gradient norm checks to become default training cost.",
+    "Adding precision fields without defining where conversion and storage ownership happen."
+  ],
+  "review_checklist": [
+    "Is every hot tensor mapped to an explicit 3D runtime shape?",
+    "Can each slice's owner, precision, lifetime, and resize policy be named?",
+    "Are CPU view tensors and runtime slices synchronized only at explicit boundaries?",
+    "Can command structs execute from offsets and dimensions without object graph lookups?",
+    "Are parameters, activations, gradients, accumulators, optimizer state, and scratch separated?",
+    "Are upload/download boundaries justified and measured?",
+    "Does batch-size change preserve tensor contracts without hidden allocation churn?",
+    "Does telemetry expose arena use, transfer volume, dispatch count, and readback cost?"
+  ],
+  "references": [
+    {
+      "title": "Neural Tensor Runtime Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/neural/references/tensor-runtime-architecture.md",
+      "interpretation": "Use this first for 3D tensor layout, arena ownership, semantic/runtime tensor split, and command compatibility.",
+      "why": "It captures the domain's primary design lens."
+    },
+    {
+      "title": "Neural GPU Residency",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/neural/references/gpu-residency.md",
+      "interpretation": "Use when tensor data movement, GPU source-of-truth, dirty ranges, or readback policy is in scope.",
+      "why": "It connects neural tensor layout to GPU throughput bottlenecks."
+    },
+    {
+      "title": "Neural Training Runtime",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/neural/references/training-runtime.md",
+      "interpretation": "Use when the tensor runtime is exercised through batches, losses, gradients, and optimizer state.",
+      "why": "Training validates whether the tensor architecture survives real update flows."
+    }
+  ]
+}

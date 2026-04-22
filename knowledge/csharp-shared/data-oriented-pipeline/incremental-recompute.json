@@ -1,0 +1,168 @@
+{
+  "id": "incremental-recompute",
+  "kind": "skill",
+  "title": "Incremental Recompute",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "incremental recompute",
+      "incremental update",
+      "change set",
+      "partial rerun",
+      "bounded recompute"
+    ],
+    "weak": [
+      "delta processing",
+      "local rerun",
+      "incremental pipeline",
+      "change batch",
+      "recompute budget"
+    ]
+  },
+  "use_for": [
+    "turning local source changes into bounded stage reruns",
+    "processing change sets instead of broad full-pipeline reruns",
+    "designing incremental pipeline updates with explicit retained products",
+    "combining invalidation rules with execution budgets",
+    "keeping recompute cost proportional to actual change"
+  ],
+  "do_not_use_for": [
+    "basic stage splitting with no retained state",
+    "generic queue mechanics by themselves",
+    "UI-only redraw policy",
+    "bootstrapping"
+  ],
+  "rules": [
+    "model change as explicit input to the pipeline, not as hidden side effect",
+    "rerun only the stages whose owned products became invalid",
+    "bound incremental work when change volume can spike",
+    "keep full rerun as an explicit fallback path",
+    "prefer stable retained products over ad hoc patching of downstream state"
+  ],
+  "procedure": [
+    "Define the change-set shape entering the pipeline.",
+    "Map which retained products each change kind invalidates.",
+    "Define the minimal stage rerun path per change kind.",
+    "Add bounded execution or batching if change volume can spike.",
+    "Keep a full rerun path for structural or global changes."
+  ],
+  "output": [
+    "incremental recompute model",
+    "change-set processing plan",
+    "bounded partial-rerun strategy"
+  ],
+  "dependencies": {
+    "hard": [
+      "dataflow-state",
+      "invalidation-propagation"
+    ],
+    "optional": [
+      "execution-model",
+      "change-batching"
+    ],
+    "contextual": [
+      "work-budgeting",
+      "scheduler",
+      "structural-rerun-policy"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about incremental updates, change sets, or bounded partial reruns through a pipeline",
+      "the request is about making recompute scale with actual change volume"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about initial stage design with no incremental path",
+      "the request is about generic scheduler mechanics without pipeline products"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to process local changes without rerunning the whole pipeline",
+      "how to combine retained products, invalidation rules, and bounded execution into one incremental model",
+      "how to preserve a correct fallback path when local incremental assumptions break"
+    ],
+    "does_not_solve": [
+      "basic ownership of source versus derived state by itself",
+      "parallel dispatch policy by itself",
+      "feature-domain semantics outside the pipeline"
+    ]
+  },
+  "core_principles": [
+    "Incremental recompute should be driven by explicit change sets and retained products, not hidden patching.",
+    "Local reruns are only valid when stage ownership and invalidation paths are already explicit.",
+    "A full rerun path should stay available for structural or global changes."
+  ],
+  "constraints": [
+    "Incremental bookkeeping must remain cheaper than the broad recompute it replaces.",
+    "Partial reruns must preserve correctness under reordering, batching, or overflow.",
+    "Structural changes must be able to bypass the incremental path cleanly."
+  ],
+  "decision_rules": [
+    "Use incremental-recompute as the owner when the main architectural question is how local changes should flow through retained products and bounded reruns.",
+    "If change volume can spike, attach work-budgeting or scheduler support before assuming the incremental path is automatically stable.",
+    "If invalidation cannot explain exactly which products become dirty, the design is not ready for incremental recompute.",
+    "If structural changes invalidate too much of the graph, keep a deliberate full-rerun path instead of overcomplicating local patch rules."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit change sets entering the pipeline",
+      "product-level invalidation maps",
+      "bounded partial reruns with retained outputs",
+      "full-rerun fallback for structural changes"
+    ],
+    "avoid_patterns": [
+      "ad hoc downstream patching with no source-of-truth change model",
+      "incremental logic that silently mutates broad shared state",
+      "partial rerun paths with no worst-case budget or fallback",
+      "treating every change as if it were local when structural impact is broad"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a bounded incremental pipeline path",
+      "when": "Use when a pipeline already has retained products and broad reruns are too costly for common local changes.",
+      "steps": [
+        "Define a concrete change-set representation.",
+        "Map change kinds to invalidated products and stage rerun paths.",
+        "Run only the affected stages and stop at clean boundaries.",
+        "Add batching or budget limits if incremental bursts can still spike.",
+        "Route structural changes to a deliberate full-rerun path."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Adding incremental complexity before stage ownership and invalidation are explicit.",
+    "Assuming local change volume is always small and stable.",
+    "Patching downstream products directly until source-versus-derived ownership becomes unclear."
+  ],
+  "review_checklist": [
+    "Is the change-set shape explicit?",
+    "Can each change kind map to a minimal rerun path?",
+    "Is incremental bookkeeping cheaper than broad recompute?",
+    "Does a correct full-rerun fallback still exist?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Incremental Recompute",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/incremental-recompute.md",
+      "interpretation": "Use this first for change-set driven reruns, bounded incremental execution, and full-rerun fallback design.",
+      "why": "Use as the primary local guide for practical incremental pipeline architecture."
+    },
+    {
+      "title": "Local Reference: Invalidation Propagation",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/invalidation-propagation.md",
+      "interpretation": "Use this to align incremental reruns with explicit dirty propagation rules and clean boundaries.",
+      "why": "Use to connect local rerun design with existing invalidation semantics."
+    }
+  ]
+}

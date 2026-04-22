@@ -1,0 +1,221 @@
+{
+  "id": "integration-surface-mapping",
+  "kind": "skill",
+  "title": "Integration Surface Mapping",
+  "stack": "csharp-shared",
+  "domain": "assembly-analysis",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "integration surface",
+      "hook candidate",
+      "runtime integration map",
+      "probe map",
+      "from dump to patch",
+      "decompiled target selection",
+      "game integration contract"
+    ],
+    "weak": [
+      "find patch target",
+      "map game internals",
+      "reflection candidate",
+      "lifecycle anchor",
+      "stable facade from dump"
+    ]
+  },
+  "use_for": [
+    "turning decompiled assembly evidence into runtime integration contracts",
+    "selecting hook, probe, snapshot, and facade candidates from game dumps",
+    "mapping unstable Unity game internals to explicit modding boundaries",
+    "bridging assembly analysis with Harmony and reflection-based runtime integration"
+  ],
+  "do_not_use_for": [
+    "raw assembly inventory without integration intent",
+    "loader bootstrap without target discovery",
+    "feature-domain gameplay policy",
+    "UI layout or rendering implementation"
+  ],
+  "rules": [
+    "choose one integration concern before mapping targets",
+    "separate evidence, interpretation, contract, and runtime validation",
+    "prefer observable lifecycle anchors before mutation points",
+    "wrap private or version-sensitive state behind probe adapters",
+    "define diagnostics and fallback behavior for every fragile surface",
+    "hand off exact targets to modding skills without letting support skills override the analysis result"
+  ],
+  "procedure": [
+    "Select the runtime concern to map.",
+    "Collect relevant dump and metadata evidence.",
+    "Identify lifecycle anchors, state carriers, public calls, private members, and network or UI contexts.",
+    "Classify each candidate as hook, direct API, reflection probe, snapshot source, facade operation, or rejected surface.",
+    "Score candidate stability and runtime risk.",
+    "Define validation probes, diagnostics, and fallback behavior.",
+    "Emit a runtime integration contract for modding implementation."
+  ],
+  "output": [
+    "integration surface map",
+    "hook and probe candidate table",
+    "runtime contract handoff",
+    "diagnostics and fallback requirements"
+  ],
+  "dependencies": {
+    "hard": [
+      "assembly-reading",
+      "metadata-parsing"
+    ],
+    "optional": [
+      "dump-pipeline"
+    ],
+    "contextual": [
+      "harmony-patching",
+      "plugin-lifecycle",
+      "diagnostics",
+      "contracts"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about deriving runtime hooks, probes, snapshots, or facades from decompiled game code",
+      "the request asks how to go from dump output to a modding integration design",
+      "the request is about selecting stable targets or integration anchors from game internals"
+    ],
+    "must_not_own_when": [
+      "the request is only about executing already selected Harmony patches",
+      "the request is only about loader entry or plugin startup",
+      "the request is only about raw assembly dump generation"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "the gap between reverse-engineered code and safe runtime mod integration",
+      "turning decompiled type and member knowledge into explicit hook, probe, event, snapshot, and facade contracts",
+      "preventing feature code from depending directly on unstable game internals"
+    ],
+    "does_not_solve": [
+      "implementing the Harmony patch class itself",
+      "guaranteeing behavior without runtime validation",
+      "choosing feature-specific gameplay behavior after the integration boundary exists"
+    ]
+  },
+  "core_principles": [
+    "Integration mapping is an analysis product, not patch implementation.",
+    "Evidence must stay traceable to exact assemblies, types, members, and signatures.",
+    "Lifecycle anchors are usually stronger contracts than incidental data reads.",
+    "Private fields and reflected calls are unstable surfaces and need adapter boundaries.",
+    "Every selected surface should declare confidence, fallback behavior, and diagnostics.",
+    "The final handoff should be implementable by modding skills without redoing the analysis."
+  ],
+  "constraints": [
+    "Do not select a hook target without exact declaring type and signature evidence.",
+    "Do not treat a private member as safe simply because reflection can read it.",
+    "Do not leak raw game objects into feature modules when a snapshot or facade can isolate them.",
+    "Do not merge multiple runtime concerns into one broad integration surface unless the game API forces it.",
+    "Do not hide rejected candidates; record why they were rejected when they were plausible."
+  ],
+  "decision_rules": [
+    "If the task starts from decompiled files and asks what to hook, use integration-surface-mapping as primary.",
+    "If exact target signatures are missing, attach metadata-parsing before modding handoff.",
+    "If the selected target is a lifecycle transition, hand off to harmony-patching with postfix-first guidance.",
+    "If the selected surface is private state, hand off a reflection probe contract with degradation logging.",
+    "If the selected surface will be consumed by feature modules, require a snapshot or facade boundary.",
+    "If candidate stability is low, require diagnostics and optional feature gating before implementation."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "evidence table with exact type, member, signature, source assembly, and confidence",
+      "candidate classification into hook, direct API, reflection probe, snapshot source, facade operation, or rejected surface",
+      "thin hook plus handler plus internal event for lifecycle anchors",
+      "reflection adapter plus snapshot for private state",
+      "public facade over raw game internals for feature consumption",
+      "diagnostics snapshot for hook and probe availability"
+    ],
+    "avoid_patterns": [
+      "jumping directly from decompiled method text to feature code",
+      "one patch that observes, interprets, mutates, renders UI, and persists state",
+      "feature modules reading private fields through ad hoc reflection",
+      "choosing targets only because their names look familiar",
+      "dropping uncertainty once implementation starts"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Map a game lifecycle event from dump to runtime contract",
+      "when": "Use when decompiled code reveals a method that appears to mark a runtime transition.",
+      "steps": [
+        "Record the exact type, method, signature, and source assembly.",
+        "Inspect nearby methods and state writes to confirm the transition meaning.",
+        "Classify the target as postfix observation unless pre-mutation state is required.",
+        "Define the minimal payload that the hook handler should receive.",
+        "Define the internal event or lifecycle snapshot updated by the handler.",
+        "Define fallback behavior if the method is missing after a game update."
+      ]
+    },
+    {
+      "name": "Design a reflection probe from decompiled private state",
+      "when": "Use when the mod needs game state that has no stable public access path.",
+      "steps": [
+        "Record all candidate member names, declaring types, and expected value shapes.",
+        "Prefer read-only access and avoid writes unless the mutation contract is proven.",
+        "Wrap access in a dedicated adapter with narrow methods.",
+        "Log missing members once per adapter and expose unavailable state to diagnostics.",
+        "Convert raw values into snapshots before feature modules consume them."
+      ]
+    },
+    {
+      "name": "Reject a tempting integration surface",
+      "when": "Use when a decompiled method or field appears useful but has poor stability or unclear semantics.",
+      "steps": [
+        "Record why the candidate was considered.",
+        "Identify the failure mode: unclear lifecycle, broad update loop, private incidental field, missing signature confidence, or high mutation risk.",
+        "Find a more semantic lifecycle anchor or a narrower state carrier if possible.",
+        "Keep the rejected candidate in notes so future analysis does not rediscover it blindly."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating dump output as implementation instructions instead of evidence.",
+    "Selecting hooks from method names without checking payload, timing, and side effects.",
+    "Building feature code around raw reflected objects.",
+    "Failing to preserve the confidence level of each selected target.",
+    "Ignoring fallback behavior until after a game update breaks the mod.",
+    "Letting runtime implementation details overwrite the analysis handoff."
+  ],
+  "review_checklist": [
+    "Is the integration concern narrowly named?",
+    "Does every selected surface trace back to exact assembly evidence?",
+    "Are candidates classified as hook, direct API, reflection probe, snapshot source, facade operation, or rejected?",
+    "Are lifecycle anchors preferred over incidental update-loop targets?",
+    "Are private/reflected members isolated behind adapters?",
+    "Does the handoff define diagnostics and fallback behavior?",
+    "Can modding implementation proceed without redoing assembly analysis?"
+  ],
+  "references": [
+    {
+      "title": "Reverse Integration Map",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/reverse-integration-map.md",
+      "interpretation": "Use this first for the evidence-to-runtime-contract workflow.",
+      "why": "It defines how assembly analysis becomes hook, probe, snapshot, and facade design."
+    },
+    {
+      "title": "Dump Pipeline",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/dump-pipeline.md",
+      "interpretation": "Use when the integration map depends on repeatable dump output or version comparison.",
+      "why": "It keeps the evidence source deterministic and diff-friendly."
+    },
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/runtime-integration.md",
+      "interpretation": "Use after candidate classification to shape the modding handoff.",
+      "why": "It describes how selected surfaces become patches, probes, modules, events, diagnostics, and facades."
+    }
+  ]
+}

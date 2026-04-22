@@ -1,0 +1,182 @@
+{
+  "id": "assembly-reading",
+  "kind": "skill",
+  "title": "Assembly Reading",
+  "stack": "csharp-shared",
+  "domain": "assembly-analysis",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "read assembly",
+      "inspect dll",
+      "mono assembly",
+      "decompile",
+      "inspect binary"
+    ],
+    "weak": [
+      "type structure",
+      "member resolution",
+      "library inspection"
+    ]
+  },
+  "use_for": [
+    "reading managed assemblies",
+    "extracting type structure",
+    "resolving members",
+    "inspecting Mono-targeted libraries",
+    "decompiled structure recovery"
+  ],
+  "do_not_use_for": [
+    "runtime patching",
+    "loader bootstrap",
+    "UI rendering",
+    "generic optimization"
+  ],
+  "rules": [
+    "read assemblies directly",
+    "separate raw reading from interpretation",
+    "preserve namespace, type, and member hierarchy",
+    "keep token and signature data available when relevant",
+    "avoid speculative renaming during initial pass"
+  ],
+  "procedure": [
+    "Load assembly.",
+    "Enumerate modules and types.",
+    "Extract fields, properties, methods, and signatures.",
+    "Preserve hierarchy and metadata references.",
+    "Emit stable intermediate representation.",
+    "Store output for downstream dump or analysis stages."
+  ],
+  "output": [
+    "extracted assembly structure",
+    "stable intermediate representation",
+    "type and member inventory"
+  ],
+  "dependencies": {
+    "hard": [
+      "metadata-parsing"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about reading or inspecting managed assemblies",
+      "the request is about recovering type/member structure from a binary",
+      "the request mentions DLL inspection, Mono assemblies, or decompilation"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about patching runtime behavior",
+      "the request is about UI rendering or generic optimization"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "turning a managed Unity assembly into reliable type and member knowledge",
+      "finding runtime integration anchors without mixing raw evidence and interpretation",
+      "building a stable inventory that can feed dump, probe, and patch design"
+    ],
+    "does_not_solve": [
+      "runtime mutation by itself",
+      "choosing gameplay policy for the mod",
+      "proving behavior that must be validated in the running game"
+    ]
+  },
+  "core_principles": [
+    "Read the assembly as evidence before designing a hook.",
+    "Preserve names, signatures, declaring types, and ownership boundaries exactly during the first pass.",
+    "Separate structural facts from semantic guesses.",
+    "Prefer lifecycle and state-transition anchors over broad update methods when looking for mod integration points.",
+    "Record uncertainty explicitly so runtime probes can degrade instead of failing silently."
+  ],
+  "constraints": [
+    "Do not rename or reinterpret members during raw inventory extraction.",
+    "Do not promote a private reflected member to a stable contract without fallback diagnostics.",
+    "Keep overloads, generic parameters, base types, and declaring types visible in the output.",
+    "Treat decompiler output as approximate when control flow or compiler-generated artifacts are involved.",
+    "Do not let patch design override the raw assembly reading result."
+  ],
+  "decision_rules": [
+    "If the task is to discover what can be hooked or observed, start with assembly-reading and attach metadata-parsing.",
+    "If the user already has raw dumps and needs repeatable export, route to dump-pipeline instead.",
+    "If the next step is runtime interception, hand off exact target signatures and uncertainty notes to harmony-patching.",
+    "If a member is private or version-sensitive, recommend a reflection adapter with one-time degradation logging.",
+    "If a method name indicates lifecycle transition, prioritize it as an integration candidate before frame-loop methods."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "raw assembly inventory followed by a separate semantic integration map",
+      "type/member indexes grouped by runtime concern",
+      "explicit candidate lists for hooks, direct calls, reflection probes, and snapshots",
+      "evidence records that preserve exact signatures and source assembly names"
+    ],
+    "avoid_patterns": [
+      "choosing Harmony targets from memory without a fresh structural pass",
+      "scattering decompiled assumptions directly through feature code",
+      "treating private fields as durable public API",
+      "combining dump generation, interpretation, and runtime integration into one opaque step"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a runtime integration map from an assembly",
+      "when": "Use when a mod needs to understand a Unity game assembly before creating hooks or probes.",
+      "steps": [
+        "Inventory candidate assemblies and identify the game-owned modules relevant to the feature.",
+        "Enumerate types and members while preserving namespaces, declaring types, signatures, and attributes.",
+        "Group candidates by runtime concern such as loading, car lifecycle, race lifecycle, menu, network, UI, or telemetry.",
+        "Mark semantic anchors where method names and call shapes imply lifecycle transitions.",
+        "Mark private or unstable data access as reflection-probe candidates rather than direct feature dependencies.",
+        "Produce a handoff list with target type, member, signature, expected payload, and confidence."
+      ]
+    },
+    {
+      "name": "Find lifecycle hook candidates",
+      "when": "Use when a feature needs to observe game state transitions without broad polling.",
+      "steps": [
+        "Search for methods whose names and payloads indicate load, activate, deactivate, enter, exit, start, complete, apply, or attach transitions.",
+        "Inspect declaring type ownership and nearby state writes to distinguish lifecycle anchors from incidental helpers.",
+        "Prefer methods that run once per transition over update-loop methods.",
+        "Record exact signatures and alternative candidates.",
+        "Pass the candidate set to integration-surface-mapping for classification and handoff."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Reading decompiled code as if it were the original source.",
+    "Skipping overload and signature details when selecting patch targets.",
+    "Letting a useful private field leak into feature code instead of wrapping it in a probe.",
+    "Failing to record why a lifecycle method was chosen over nearby alternatives.",
+    "Conflating evidence, interpretation, and runtime behavior in one document."
+  ],
+  "review_checklist": [
+    "Are type and member identities preserved exactly?",
+    "Are integration candidates grouped by runtime concern?",
+    "Are private or reflected members marked as unstable?",
+    "Is there a clear handoff to patches, probes, events, or facades?",
+    "Can a future game update be diffed against the current findings?"
+  ],
+  "references": [
+    {
+      "title": "Reverse Integration Map",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/reverse-integration-map.md",
+      "interpretation": "Use this first when assembly reading must feed a runtime modding contract.",
+      "why": "It captures the bridge from decompiled evidence to hooks, probes, snapshots, and facades."
+    },
+    {
+      "title": "Integration Surface Mapping",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/assembly-analysis/references/integration-surface-mapping.md",
+      "interpretation": "Use after raw reading when the next step is hook or probe selection.",
+      "why": "It gives the classification model for turning findings into runtime integration surfaces."
+    }
+  ]
+}

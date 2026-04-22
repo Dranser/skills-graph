@@ -1,0 +1,166 @@
+{
+  "id": "measurement-profiling",
+  "kind": "skill",
+  "title": "Measurement And Profiling",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "profiling",
+      "measurement",
+      "performance instrumentation",
+      "hot path diagnosis",
+      "runtime metrics"
+    ],
+    "weak": [
+      "benchmark",
+      "profile capture",
+      "cost attribution",
+      "runtime counters",
+      "bottleneck diagnosis"
+    ]
+  },
+  "use_for": [
+    "building a measurement-first diagnosis path",
+    "defining runtime counters and profile slices",
+    "isolating dominant cost before redesigning architecture",
+    "connecting architectural phases to measurable runtime evidence",
+    "deciding what to instrument before optimizing"
+  ],
+  "do_not_use_for": [
+    "micro-benchmark theater detached from runtime behavior",
+    "feature ownership with no performance concern",
+    "UI composition as a primary owner",
+    "generic logging unrelated to cost attribution"
+  ],
+  "rules": [
+    "measure the dominant cost before prescribing low-level changes",
+    "instrument lifecycle phases and owned work regions explicitly",
+    "track worst-case behavior alongside averages",
+    "prefer counters tied to real architectural boundaries",
+    "do not confuse broad telemetry with actionable profiling"
+  ],
+  "procedure": [
+    "Name the suspected hot phase, path, or workload.",
+    "Define the counters and timings needed to attribute cost.",
+    "Capture worst-case, average, and spike behavior under representative load.",
+    "Classify whether the dominant issue is scheduling, memory, locality, or recompute.",
+    "Escalate to the owning optimization skill with evidence."
+  ],
+  "output": [
+    "measurement plan",
+    "profiling instrumentation targets",
+    "evidence-backed bottleneck classification"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "work-budgeting"
+    ],
+    "contextual": [
+      "scheduler",
+      "memory-management",
+      "memory-arenas",
+      "contention-shaping",
+      "cache-optimization",
+      "data-oriented-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about profiling strategy, measurement setup, or cost attribution before optimization",
+      "the request is about building evidence for where runtime cost actually comes from"
+    ],
+    "must_not_own_when": [
+      "the bottleneck class is already known and the task is now architectural redesign in a more specific performance skill",
+      "the request is about generic logging rather than runtime cost diagnosis"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to make performance diagnosis evidence-backed instead of folklore-driven",
+      "how to tie runtime metrics to real architectural boundaries",
+      "how to classify the bottleneck before choosing a redesign path"
+    ],
+    "does_not_solve": [
+      "the final optimization design by itself",
+      "high-volume observability platforms",
+      "feature-domain semantics outside the bottleneck diagnosis"
+    ]
+  },
+  "core_principles": [
+    "A good profile explains where cost belongs, not just that cost exists.",
+    "Instrumentation should align with lifecycle phases, queues, buffers, and owned work regions.",
+    "Worst-case spikes and backlog behavior matter as much as average timing."
+  ],
+  "constraints": [
+    "Instrumentation overhead must stay low enough not to distort the target path materially.",
+    "Counters should remain tied to explicit runtime ownership rather than vague subsystem labels.",
+    "Representative load matters more than synthetic numbers detached from the real workload."
+  ],
+  "decision_rules": [
+    "Use measurement-profiling as the owner when the main problem is uncertainty about what really dominates cost.",
+    "If the issue is a spike-sensitive phase, capture worst-case latency and backlog metrics before optimizing throughput.",
+    "If cost attribution cannot separate scheduling, memory, locality, and recompute, add instrumentation before changing architecture.",
+    "If the bottleneck class is already clear, hand off to the more specific performance skill instead of staying in diagnosis."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "phase-scoped timers and counters",
+      "queue depth and backlog metrics where work is staged",
+      "allocation and retained-size counters tied to owned buffers",
+      "hot-path instrumentation that reflects real work boundaries"
+    ],
+    "avoid_patterns": [
+      "one giant performance number with no attribution",
+      "micro-benchmarks used as a substitute for runtime profiling",
+      "instrumentation labels that do not map to architecture",
+      "average-only dashboards hiding spikes and tails"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a diagnosis-first profiling pass",
+      "when": "Use when the runtime is slow or unstable but the dominant bottleneck class is still unclear.",
+      "steps": [
+        "Mark lifecycle phases and candidate hot regions.",
+        "Add timers, counters, and backlog metrics at explicit ownership boundaries.",
+        "Run representative workloads and capture worst-case as well as average behavior.",
+        "Classify the dominant cost before selecting a redesign path."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Profiling everything broadly without making the numbers actionable.",
+    "Relying on averages while the real issue is tail latency or spikes.",
+    "Jumping into memory, cache, or scheduler changes before cost attribution is clear."
+  ],
+  "review_checklist": [
+    "Do the metrics map to real architectural boundaries?",
+    "Can the profile distinguish spikes from averages?",
+    "Is the bottleneck class actually identifiable from the instrumentation?",
+    "Is instrumentation overhead kept proportional to the diagnosis need?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Measurement And Profiling",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/performance/references/measurement-profiling.md",
+      "interpretation": "Use this first for evidence-driven bottleneck diagnosis, phase-level metrics, and profiling scope decisions.",
+      "why": "Use as the primary local guide for performance measurement strategy."
+    },
+    {
+      "title": "Performance Domain Foundations",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/performance/references/performance-foundations.md",
+      "interpretation": "Use this to keep profiling aligned with the domain's cost model, budgeting doctrine, and optimization boundaries.",
+      "why": "Use to keep diagnosis grounded in the larger performance doctrine."
+    }
+  ]
+}

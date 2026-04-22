@@ -1,0 +1,163 @@
+{
+  "id": "memory-arenas",
+  "kind": "skill",
+  "title": "Memory Arenas",
+  "stack": "csharp-shared",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "arena",
+      "arena allocator",
+      "scratch buffer",
+      "temp arena",
+      "pass-local memory"
+    ],
+    "weak": [
+      "frame arena",
+      "region allocator",
+      "linear allocation",
+      "scratch memory",
+      "reset-at-boundary"
+    ]
+  },
+  "use_for": [
+    "designing pass-local or phase-local temporary memory",
+    "replacing repeated temporary allocations with reset-at-boundary arenas",
+    "separating scratch working memory from long-lived ownership",
+    "making temporary memory cost predictable in staged execution",
+    "containing transient allocations inside explicit lifecycle boundaries"
+  ],
+  "do_not_use_for": [
+    "general long-lived storage ownership",
+    "pooling stable reusable objects with individual lifetimes",
+    "cold-path cleanup",
+    "UI architecture as a primary owner"
+  ],
+  "rules": [
+    "use arenas for grouped temporary lifetime, not for arbitrary shared ownership",
+    "reset arenas at explicit lifecycle boundaries",
+    "keep arena ownership single and inspectable",
+    "separate scratch memory from retained products and long-lived state",
+    "cap or observe retained peak capacity"
+  ],
+  "procedure": [
+    "Identify the pass or phase with repeated temporary memory churn.",
+    "Define the arena owner and reset boundary.",
+    "Move short-lived scratch allocations into linear or grouped arena use.",
+    "Keep long-lived outputs outside the arena.",
+    "Measure allocation churn, retained peak size, and reset cost."
+  ],
+  "output": [
+    "arena ownership model",
+    "reset-boundary memory policy",
+    "pass-local scratch memory design"
+  ],
+  "dependencies": {
+    "hard": [
+      "memory-management"
+    ],
+    "optional": [
+      "work-budgeting"
+    ],
+    "contextual": [
+      "data-oriented-design",
+      "scheduler"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about scratch memory, frame arenas, pass-local temporary memory, or grouped reset-at-boundary allocation",
+      "the request is about replacing many short-lived temporary allocations with arena-style lifetime control"
+    ],
+    "must_not_own_when": [
+      "the main issue is long-lived object pooling, generic ownership policy, or cache locality without grouped temporary lifetime"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to give temporary working memory one explicit owner and reset point",
+      "how to reduce churn from many short-lived allocations inside one phase",
+      "how to keep scratch memory separate from retained outputs"
+    ],
+    "does_not_solve": [
+      "general memory policy across all lifetimes",
+      "stable object reuse with individual return semantics",
+      "layout-oriented cache tuning by itself"
+    ]
+  },
+  "core_principles": [
+    "Arenas are for grouped temporary lifetime, not for hiding broad ownership ambiguity.",
+    "Reset boundaries should align with real runtime phases or passes.",
+    "Scratch memory and retained outputs should never blur into one storage class."
+  ],
+  "constraints": [
+    "Arena lifetime must be short, explicit, and owned by one runtime boundary.",
+    "Anything that survives the reset boundary must leave the arena deliberately.",
+    "Peak arena growth must be observable so one burst does not become permanent memory bloat."
+  ],
+  "decision_rules": [
+    "Use memory-arenas as the owner when many small temporary allocations belong to one pass or phase and can die together.",
+    "If temporary memory spans multiple phases unpredictably, do not force it into one arena.",
+    "If responsiveness matters, attach work-budgeting so scratch growth and reset behavior stay compatible with the phase budget.",
+    "If the memory problem is really poor staging or layout, attach data-oriented-design instead of solving everything with arenas."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "phase-local scratch arenas with explicit reset",
+      "arena outputs copied or promoted explicitly when they must survive",
+      "arena ownership tied to one system, stage, or pass",
+      "observable peak capacity and reset behavior"
+    ],
+    "avoid_patterns": [
+      "shared global scratch arenas across unrelated systems",
+      "objects escaping arena lifetime accidentally",
+      "using arenas to hide uncertain ownership",
+      "keeping peak-sized arenas forever with no capacity discipline"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Replace pass-local churn with a scratch arena",
+      "when": "Use when one pass repeatedly allocates temporary working memory that dies at the same boundary.",
+      "steps": [
+        "Name the pass boundary and arena owner.",
+        "Move grouped temporary allocations into the arena.",
+        "Ensure outputs that must survive are promoted out explicitly.",
+        "Reset at the pass boundary and measure retained peak capacity."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Letting data escape an arena reset boundary.",
+    "Using one shared arena for unrelated systems.",
+    "Applying arenas where individual object reuse or long-lived ownership is the real need."
+  ],
+  "review_checklist": [
+    "Is the arena owner explicit?",
+    "Is the reset boundary real and deterministic?",
+    "Are long-lived outputs kept out of the arena?",
+    "Is peak arena growth observed and controlled?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Memory Arenas",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/performance/references/memory-arenas.md",
+      "interpretation": "Use this first for grouped temporary lifetime, reset boundaries, and scratch-memory ownership.",
+      "why": "Use as the primary local guide for arena-style temporary memory."
+    },
+    {
+      "title": "Memory Management",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/performance/references/memory-management.md",
+      "interpretation": "Use this to keep arena usage aligned with the broader lifetime and ownership model.",
+      "why": "Use to connect arena decisions to the domain's general memory discipline."
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "id": "refactoring",
+  "kind": "skill",
+  "title": "Refactoring",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "refactor",
+      "cleanup",
+      "overengineering",
+      "dead code",
+      "stale code",
+      "residual code",
+      "hidden coupling",
+      "legacy code",
+      "simplify architecture"
+    ],
+    "weak": [
+      "remove feature remnants",
+      "obsolete code",
+      "unused abstraction",
+      "technical debt",
+      "messy code",
+      "cleanup after deletion"
+    ]
+  },
+  "use_for": [
+    "simplifying existing code without changing behavior",
+    "removing overengineered layers and unused abstractions",
+    "cleaning residual code after feature removal",
+    "auditing hidden stale couplings before deletion",
+    "reducing maintenance cost while preserving contracts"
+  ],
+  "do_not_use_for": [
+    "bug fixes where root cause is not understood",
+    "new feature design as the primary goal",
+    "performance redesign unless performance is explicitly the owner",
+    "large rewrites with no validation path"
+  ],
+  "rules": [
+    "define the behavior contract before changing structure",
+    "separate mechanical cleanup from semantic changes",
+    "remove abstractions only after call sites and ownership are understood",
+    "treat stale feature remnants as regression risks until reachability is checked",
+    "keep refactors small enough to validate and review"
+  ],
+  "procedure": [
+    "State the refactor goal and what behavior must remain unchanged.",
+    "Map owners, call sites, lifecycle hooks, dataflow, configuration, tests, and integration boundaries.",
+    "Classify code as active, stale, transitional, duplicated, over-abstracted, or unknown.",
+    "Choose a narrow transformation: inline, delete, split, move, rename, consolidate, or isolate.",
+    "Apply the transformation in a reviewable sequence.",
+    "Run validation focused on unchanged behavior and removed coupling.",
+    "Leave notes for any suspicious but unresolved code that should not be deleted yet."
+  ],
+  "output": [
+    "scoped refactor plan",
+    "simplified code structure",
+    "stale-code and hidden-coupling audit result",
+    "validation summary"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "bug-investigation",
+      "contracts",
+      "diagnostics",
+      "measurement-profiling"
+    ],
+    "contextual": [
+      "runtime-lifecycle",
+      "composition-boundaries",
+      "stage-contracts",
+      "dataflow-state"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is primarily about simplifying, cleaning, restructuring, deleting stale code, or reducing overengineering in existing code",
+      "the task is to remove obsolete feature remnants or hidden couplings safely"
+    ],
+    "must_not_own_when": [
+      "there is an active bug whose root cause is still unknown and investigation must happen first",
+      "the task is primarily a new feature, UI design, performance architecture, or reverse-engineering task"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to simplify existing systems without introducing regressions",
+      "how to remove dead or stale code safely",
+      "how to detect hidden links left after feature deletion",
+      "how to reduce overengineering while preserving useful boundaries"
+    ],
+    "does_not_solve": [
+      "unknown bug root-cause discovery by itself",
+      "big-bang rewrites",
+      "domain redesign where behavior is intentionally changing"
+    ]
+  },
+  "core_principles": [
+    "Refactoring changes structure while preserving behavior.",
+    "Deletion is a behavior change unless reachability and side effects are understood.",
+    "Overengineering is not abstraction count; it is abstraction cost without current runtime or maintenance value.",
+    "Residual code is dangerous because it can remain connected through lifecycle hooks, configuration, serialization, reflection, events, tests, editor scripts, or generated data.",
+    "The safest refactor sequence reduces uncertainty before it reduces code."
+  ],
+  "constraints": [
+    "Do not mix broad cleanup with unrelated feature changes.",
+    "Do not remove adapters, configs, serialized fields, events, or lifecycle hooks based only on text search.",
+    "Do not collapse boundaries that still protect ownership, lifecycle, validation, or integration contracts.",
+    "Do not rename public or serialized surfaces without migration or compatibility review.",
+    "Do not continue refactoring if validation exposes unexplained behavior changes."
+  ],
+  "decision_rules": [
+    "If the current behavior is unclear, characterize it before refactoring.",
+    "If code looks unused, check call sites, configuration, serialization, reflection, editor scripts, tests, generated files, and external entry points.",
+    "If an abstraction has one caller and no ownership or validation value, consider inlining or merging it.",
+    "If an abstraction protects lifecycle, domain boundary, diagnostics, or testability, keep it unless its cost is proven harmful.",
+    "If feature deletion left remnants, remove from the outermost entry points inward: UI/config/registration, lifecycle hooks, data paths, tests, docs, then core code.",
+    "If a refactor reveals a bug, switch to bug-investigation for that failure before continuing cleanup."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "behavior-preserving small-step transformations",
+      "call-site and lifecycle reachability maps before deletion",
+      "public surface and serialized data compatibility review",
+      "separate commits or patches for mechanical moves and semantic changes",
+      "explicit removal checklist for deleted features"
+    ],
+    "avoid_patterns": [
+      "big-bang cleanup without intermediate validation",
+      "deleting code solely because it has no direct text references",
+      "collapsing boundaries that still encode ownership or lifecycle rules",
+      "mixing renames, moves, behavior changes, and bug fixes in one opaque patch",
+      "leaving obsolete config, docs, tests, or registration paths after deleting implementation"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Reduce overengineering",
+      "when": "Use when a subsystem has too many layers, abstractions, or indirections for its current responsibilities.",
+      "steps": [
+        "Identify the real current responsibilities and active callers.",
+        "Mark which abstractions protect a useful boundary and which only forward calls.",
+        "Inline or merge pass-through layers one at a time.",
+        "Keep boundary names where they encode ownership, lifecycle, or validation.",
+        "Validate behavior after each meaningful simplification."
+      ]
+    },
+    {
+      "name": "Remove feature remnants",
+      "when": "Use after a feature was deleted or disabled but related code may still be connected.",
+      "steps": [
+        "List all entry points: registration, config, UI, commands, lifecycle hooks, tests, docs, assets, serialization, and generated data.",
+        "Remove or gate entry points before deleting deep implementation.",
+        "Search for stale identifiers and indirect references.",
+        "Run compile/tests/smoke path and inspect logs for missing references.",
+        "Remove tests and docs only when they describe the deleted behavior rather than preserved contracts."
+      ]
+    },
+    {
+      "name": "Audit hidden coupling",
+      "when": "Use when old code may still affect behavior through indirect links.",
+      "steps": [
+        "Search direct references and also registration tables, event subscriptions, config keys, serialized fields, reflection strings, editor scripts, and generated assets.",
+        "Trace lifecycle: initialization, update, fixed update, shutdown, suspend, resume, disposal.",
+        "Trace dataflow: who writes, who reads, who caches, who publishes.",
+        "Disable or remove the suspected link in the shallowest safe location first.",
+        "Validate that expected behavior remains and the obsolete path is no longer active."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Deleting stale-looking code that is still referenced by serialized assets or registration.",
+    "Calling a rewrite a refactor while behavior is intentionally changing.",
+    "Removing an abstraction that was the only place enforcing lifecycle or ownership.",
+    "Leaving old tests or configs that re-enable removed paths later.",
+    "Refactoring through a failing test without first understanding whether the test reveals a real bug."
+  ],
+  "review_checklist": [
+    "Is the behavior-preservation contract explicit?",
+    "Were call sites and lifecycle hooks mapped before deletion?",
+    "Were serialized/config/reflection/editor/generated references checked where relevant?",
+    "Are mechanical changes separated from semantic changes?",
+    "Did validation prove behavior stayed stable or intentionally changed?",
+    "Were unresolved suspicious links documented instead of silently ignored?"
+  ],
+  "references": [
+    {
+      "title": "Refactoring",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/code-maintenance/references/refactoring.md",
+      "interpretation": "Use this first for behavior-preserving cleanup, overengineering reduction, and safe deletion.",
+      "why": "It encodes the practical refactoring discipline for existing project code."
+    },
+    {
+      "title": "Stale Coupling Audit",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/code-maintenance/references/stale-coupling-audit.md",
+      "interpretation": "Use when old feature remnants or hidden obsolete links can cause regressions.",
+      "why": "Hidden coupling is one of the most painful failure modes in large evolving projects."
+    }
+  ]
+}

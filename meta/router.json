@@ -1,11 +1,14 @@
 {
-  "version": "1.0",
-  "description": "Primary-domain router for Skills Graph.",
+  "version": "2.0",
+  "description": "Stack-aware primary-domain router for Skills Graph.",
   "index_source": "meta/index.json",
-  "routing_mode": "single_primary_with_attached_skills",
+  "routing_mode": "stack_then_single_primary_with_attached_skills",
   "rules": {
+    "select_stack_before_primary_domain": true,
+    "allow_default_stack_when_stack_is_implicit": true,
     "select_primary_from_entry_and_skills": true,
     "ignore_dependencies_during_primary_selection": true,
+    "freeze_stack_after_selection": true,
     "freeze_primary_after_selection": true,
     "allow_support_attachment_after_primary_selection": true,
     "allow_cross_domain_skills": true,
@@ -14,6 +17,20 @@
     "disallow_cross_cutting_override_primary_without_direct_ownership_match": true,
     "disallow_manifest_as_primary": true,
     "skill_json_is_canonical_instruction_source": true
+  },
+  "stack_resolution": {
+    "enabled": true,
+    "default_stack": "csharp-shared",
+    "prefer_explicit_stack_signals": true,
+    "allow_host_environment_inference": true,
+    "stack_signal_weight": 12,
+    "host_environment_weight": 8,
+    "minimum_stack_score": 1,
+    "tie_break_order": [
+      "higher_stack_signal_count",
+      "higher_total_score",
+      "stable_index_order"
+    ]
   },
   "scoring": {
     "strong_signal_weight": 10,
@@ -83,212 +100,265 @@
     "include_contextual_dependencies_when_triggered": true,
     "require_declared_relevance_for_cross_domain": true,
     "prefer_attached_cross_cutting_unless_cross_cutting_has_stronger_ownership_match": true,
+    "allow_shared_stack_attachments_into_specialized_stack": true,
+    "disallow_specialized_stack_attachments_into_shared_stack_without_explicit_relevance": true,
     "max_same_domain_attachments": 4,
     "max_cross_domain_attachments": 3,
     "cross_cutting_domains": [
       "framework"
     ]
   },
-  "domains": {
-    "assembly-analysis": {
-      "entry": "knowledge/assembly-analysis/assembly-analysis_entry.json",
-      "manifest": "knowledge/assembly-analysis/assembly-analysis_manifest.json",
-      "skills": [
-        "knowledge/assembly-analysis/assembly-reading.json",
-        "knowledge/assembly-analysis/dump-pipeline.json",
-        "knowledge/assembly-analysis/metadata-parsing.json",
-        "knowledge/assembly-analysis/integration-surface-mapping.json"
+  "stacks": {
+    "csharp-shared": {
+      "signals": {
+        "strong": [
+          ".net",
+          "c#",
+          "clr",
+          "managed runtime",
+          "shared csharp"
+        ],
+        "weak": [
+          "console app",
+          "class library",
+          "backend service",
+          "plain dotnet"
+        ]
+      },
+      "host_environments": [
+        ".net",
+        "dotnet",
+        "unity"
       ],
-      "default_primary_candidates": [
-        "integration-surface-mapping",
-        "assembly-reading",
-        "dump-pipeline"
-      ],
-      "default_support_candidates": [
-        "metadata-parsing"
-      ]
+      "domains": {
+        "assembly-analysis": {
+          "entry": "knowledge/csharp-shared/assembly-analysis/assembly-analysis_entry.json",
+          "manifest": "knowledge/csharp-shared/assembly-analysis/assembly-analysis_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/assembly-analysis/assembly-reading.json",
+            "knowledge/csharp-shared/assembly-analysis/dump-pipeline.json",
+            "knowledge/csharp-shared/assembly-analysis/metadata-parsing.json",
+            "knowledge/csharp-shared/assembly-analysis/integration-surface-mapping.json"
+          ],
+          "default_primary_candidates": [
+            "integration-surface-mapping",
+            "assembly-reading",
+            "dump-pipeline"
+          ],
+          "default_support_candidates": [
+            "metadata-parsing"
+          ]
+        },
+        "code-maintenance": {
+          "entry": "knowledge/csharp-shared/code-maintenance/code-maintenance_entry.json",
+          "manifest": "knowledge/csharp-shared/code-maintenance/code-maintenance_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/code-maintenance/bug-investigation.json",
+            "knowledge/csharp-shared/code-maintenance/refactoring.json"
+          ],
+          "default_primary_candidates": [
+            "bug-investigation",
+            "refactoring"
+          ],
+          "default_support_candidates": []
+        },
+        "data-oriented-pipeline": {
+          "entry": "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-pipeline_entry.json",
+          "manifest": "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/data-oriented-pipeline/pipeline-architecture.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/stage-boundaries.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/dataflow-state.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/invalidation-propagation.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/execution-model.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/incremental-recompute.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/change-batching.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/structural-rerun-policy.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/stage-contracts.json"
+          ],
+          "default_primary_candidates": [
+            "pipeline-architecture",
+            "execution-model",
+            "incremental-recompute",
+            "change-batching",
+            "structural-rerun-policy",
+            "stage-contracts"
+          ],
+          "default_support_candidates": [
+            "stage-boundaries",
+            "dataflow-state",
+            "invalidation-propagation"
+          ]
+        },
+        "framework": {
+          "entry": "knowledge/csharp-shared/framework/framework_entry.json",
+          "manifest": "knowledge/csharp-shared/framework/framework_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/framework/bootstrap.json",
+            "knowledge/csharp-shared/framework/contracts.json",
+            "knowledge/csharp-shared/framework/di.json",
+            "knowledge/csharp-shared/framework/diagnostics.json",
+            "knowledge/csharp-shared/framework/runtime-lifecycle.json",
+            "knowledge/csharp-shared/framework/extension-points.json",
+            "knowledge/csharp-shared/framework/composition-boundaries.json",
+            "knowledge/csharp-shared/framework/service-lifetimes.json"
+          ],
+          "default_primary_candidates": [
+            "bootstrap",
+            "contracts",
+            "di",
+            "diagnostics",
+            "runtime-lifecycle",
+            "extension-points",
+            "composition-boundaries",
+            "service-lifetimes"
+          ],
+          "default_support_candidates": []
+        },
+        "neural": {
+          "entry": "knowledge/csharp-shared/neural/neural_entry.json",
+          "manifest": "knowledge/csharp-shared/neural/neural_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/neural/tensor-runtime-architecture.json",
+            "knowledge/csharp-shared/neural/architecture.json",
+            "knowledge/csharp-shared/neural/optimization.json",
+            "knowledge/csharp-shared/neural/training.json"
+          ],
+          "default_primary_candidates": [
+            "tensor-runtime-architecture",
+            "architecture",
+            "training"
+          ],
+          "default_support_candidates": [
+            "optimization"
+          ]
+        },
+        "performance": {
+          "entry": "knowledge/csharp-shared/performance/performance_entry.json",
+          "manifest": "knowledge/csharp-shared/performance/performance_manifest.json",
+          "skills": [
+            "knowledge/csharp-shared/performance/runtime-performance-architecture.json",
+            "knowledge/csharp-shared/performance/cache-optimization.json",
+            "knowledge/csharp-shared/performance/data-oriented-design.json",
+            "knowledge/csharp-shared/performance/memory-management.json",
+            "knowledge/csharp-shared/performance/scheduler.json",
+            "knowledge/csharp-shared/performance/work-budgeting.json",
+            "knowledge/csharp-shared/performance/measurement-profiling.json",
+            "knowledge/csharp-shared/performance/memory-arenas.json",
+            "knowledge/csharp-shared/performance/contention-shaping.json"
+          ],
+          "default_primary_candidates": [
+            "runtime-performance-architecture",
+            "scheduler",
+            "work-budgeting",
+            "measurement-profiling",
+            "memory-arenas",
+            "contention-shaping",
+            "data-oriented-design"
+          ],
+          "default_support_candidates": [
+            "memory-management",
+            "cache-optimization",
+            "measurement-profiling"
+          ]
+        }
+      }
     },
-    "code-maintenance": {
-      "entry": "knowledge/code-maintenance/code-maintenance_entry.json",
-      "manifest": "knowledge/code-maintenance/code-maintenance_manifest.json",
-      "skills": [
-        "knowledge/code-maintenance/bug-investigation.json",
-        "knowledge/code-maintenance/refactoring.json"
+    "unity": {
+      "signals": {
+        "strong": [
+          "unity",
+          "monobehaviour",
+          "scriptableobject",
+          "editorwindow",
+          "imgui",
+          "scene"
+        ],
+        "weak": [
+          "gameobject",
+          "assetdatabase",
+          "frame loop",
+          "play mode"
+        ]
+      },
+      "host_environments": [
+        "unity"
       ],
-      "default_primary_candidates": [
-        "bug-investigation",
-        "refactoring"
+      "inherits": [
+        "csharp-shared"
       ],
-      "default_support_candidates": []
-    },
-    "data-oriented-pipeline": {
-      "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
-      "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
-      "skills": [
-        "knowledge/data-oriented-pipeline/pipeline-architecture.json",
-        "knowledge/data-oriented-pipeline/stage-boundaries.json",
-        "knowledge/data-oriented-pipeline/dataflow-state.json",
-        "knowledge/data-oriented-pipeline/invalidation-propagation.json",
-        "knowledge/data-oriented-pipeline/execution-model.json",
-        "knowledge/data-oriented-pipeline/incremental-recompute.json",
-        "knowledge/data-oriented-pipeline/change-batching.json",
-        "knowledge/data-oriented-pipeline/structural-rerun-policy.json",
-        "knowledge/data-oriented-pipeline/stage-contracts.json"
-      ],
-      "default_primary_candidates": [
-        "pipeline-architecture",
-        "execution-model",
-        "incremental-recompute",
-        "change-batching",
-        "structural-rerun-policy",
-        "stage-contracts"
-      ],
-      "default_support_candidates": [
-        "stage-boundaries",
-        "dataflow-state",
-        "invalidation-propagation"
-      ]
-    },
-    "framework": {
-      "entry": "knowledge/framework/framework_entry.json",
-      "manifest": "knowledge/framework/framework_manifest.json",
-      "skills": [
-        "knowledge/framework/bootstrap.json",
-        "knowledge/framework/contracts.json",
-        "knowledge/framework/di.json",
-        "knowledge/framework/diagnostics.json",
-        "knowledge/framework/runtime-lifecycle.json",
-        "knowledge/framework/extension-points.json",
-        "knowledge/framework/composition-boundaries.json",
-        "knowledge/framework/service-lifetimes.json"
-      ],
-      "default_primary_candidates": [
-        "bootstrap",
-        "contracts",
-        "di",
-        "diagnostics",
-        "runtime-lifecycle",
-        "extension-points",
-        "composition-boundaries",
-        "service-lifetimes"
-      ],
-      "default_support_candidates": []
-    },
-    "gpu": {
-      "entry": "knowledge/gpu/gpu_entry.json",
-      "manifest": "knowledge/gpu/gpu_manifest.json",
-      "skills": [
-        "knowledge/gpu/gpu-pipeline-architecture.json",
-        "knowledge/gpu/gpu-compute.json",
-        "knowledge/gpu/gpu-instancing.json",
-        "knowledge/gpu/gpu-diagnostics.json"
-      ],
-      "default_primary_candidates": [
-        "gpu-pipeline-architecture",
-        "gpu-compute",
-        "gpu-instancing",
-        "gpu-diagnostics"
-      ],
-      "default_support_candidates": [
-        "gpu-diagnostics"
-      ]
-    },
-    "modding": {
-      "entry": "knowledge/modding/modding_entry.json",
-      "manifest": "knowledge/modding/modding_manifest.json",
-      "skills": [
-        "knowledge/modding/harmony-patching.json",
-        "knowledge/modding/loader-integration.json",
-        "knowledge/modding/plugin-lifecycle.json"
-      ],
-      "default_primary_candidates": [
-        "harmony-patching",
-        "loader-integration"
-      ],
-      "default_support_candidates": [
-        "plugin-lifecycle"
-      ]
-    },
-    "neural": {
-      "entry": "knowledge/neural/neural_entry.json",
-      "manifest": "knowledge/neural/neural_manifest.json",
-      "skills": [
-        "knowledge/neural/tensor-runtime-architecture.json",
-        "knowledge/neural/architecture.json",
-        "knowledge/neural/optimization.json",
-        "knowledge/neural/training.json"
-      ],
-      "default_primary_candidates": [
-        "tensor-runtime-architecture",
-        "architecture",
-        "training"
-      ],
-      "default_support_candidates": [
-        "optimization"
-      ]
-    },
-    "performance": {
-      "entry": "knowledge/performance/performance_entry.json",
-      "manifest": "knowledge/performance/performance_manifest.json",
-      "skills": [
-        "knowledge/performance/runtime-performance-architecture.json",
-        "knowledge/performance/cache-optimization.json",
-        "knowledge/performance/data-oriented-design.json",
-        "knowledge/performance/memory-management.json",
-        "knowledge/performance/scheduler.json",
-        "knowledge/performance/work-budgeting.json",
-        "knowledge/performance/measurement-profiling.json",
-        "knowledge/performance/memory-arenas.json",
-        "knowledge/performance/contention-shaping.json"
-      ],
-      "default_primary_candidates": [
-        "runtime-performance-architecture",
-        "scheduler",
-        "work-budgeting",
-        "measurement-profiling",
-        "memory-arenas",
-        "contention-shaping",
-        "data-oriented-design"
-      ],
-      "default_support_candidates": [
-        "memory-management",
-        "cache-optimization",
-        "measurement-profiling"
-      ]
-    },
-    "unity-ui": {
-      "entry": "knowledge/unity-ui/unity-ui_entry.json",
-      "manifest": "knowledge/unity-ui/unity-ui_manifest.json",
-      "skills": [
-        "knowledge/unity-ui/imgui-core.json",
-        "knowledge/unity-ui/imgui-state-model.json",
-        "knowledge/unity-ui/imgui-layout-composition.json",
-        "knowledge/unity-ui/imgui-manual-layout.json",
-        "knowledge/unity-ui/imgui-incremental-update.json",
-        "knowledge/unity-ui/imgui-input-routing.json",
-        "knowledge/unity-ui/imgui-windowing.json",
-        "knowledge/unity-ui/imgui-styling.json",
-        "knowledge/unity-ui/imgui-performance.json",
-        "knowledge/unity-ui/imgui-debugging.json"
-      ],
-      "default_primary_candidates": [
-        "imgui-core",
-        "imgui-windowing",
-        "imgui-incremental-update"
-      ],
-      "default_support_candidates": [
-        "imgui-state-model",
-        "imgui-layout-composition",
-        "imgui-manual-layout",
-        "imgui-incremental-update",
-        "imgui-input-routing",
-        "imgui-styling",
-        "imgui-performance",
-        "imgui-debugging"
-      ]
+      "domains": {
+        "gpu": {
+          "entry": "knowledge/unity/gpu/gpu_entry.json",
+          "manifest": "knowledge/unity/gpu/gpu_manifest.json",
+          "skills": [
+            "knowledge/unity/gpu/gpu-pipeline-architecture.json",
+            "knowledge/unity/gpu/gpu-compute.json",
+            "knowledge/unity/gpu/gpu-instancing.json",
+            "knowledge/unity/gpu/gpu-diagnostics.json"
+          ],
+          "default_primary_candidates": [
+            "gpu-pipeline-architecture",
+            "gpu-compute",
+            "gpu-instancing",
+            "gpu-diagnostics"
+          ],
+          "default_support_candidates": [
+            "gpu-diagnostics"
+          ]
+        },
+        "modding": {
+          "entry": "knowledge/unity/modding/modding_entry.json",
+          "manifest": "knowledge/unity/modding/modding_manifest.json",
+          "skills": [
+            "knowledge/unity/modding/harmony-patching.json",
+            "knowledge/unity/modding/loader-integration.json",
+            "knowledge/unity/modding/plugin-lifecycle.json"
+          ],
+          "default_primary_candidates": [
+            "harmony-patching",
+            "loader-integration"
+          ],
+          "default_support_candidates": [
+            "plugin-lifecycle"
+          ]
+        },
+        "unity-ui": {
+          "entry": "knowledge/unity/unity-ui/unity-ui_entry.json",
+          "manifest": "knowledge/unity/unity-ui/unity-ui_manifest.json",
+          "skills": [
+            "knowledge/unity/unity-ui/imgui-core.json",
+            "knowledge/unity/unity-ui/imgui-state-model.json",
+            "knowledge/unity/unity-ui/imgui-layout-composition.json",
+            "knowledge/unity/unity-ui/imgui-manual-layout.json",
+            "knowledge/unity/unity-ui/imgui-incremental-update.json",
+            "knowledge/unity/unity-ui/imgui-input-routing.json",
+            "knowledge/unity/unity-ui/imgui-windowing.json",
+            "knowledge/unity/unity-ui/imgui-styling.json",
+            "knowledge/unity/unity-ui/imgui-performance.json",
+            "knowledge/unity/unity-ui/imgui-debugging.json"
+          ],
+          "default_primary_candidates": [
+            "imgui-core",
+            "imgui-windowing",
+            "imgui-incremental-update"
+          ],
+          "default_support_candidates": [
+            "imgui-state-model",
+            "imgui-layout-composition",
+            "imgui-manual-layout",
+            "imgui-incremental-update",
+            "imgui-input-routing",
+            "imgui-styling",
+            "imgui-performance",
+            "imgui-debugging"
+          ]
+        }
+      }
     }
   },
   "output_contract": {
+    "selected_stack": "string",
     "primary_domain": "string",
     "primary_file": "string",
     "attached_skills": [

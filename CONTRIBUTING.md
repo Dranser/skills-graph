@@ -2,6 +2,12 @@
 
 Skills Graph accepts contributions that improve the repository as a structured skill system, not as a loose prompt collection.
 
+Current repository bias:
+- the existing mature guidance is primarily oriented toward `.NET`, `C#`, and Unity-related engineering
+- contributions outside that stack are allowed, but they should be introduced deliberately with clear ownership and routing boundaries
+- do not treat projects centered on third-party frameworks or heavy library ecosystems as the default target shape for this repository
+- do not mix materially different stacks inside one domain surface when stack-specific guidance would diverge in practice
+
 ## What To Contribute
 
 Good contributions include:
@@ -14,6 +20,7 @@ Good contributions include:
 ## Contribution Rules
 
 - Keep the primary model intact: discovery, routing, execution planning, dependency expansion, then skill knowledge.
+- If multiple technology stacks are supported, model stack explicitly in repository structure and routing rather than blending stack-specific implementation guidance into one skill.
 - Do not treat manifest or entry files as executable skills.
 - Prefer explicit ownership, explicit lifecycle, and explicit boundaries.
 - Do not introduce third-party packages or frameworks as the default implementation path in skill guidance.

@@ -1,0 +1,135 @@
+{
+  "id": "stage-boundaries",
+  "kind": "skill",
+  "title": "Stage Boundaries",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "stage boundaries",
+      "pipeline stages",
+      "stage split",
+      "processing stages"
+    ],
+    "weak": [
+      "stage ownership",
+      "boundary split",
+      "pipeline phases"
+    ]
+  },
+  "use_for": [
+    "splitting a system into explicit pipeline stages",
+    "assigning ownership to intermediate and final stage outputs",
+    "defining where one recompute region ends and another begins"
+  ],
+  "do_not_use_for": [
+    "generic layering without dataflow concerns",
+    "scheduler-only questions",
+    "UI tree composition"
+  ],
+  "rules": [
+    "split stages around data dependency changes",
+    "make each stage produce a concrete owned output",
+    "avoid stage boundaries that exist only by naming convention",
+    "keep stage contracts narrow enough to review quickly"
+  ],
+  "procedure": [
+    "List transformations in order.",
+    "Group transformations by shared inputs and owned outputs.",
+    "Separate stages where recompute scope differs.",
+    "Name each boundary by the data it consumes and produces."
+  ],
+  "output": [
+    "stage map",
+    "boundary definitions",
+    "owned outputs per stage"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "dataflow-state",
+      "stage-contracts"
+    ],
+    "contextual": [
+      "pipeline-architecture"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about how to split a data-oriented pipeline into stages or boundaries"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about runtime dispatch policy or invalidation strategy"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "where stages begin and end",
+      "how to align data dependency changes with pipeline structure"
+    ],
+    "does_not_solve": [
+      "scheduler internals",
+      "container design"
+    ]
+  },
+  "core_principles": [
+    "A stage boundary is justified by owned data, not by arbitrary code grouping.",
+    "Stage outputs should be inspectable and reusable.",
+    "Boundary shape should reduce recompute scope."
+  ],
+  "constraints": [
+    "Stages must not depend on invisible downstream mutation.",
+    "Boundaries must not force unnecessary whole-pipeline reruns."
+  ],
+  "decision_rules": [
+    "Split when a downstream product can stay valid despite an upstream local change elsewhere.",
+    "Avoid over-splitting if no owned intermediate product exists."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "stage outputs with stable identities",
+      "clear upstream and downstream contracts",
+      "boundary design driven by recompute economics"
+    ],
+    "avoid_patterns": [
+      "phase names without owned outputs",
+      "stages that only forward mutable references around"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Split a transform chain into stable stages",
+      "when": "Use when one long chain recomputes too much after local change.",
+      "steps": [
+        "Find where a reusable intermediate product appears.",
+        "Promote that product to an explicit stage output.",
+        "Stop downstream recompute when upstream changes do not invalidate it."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Naming phases without changing ownership.",
+    "Leaving stage outputs mutable and shared everywhere.",
+    "Over-splitting a tiny pipeline into noise."
+  ],
+  "review_checklist": [
+    "Does each stage own a real output?",
+    "Do stage boundaries reduce recompute scope?",
+    "Can downstream consumers name the stage product they depend on?",
+    "Was over-splitting avoided?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Stage Boundaries",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/stage-boundaries.md",
+      "interpretation": "Use this first for stage splitting, owned products, and recompute boundary logic.",
+      "why": "Use as the primary local guide for boundary design."
+    }
+  ]
+}

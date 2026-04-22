@@ -1,0 +1,195 @@
+{
+  "id": "imgui-input-routing",
+  "kind": "skill",
+  "title": "IMGUI Input Routing",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "input routing",
+      "focus",
+      "hot control",
+      "event consumption",
+      "input system",
+      "input actions"
+    ],
+    "weak": [
+      "keyboard navigation",
+      "mouse capture",
+      "command routing",
+      "active control",
+      "legacy input disabled",
+      "action map"
+    ]
+  },
+  "use_for": [
+    "routing IMGUI events between windows, panels, and widgets",
+    "defining focus ownership and event consumption rules",
+    "designing command dispatch for tool UI",
+    "bridging Unity Input System actions and device state into IMGUI framework commands"
+  ],
+  "do_not_use_for": [
+    "style systems",
+    "layout-only decomposition",
+    "generic gameplay input systems",
+    "architectures that depend on legacy Input Manager reads as the primary signal path"
+  ],
+  "rules": [
+    "make event ownership explicit",
+    "consume events at controlled boundaries",
+    "treat focus and hot control as framework-owned concerns",
+    "separate command dispatch from raw event inspection",
+    "derive framework commands from Input System before dispatching to IMGUI surfaces",
+    "support projects where legacy Input Manager is disabled"
+  ],
+  "procedure": [
+    "Identify host-level event entry and Input System action sources.",
+    "Translate Input System actions or device reads into framework command intent.",
+    "Define focus and active-control ownership.",
+    "Route events through explicit window and panel boundaries.",
+    "Consume or forward events according to deterministic rules."
+  ],
+  "output": [
+    "event routing policy",
+    "focus ownership model",
+    "command dispatch rules"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-state-model"
+    ],
+    "optional": [],
+    "contextual": [
+      "imgui-debugging"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about event routing, focus, or command dispatch in IMGUI"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about layout composition or visual structure"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "who handles which IMGUI events and when",
+      "how focus and active control move between UI regions",
+      "how modern Input System signals become host, panel, and widget commands"
+    ],
+    "does_not_solve": [
+      "window lifetime design",
+      "styling"
+    ]
+  },
+  "core_principles": [
+    "Route high-level commands through framework boundaries, not ad hoc widget logic.",
+    "Keep focus state inspectable and host-visible.",
+    "Do not let arbitrary feature widgets silently consume shared events.",
+    "Prefer Input System action maps or explicit device reads as the source of command intent in modern Unity.",
+    "Treat IMGUI Event inspection as a downstream UI concern, not the only source of user intent."
+  ],
+  "constraints": [
+    "Input handling must respect IMGUI event phases.",
+    "Competing widgets require deterministic precedence rules.",
+    "Mouse and keyboard ownership must be debuggable.",
+    "The routing layer must still function when old Input Manager axes and buttons are unavailable."
+  ],
+  "decision_rules": [
+    "Handle host-level shortcuts before nested panels when the command is global.",
+    "Keep panel-local shortcuts inside panel routing when they should not leak to the host.",
+    "Instrument routing before adding more abstraction if focus bugs appear.",
+    "Prefer InputAction and InputActionMap for reusable host commands and tool-local commands.",
+    "Use raw device reads from Input System only when action maps are too indirect for the interaction."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit event routers at host and panel boundaries",
+      "focus state stored in retained host state",
+      "command tables separate from raw Event inspection",
+      "host-level input adapter that converts Input System signals into framework commands",
+      "action-map ownership aligned with window or tool lifetime"
+    ],
+    "avoid_patterns": [
+      "event use spread through unrelated draw helpers",
+      "silent global shortcut handling inside leaf widgets",
+      "focus inferred only from transient draw context",
+      "command routing built primarily on UnityEngine.Input polling",
+      "mixing legacy Input Manager assumptions into framework contracts"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Route global and panel-local shortcuts through Input System",
+      "when": "Use when a tool window has both host commands and content-specific commands and the project relies on Input System.",
+      "steps": [
+        "Define host-level and panel-level action ownership explicitly.",
+        "Resolve Input System actions into framework commands before nested IMGUI drawing.",
+        "Resolve host-level commands first.",
+        "Forward unhandled events into the active panel.",
+        "Allow the panel to consume only its declared commands."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Leaf widgets consuming events that should remain global.",
+    "Shortcut handling duplicated across host and panel levels.",
+    "No retained representation of focus ownership.",
+    "Assuming IMGUI Event alone is a sufficient abstraction over modern Unity input.",
+    "Hard-coding legacy input axis or button names into framework routing."
+  ],
+  "review_checklist": [
+    "Is event ownership explicit?",
+    "Are focus transitions visible in the design?",
+    "Can command precedence be explained without reading every widget?",
+    "Is event consumption limited to clear boundaries?",
+    "Can the routing layer run with Input System as the only active backend?",
+    "Are command sources separated from raw IMGUI Event inspection?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Event Cycle",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-event-cycle.md",
+      "interpretation": "Use this first for host-level event routing, focus ownership, and the relationship between IMGUI events and framework command flow.",
+      "why": "Use for host-level event routing, focus ownership, and control-flow guidance."
+    },
+    {
+      "title": "Local Reference: IMGUI Input System Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-input-system.md",
+      "interpretation": "Use this first when building action-based routing or supporting projects with legacy input disabled.",
+      "why": "Use for action-based command routing and modern Unity projects where legacy input is disabled."
+    },
+    {
+      "title": "Unity Scripting API: Event",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/530/ScriptReference/Event.html",
+      "interpretation": "Use this to confirm low-level event semantics after the domain's routing model is already established.",
+      "why": "Use for event types, consumption, and input details that drive routing decisions."
+    },
+    {
+      "title": "Input System Manual: Actions",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/ja/Packages/com.unity.inputsystem%401.4/manual/Actions.html",
+      "interpretation": "Use this to confirm action maps, callbacks, and polling patterns that the framework adapts into command routing.",
+      "why": "Use for action maps, action ownership, callbacks, and polling patterns when building framework-level command routing."
+    },
+    {
+      "title": "Input System Manual: Installation",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/ja/Packages/com.unity.inputsystem%401.4/manual/Installation.html",
+      "interpretation": "Use this to confirm Active Input Handling requirements when the framework must run without the legacy Input Manager.",
+      "why": "Use for the active input handling requirement when projects disable the legacy Input Manager and rely on Input System."
+    }
+  ]
+}

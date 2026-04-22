@@ -1,0 +1,198 @@
+{
+  "id": "plugin-lifecycle",
+  "kind": "skill",
+  "title": "Plugin Lifecycle",
+  "stack": "unity",
+  "domain": "modding",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "plugin lifecycle",
+      "awake",
+      "start",
+      "initialize plugin",
+      "shutdown"
+    ],
+    "weak": [
+      "lifecycle phases",
+      "activation",
+      "teardown"
+    ]
+  },
+  "use_for": [
+    "plugin init order",
+    "plugin start and stop behavior",
+    "lifecycle-bound resources",
+    "runtime service activation"
+  ],
+  "do_not_use_for": [
+    "Harmony patch mechanics",
+    "assembly parsing",
+    "generic performance work",
+    "IMGUI layout"
+  ],
+  "rules": [
+    "separate allocation, initialization, and activation",
+    "initialize diagnostics first",
+    "keep startup and shutdown explicit",
+    "dispose runtime state when needed",
+    "do not hide lifecycle transitions"
+  ],
+  "procedure": [
+    "Define lifecycle phases.",
+    "Bind diagnostics to earliest phase.",
+    "Allocate and register services.",
+    "Activate runtime features.",
+    "Handle teardown.",
+    "Keep state deterministic."
+  ],
+  "output": [
+    "lifecycle orchestration code",
+    "startup and teardown flow"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics"
+    ],
+    "optional": [
+      "loader-integration"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is explicitly about plugin lifecycle phases",
+      "request is about startup/shutdown sequencing"
+    ],
+    "must_not_own_when": [
+      "request is mainly about patching, UI, or parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "coordinating mod runtime phases after loader attach",
+      "keeping modules, patches, probes, UI, sync, and diagnostics in a predictable order",
+      "making startup and teardown inspectable when game state is unstable"
+    ],
+    "does_not_solve": [
+      "loader-specific entry syntax",
+      "choosing exact Harmony targets",
+      "reverse-engineering assemblies"
+    ]
+  },
+  "core_principles": [
+    "Lifecycle should be explicit, phase-based, and observable.",
+    "Modules should have stable initialization order and isolated failure handling.",
+    "Shutdown should run in reverse ownership order where practical.",
+    "Runtime state should degrade when a module fails instead of corrupting unrelated systems.",
+    "Game lifecycle events should be converted into stable internal events and snapshots."
+  ],
+  "constraints": [
+    "Do not let one module failure prevent diagnostics from reporting the failure.",
+    "Do not hide startup order inside attribute discovery without a deterministic priority rule.",
+    "Do not perform game-object mutation before the relevant game lifecycle state is ready.",
+    "Do not keep stale references to Unity objects after scene or car lifecycle changes.",
+    "Do not require feature modules to know raw hook timing."
+  ],
+  "decision_rules": [
+    "Use plugin-lifecycle as support whenever loader-integration starts more than one runtime subsystem.",
+    "Use it as primary when the request is about phase design, module ordering, shutdown, or runtime readiness.",
+    "If game state appears through hooks, publish lifecycle events before feature modules consume it.",
+    "If a subsystem depends on a fragile hook or probe, gate it behind availability diagnostics.",
+    "If runtime work can occur off the Unity main thread, route it through an explicit dispatcher."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "module registry with deterministic priority and state tracking",
+      "diagnostics-first module initialization",
+      "event bus for game lifecycle transitions",
+      "snapshot/facade layer over raw game objects",
+      "explicit main-thread dispatcher and fixed-step policy",
+      "reverse-order shutdown with error capture"
+    ],
+    "avoid_patterns": [
+      "module startup driven by incidental static constructor order",
+      "feature modules subscribing directly to Harmony patch methods",
+      "stale game object references without lost/reset events",
+      "unbounded per-frame work in lifecycle callbacks",
+      "crash-on-missing-hook behavior for optional integrations"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Stabilize plugin runtime lifecycle",
+      "when": "Use when a mod grows from one feature into a toolkit with modules, hooks, probes, UI, sync, and diagnostics.",
+      "steps": [
+        "Define runtime phases: configure, attach, initialize modules, update, fixed update, GUI, shutdown.",
+        "Register modules with explicit priorities and track created, initialized, stopped, and faulted states.",
+        "Initialize diagnostics and logging before fragile integrations.",
+        "Convert game hook callbacks into internal events and lifecycle snapshots.",
+        "Gate feature modules on readiness and integration availability.",
+        "Capture shutdown errors without hiding earlier initialization failures."
+      ]
+    },
+    {
+      "name": "Gate a feature on fragile game integration",
+      "when": "Use when a feature depends on a hook, reflected member, game context, or multiplayer transport that may be unavailable.",
+      "steps": [
+        "Name the required hook, probe, lifecycle state, or transport dependency.",
+        "Expose its readiness through diagnostics or a lifecycle snapshot.",
+        "Prevent the feature from mutating game state until readiness is true.",
+        "Log a clear degraded reason when the feature is disabled.",
+        "Resume or reinitialize only through an explicit lifecycle event."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating loader Awake or Start as the whole lifecycle model.",
+    "Letting feature modules own raw game lifecycle transitions.",
+    "Ignoring scene reload, car swap, and object invalidation paths.",
+    "Only logging happy-path initialization.",
+    "Assuming optional integrations are always available."
+  ],
+  "review_checklist": [
+    "Are lifecycle phases named and ordered?",
+    "Are module states observable?",
+    "Are hook/probe-dependent features gated by readiness?",
+    "Are stale game references cleared through lifecycle events?",
+    "Does shutdown run deliberately and capture errors?",
+    "Can diagnostics explain why a subsystem is unavailable?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/modding/references/runtime-integration.md",
+      "interpretation": "Use this first for runtime phases, module lifecycle, diagnostics, hooks, probes, and facades.",
+      "why": "It captures the practical architecture for a reusable Unity-game modding toolkit."
+    },
+    {
+      "title": "Harmony Patching",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/harmony-patching.md",
+      "interpretation": "Use when plugin lifecycle depends on hook availability or patch state reporting.",
+      "why": "It defines how patch availability should feed runtime lifecycle and diagnostics."
+    },
+    {
+      "title": "Reflection Probe Degradation",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/reflection-probe-degradation.md",
+      "interpretation": "Use when lifecycle readiness depends on private or version-sensitive game state.",
+      "why": "It defines how fragile probe availability should be reported and gated."
+    },
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use when module lifecycle needs health, readiness, degraded-state, or failure-policy guidance.",
+      "why": "It defines the runtime signals that make lifecycle behavior inspectable."
+    }
+  ]
+}
