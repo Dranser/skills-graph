@@ -17,7 +17,8 @@
       "allocation control",
       "reuse",
       "object lifetime",
-      "gc pressure"
+      "gc pressure",
+      "temporary buffers"
     ]
   },
   "use_for": [
@@ -25,7 +26,8 @@
     "pooling",
     "lifetime management",
     "GC pressure reduction",
-    "memory ownership discipline"
+    "memory ownership discipline",
+    "buffer reuse strategy"
   ],
   "do_not_use_for": [
     "runtime patching",
@@ -33,30 +35,14 @@
     "loader bootstrap",
     "metadata parsing"
   ],
-  "rules": [
-    "make ownership explicit",
-    "reduce transient allocations on hot paths",
-    "pool only when lifecycle is clear",
-    "keep release paths deterministic",
-    "separate long-lived and short-lived data"
-  ],
-  "procedure": [
-    "Identify hot allocations.",
-    "Classify object lifetimes.",
-    "Replace repeated hot allocations where justified.",
-    "Introduce pooling or reuse path.",
-    "Bind ownership and release rules.",
-    "Validate behavior under repeated workload."
-  ],
-  "output": [
-    "allocation control code",
-    "pooling structures",
-    "explicit lifetime model"
-  ],
   "dependencies": {
     "hard": [],
-    "optional": [],
-    "contextual": []
+    "optional": [
+      "data-oriented-design"
+    ],
+    "contextual": [
+      "cache-optimization"
+    ]
   },
   "conflicts": [],
   "ownership": {
@@ -69,5 +55,102 @@
     "must_not_own_when": [
       "request is mainly about UI layout, runtime patching, loader bootstrap, or metadata parsing"
     ]
-  }
+  },
+  "problem_space": {
+    "solves": [
+      "making allocation behavior explicit",
+      "controlling lifetimes of hot-path objects and buffers",
+      "reducing allocator and GC overhead where it matters"
+    ],
+    "does_not_solve": [
+      "performance issues caused by poor algorithms or layout alone",
+      "pooling by default in cold code without evidence",
+      "ownership ambiguity hidden behind convenience abstractions"
+    ]
+  },
+  "core_principles": [
+    "Make ownership and release responsibility explicit.",
+    "Reduce transient allocations in hot paths before reaching for broad pooling.",
+    "Pool only when lifecycle and capacity behavior are bounded and inspectable.",
+    "Prefer stable reusable buffers over repeated small temporary allocations.",
+    "Keep long-lived, medium-lived, and per-frame or per-pass data clearly separated."
+  ],
+  "constraints": [
+    "Do not introduce pools that conceal leaks, stale state, or unbounded growth.",
+    "Do not retain memory indefinitely without a clear shrink or reset policy.",
+    "Do not optimize away allocations in cold paths while ignoring dominant hot costs.",
+    "Any reuse strategy must define reset rules and ownership transfer rules."
+  ],
+  "decision_rules": [
+    "If a hot path repeatedly allocates the same shape of data, first test stable buffer reuse.",
+    "If objects cross subsystem boundaries, define ownership and disposal rules before optimizing allocation sites.",
+    "If pooled instances require heavy reset logic, question whether pooling is still a net win.",
+    "If temporary memory can be scoped to a pass or stage, prefer pass-local arenas or explicit reusable buffers.",
+    "If allocation pressure is low and the code is cold, avoid premature pooling complexity."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit owner-and-borrower relationships",
+      "reusable buffers with clear reset points",
+      "bounded pools for stable hot-path object shapes",
+      "pass-scoped working memory separated from long-lived state"
+    ],
+    "avoid_patterns": [
+      "global pools with unclear return discipline",
+      "pooling as a blanket default across the whole system",
+      "shared mutable pooled state crossing unrelated domains",
+      "allocating formatting, wrapper, or adapter objects inside hot loops"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Reusable Working Buffer",
+      "when": "A system repeatedly builds temporary collections during each update or processing pass.",
+      "steps": [
+        "Measure the repeated allocation site.",
+        "Replace per-pass allocations with a reusable buffer owned by the system or pass host.",
+        "Define explicit clear or reset timing.",
+        "Verify that retained capacity remains bounded."
+      ]
+    },
+    {
+      "name": "Bounded Object Pool",
+      "when": "A stable hot-path object shape is created and retired frequently under controlled lifecycle rules.",
+      "steps": [
+        "Define the owner responsible for acquisition and release.",
+        "Define reset semantics for reused instances.",
+        "Cap pool growth or define shrink behavior.",
+        "Validate that the pool removes meaningful hot-path cost instead of shifting it elsewhere."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating pooling as automatically beneficial.",
+    "Adding reuse without explicit reset and ownership semantics.",
+    "Retaining oversized buffers forever after short spikes.",
+    "Chasing allocation counts while ignoring bigger CPU or cache costs."
+  ],
+  "review_checklist": [
+    "Is ownership explicit for allocated and reused memory?",
+    "Are hot-path temporary allocations either removed or justified?",
+    "Do pools or reusable buffers have reset and capacity discipline?",
+    "Are long-lived and short-lived allocations separated conceptually and operationally?",
+    "Was the optimization chosen based on measured pressure rather than habit?"
+  ],
+  "references": [
+    {
+      "title": "Memory Management",
+      "type": "local-reference",
+      "path": "knowledge/performance/references/memory-management.md",
+      "priority": "preferred",
+      "interpretation": "Use for allocation policy, pooling boundaries, and lifetime review."
+    },
+    {
+      "title": "Performance Domain Foundations",
+      "type": "local-reference",
+      "path": "knowledge/performance/references/performance-foundations.md",
+      "priority": "supporting",
+      "interpretation": "Use for the larger cost model and measurement-first optimization framing."
+    }
+  ]
 }
