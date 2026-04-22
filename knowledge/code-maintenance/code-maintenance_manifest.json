@@ -1,0 +1,11 @@
+{
+  "id": "code-maintenance-manifest",
+  "kind": "domain_manifest",
+  "domain": "code-maintenance",
+  "files": [
+    "bug-investigation",
+    "refactoring"
+  ],
+  "entry_file": "code-maintenance_entry.json",
+  "manifest_file": "code-maintenance_manifest.json"
+}

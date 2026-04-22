@@ -108,6 +108,19 @@
         "metadata-parsing"
       ]
     },
+    "code-maintenance": {
+      "entry": "knowledge/code-maintenance/code-maintenance_entry.json",
+      "manifest": "knowledge/code-maintenance/code-maintenance_manifest.json",
+      "skills": [
+        "knowledge/code-maintenance/bug-investigation.json",
+        "knowledge/code-maintenance/refactoring.json"
+      ],
+      "default_primary_candidates": [
+        "bug-investigation",
+        "refactoring"
+      ],
+      "default_support_candidates": []
+    },
     "data-oriented-pipeline": {
       "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
       "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
@@ -218,6 +231,7 @@
       "entry": "knowledge/performance/performance_entry.json",
       "manifest": "knowledge/performance/performance_manifest.json",
       "skills": [
+        "knowledge/performance/runtime-performance-architecture.json",
         "knowledge/performance/cache-optimization.json",
         "knowledge/performance/data-oriented-design.json",
         "knowledge/performance/memory-management.json",
@@ -228,6 +242,7 @@
         "knowledge/performance/contention-shaping.json"
       ],
       "default_primary_candidates": [
+        "runtime-performance-architecture",
         "scheduler",
         "work-budgeting",
         "measurement-profiling",
@@ -237,7 +252,8 @@
       ],
       "default_support_candidates": [
         "memory-management",
-        "cache-optimization"
+        "cache-optimization",
+        "measurement-profiling"
       ]
     },
     "unity-ui": {

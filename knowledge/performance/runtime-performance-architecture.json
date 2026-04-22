@@ -1,0 +1,245 @@
+{
+  "id": "runtime-performance-architecture",
+  "kind": "skill",
+  "title": "Runtime Performance Architecture",
+  "domain": "performance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "runtime performance",
+      "cpu runtime",
+      "simulation runtime",
+      "deterministic runtime",
+      "phase pipeline",
+      "command controlled mutation",
+      "packed storage",
+      "worker ownership",
+      "runtime synchronization",
+      "unity main thread"
+    ],
+    "weak": [
+      "runtime optimization",
+      "execution phases",
+      "host boundary",
+      "worker utilization",
+      "published state",
+      "range task",
+      "reduction"
+    ]
+  },
+  "use_for": [
+    "designing CPU-first performance architecture for custom runtimes",
+    "moving heavy Unity-hosted work into deterministic runtime phases",
+    "coordinating storage layout, commands, scheduler, synchronization, and diagnostics",
+    "reviewing simulation-first runtime performance boundaries",
+    "building performance models around real workloads rather than isolated micro-optimizations"
+  ],
+  "do_not_use_for": [
+    "single local micro-optimizations with no runtime boundary",
+    "GPU pipeline architecture as the primary concern",
+    "UI composition as the primary concern",
+    "plugin loader integration",
+    "assembly analysis"
+  ],
+  "rules": [
+    "treat performance as a runtime contract, not an after-the-fact patch",
+    "preserve correctness, architectural clarity, and determinism before throughput",
+    "keep Unity or other host APIs outside worker and core runtime contracts",
+    "define phase, command, storage, scheduler, synchronization, and diagnostics boundaries before tuning",
+    "keep single-thread execution as the correctness and debugging baseline",
+    "grow multithreading only from validated workload shape and ownership"
+  ],
+  "procedure": [
+    "Identify the runtime identity, host boundary, and real workload being optimized.",
+    "Map lifecycle phases and mutation windows.",
+    "Map storage ownership, handles, packed indices, snapshots, write state, and published state.",
+    "Map task categories: serial, range, tiled, grouped, island, reduction, and barrier.",
+    "Define synchronization boundaries: capture, compute, barrier, commit/publish, submit.",
+    "Define diagnostics: phase timings, task timings, worker utilization, storage counters, queue/backlog, and validation errors.",
+    "Choose optimization pressure points from evidence before modifying scheduler, storage, or workload shape."
+  ],
+  "output": [
+    "runtime performance architecture map",
+    "phase and mutation boundary contract",
+    "storage/scheduler/synchronization review",
+    "diagnostics and benchmarking plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "scheduler",
+      "data-oriented-design",
+      "measurement-profiling"
+    ],
+    "optional": [
+      "memory-management",
+      "memory-arenas",
+      "contention-shaping",
+      "work-budgeting",
+      "cache-optimization"
+    ],
+    "contextual": [
+      "pipeline-architecture",
+      "execution-model",
+      "stage-contracts",
+      "diagnostics",
+      "runtime-lifecycle"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about performance architecture of a custom runtime, simulation substrate, CPU task system, Unity-hosted runtime, phase pipeline, storage/scheduler design, or deterministic multithreading",
+      "the task needs coordination between scheduling, storage, synchronization, work budgeting, and profiling"
+    ],
+    "must_not_own_when": [
+      "the request is only about a narrow cache, allocation, or scheduler issue already owned by a more specific performance skill",
+      "the primary concern is GPU-driven rendering or compute pipeline architecture",
+      "the request is mainly about UI, plugin lifecycle, or assembly parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to make runtime performance coherent across lifecycle, phases, storage, scheduler, synchronization, and diagnostics",
+      "how to optimize Unity-hosted heavy computation without letting Unity objects leak into worker execution",
+      "how to keep multithreaded CPU performance deterministic and measurable",
+      "how to validate performance against real simulation workloads and synthetic stress probes"
+    ],
+    "does_not_solve": [
+      "domain-specific simulation math by itself",
+      "GPU pipeline design as the main architecture",
+      "adopting Unity DOTS, ECS, Jobs, or third-party frameworks as the default solution"
+    ]
+  },
+  "core_principles": [
+    "Runtime performance starts with responsibility boundaries.",
+    "A phase is a synchronization and mutation contract, not a label.",
+    "Commands describe mutation intent; storage applies mutation at controlled boundaries.",
+    "Packed storage separates stable identity from dense iteration location.",
+    "Worker tasks need explicit read/write ownership, not access to host objects.",
+    "Single-thread mode remains a permanent correctness, profiling, and debugging asset.",
+    "Parallel speedup is valid only after snapshot, barrier, commit, and publish rules are clear.",
+    "Diagnostics should observe the runtime without becoming hidden execution policy."
+  ],
+  "constraints": [
+    "Do not bypass command boundaries for convenience in performance-sensitive runtime code.",
+    "Do not perform structural mutation from worker tasks.",
+    "Do not let core runtime depend on Unity types, GameObjects, Transforms, renderers, or host state.",
+    "Do not add scheduler sophistication before workload shape, ownership, and measurement justify it.",
+    "Do not optimize for average throughput while ignoring frame spikes, backlog, and tail latency.",
+    "Do not allow optional integrations such as rendering or GPU paths to define the core runtime identity."
+  ],
+  "decision_rules": [
+    "Use runtime-performance-architecture when several performance concerns meet: phases, storage, scheduler, synchronization, diagnostics, and host boundary.",
+    "Attach scheduler when task granularity, dispatch mode, chunking, worker utilization, barriers, or reductions are in scope.",
+    "Attach data-oriented-design when packed storage, hot/cold layout, handle/index separation, or range traversal is in scope.",
+    "Attach measurement-profiling whenever the bottleneck is not yet evidence-backed.",
+    "Attach contention-shaping when scaling collapses around shared writes, locks, queues, or reductions.",
+    "Attach work-budgeting when frame responsiveness, backlog, burst workloads, or phase budgets are in scope.",
+    "Attach memory-arenas when phase-local scratch, transient buffers, or reset-at-boundary memory is in scope."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "small public lifecycle facade with explicit runtime core behind it",
+      "phase pipeline with collect, lifecycle, compute, prepare, submit, and diagnostics boundaries",
+      "command queues for mutation intent and controlled application windows",
+      "packed storage with handles, slot reuse, generation checks, dense iteration, and diagnostics",
+      "range, tiled, grouped, island, reduction, and barrier task categories",
+      "capture/compute/barrier/commit-publish/submit synchronization sequence",
+      "Unity host adapters that consume published state instead of controlling compute order",
+      "synthetic stress modules plus realistic workload probes for scheduler validation"
+    ],
+    "avoid_patterns": [
+      "one giant runtime manager that owns lifecycle, domain logic, storage, scheduling, and rendering",
+      "worker tasks reading Unity objects or host-owned mutable state",
+      "structural mutation hidden inside compute tasks",
+      "object-per-entity hot paths when dense storage and ranges are available",
+      "scheduler complexity that outgrows validated workload needs",
+      "diagnostics that force synchronization or change the execution model by default"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Review a CPU-first runtime for performance readiness",
+      "when": "Use when evaluating or designing a custom runtime that should offload heavy Unity-hosted computation.",
+      "steps": [
+        "Identify the public host facade and verify it is only a lifecycle gateway.",
+        "List runtime phases and the responsibility of each phase.",
+        "Identify all structural mutation windows and confirm they are command-controlled.",
+        "Map storage identity, dense location, stale-handle protection, and compaction policy.",
+        "Map task types and the ownership rules each task must obey.",
+        "Verify synchronization boundaries before published state reaches host systems.",
+        "Check diagnostics coverage for phase cost, worker utilization, storage growth, and validation failures."
+      ]
+    },
+    {
+      "name": "Move Unity main-thread work into runtime phases",
+      "when": "Use when a Unity project has heavy gameplay or simulation work that should no longer live directly in MonoBehaviour update logic.",
+      "steps": [
+        "Capture host inputs into runtime-owned snapshots.",
+        "Queue mutation intent instead of mutating runtime state directly from Unity code.",
+        "Run heavy compute in fixed or variable runtime phases with explicit ownership.",
+        "Publish stable outputs after barrier and commit boundaries.",
+        "Let Unity adapters consume published payloads during submit or host handoff.",
+        "Measure main-thread cost before and after the boundary change."
+      ]
+    },
+    {
+      "name": "Validate multithreaded runtime scaling",
+      "when": "Use when adding or reviewing worker execution for a CPU simulation runtime.",
+      "steps": [
+        "Keep single-thread mode as the reference path.",
+        "Define range ownership, write policy, and reduction merge contract.",
+        "Add barriers before any observation of computed results.",
+        "Run deterministic comparisons between single-thread and worker execution.",
+        "Measure worker utilization, planning cost, reduction commit cost, and imbalance.",
+        "Prefer workload reshaping over scheduler complexity if scaling is poor."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating Unity as the runtime instead of the host.",
+    "Adding multithreading before mutation and storage ownership are disciplined.",
+    "Optimizing the scheduler while storage layout still causes scattered access.",
+    "Publishing partial worker state to host systems before commit boundaries.",
+    "Benchmarking only synthetic load and missing realistic workload behavior.",
+    "Letting optional rendering, overlay, or GPU integration leak into core runtime rules."
+  ],
+  "review_checklist": [
+    "Is the runtime identity CPU-first, deterministic, and simulation/compute oriented?",
+    "Are lifecycle, phases, commands, storage, scheduler, diagnostics, and host boundary separate?",
+    "Are structural mutations limited to explicit command/lifecycle windows?",
+    "Can hot data be traversed densely by range tasks?",
+    "Can single-thread and worker execution be compared deterministically?",
+    "Are barriers, reductions, commit, publish, and submit boundaries explicit?",
+    "Do diagnostics expose phase cost, worker utilization, storage churn, contention, and backlog?",
+    "Do integrations consume published state without controlling core execution?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Performance Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/performance/references/runtime-performance-architecture.md",
+      "interpretation": "Use this first for CPU-first runtime performance architecture, phase discipline, command mutation, scheduler/storage boundaries, and Unity host separation.",
+      "why": "It captures the domain's top-level DOP-derived performance lens."
+    },
+    {
+      "title": "Runtime Synchronization Contract",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/performance/references/runtime-synchronization.md",
+      "interpretation": "Use when worker execution, snapshots, barriers, commit/publish, or host handoff are in scope.",
+      "why": "Parallel performance is invalid without explicit synchronization ownership."
+    },
+    {
+      "title": "Performance Benchmarking And Workloads",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/performance/references/runtime-benchmarking.md",
+      "interpretation": "Use when comparing single-thread, worker policies, synthetic stress, and realistic workload probes.",
+      "why": "Runtime performance needs both controlled stress and real workload validation."
+    }
+  ]
+}

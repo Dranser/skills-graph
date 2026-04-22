@@ -3,6 +3,7 @@
   "kind": "domain_manifest",
   "domain": "performance",
   "files": [
+    "runtime-performance-architecture",
     "memory-management",
     "cache-optimization",
     "data-oriented-design",

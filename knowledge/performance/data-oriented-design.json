@@ -34,6 +34,25 @@
     "IMGUI rendering",
     "assembly metadata parsing"
   ],
+  "rules": [
+    "shape data around the real access pattern",
+    "separate logical identity from dense execution location when needed",
+    "prefer contiguous traversal for hot paths",
+    "split hot and cold state when the workload justifies it",
+    "keep staging, invalidation, and ownership boundaries explicit"
+  ],
+  "procedure": [
+    "Identify the workload, hot fields, and traversal order.",
+    "Classify data as hot, cold, identity, derived, scratch, or published output.",
+    "Choose packed, staged, split, indexed, or sparse representation based on access pattern.",
+    "Define update, invalidation, and recompute boundaries.",
+    "Validate traversal cost, cache behavior, and ownership clarity."
+  ],
+  "output": [
+    "data layout and traversal contract",
+    "hot/cold split or staging plan",
+    "data-oriented ownership and invalidation review"
+  ],
   "dependencies": {
     "hard": [
       "cache-optimization",

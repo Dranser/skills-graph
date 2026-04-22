@@ -35,6 +35,25 @@
     "assembly dumps",
     "neural architecture definitions"
   ],
+  "rules": [
+    "align task execution with runtime phases",
+    "keep task ownership, read sets, write sets, and synchronization explicit",
+    "keep single-thread execution as a valid reference path",
+    "do not add worker complexity before workload shape justifies it",
+    "measure dispatch, planning, utilization, imbalance, and reduction cost"
+  ],
+  "procedure": [
+    "Identify the phase and work category: serial, range, tiled, grouped, island, reduction, or barrier.",
+    "Define range length, chunk policy, ownership units, write policy, and minimum useful parallel size.",
+    "Choose serial or parallel execution from workload size, relative cost, and worker count.",
+    "Validate disjoint writes, barriers, reductions, and deterministic equivalence.",
+    "Measure worker utilization, dispatch overhead, planning cost, and phase impact."
+  ],
+  "output": [
+    "scheduler task contract",
+    "dispatch and chunking policy",
+    "worker ownership and synchronization review"
+  ],
   "dependencies": {
     "hard": [
       "data-oriented-design",

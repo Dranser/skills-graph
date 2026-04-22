@@ -33,6 +33,25 @@
     "IMGUI",
     "raw metadata parsing"
   ],
+  "rules": [
+    "name the hot traversal before changing layout",
+    "optimize access order and ownership before instruction-level tweaks",
+    "treat false sharing as a write-ownership problem",
+    "preserve semantic and phase boundaries while improving locality",
+    "measure cache-sensitive changes against the real workload"
+  ],
+  "procedure": [
+    "Identify the hot loop or worker range.",
+    "Map read and write order to physical layout.",
+    "Check hot/cold mixing, pointer chasing, and cross-thread write adjacency.",
+    "Choose traversal reorder, staging, partitioning, or layout change.",
+    "Re-measure locality-sensitive pass cost and scaling behavior."
+  ],
+  "output": [
+    "hot traversal and locality map",
+    "cache-aware layout or traversal change",
+    "false-sharing and write-ownership review"
+  ],
   "dependencies": {
     "hard": [
       "data-oriented-design"

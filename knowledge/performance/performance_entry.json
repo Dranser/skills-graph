@@ -4,6 +4,7 @@
   "title": "Performance Domain Entry",
   "domain": "performance",
   "entry_points": [
+    "runtime-performance-architecture",
     "scheduler",
     "data-oriented-design",
     "memory-management",
@@ -14,6 +15,15 @@
     "contention-shaping"
   ],
   "signals": [
+    "runtime performance",
+    "cpu runtime",
+    "simulation runtime",
+    "deterministic runtime",
+    "phase pipeline",
+    "command controlled mutation",
+    "packed storage",
+    "worker ownership",
+    "runtime synchronization",
     "performance",
     "cpu",
     "memory",
@@ -45,6 +55,10 @@
     "backpressure"
   ],
   "use_for": [
+    "CPU-first runtime performance architecture",
+    "deterministic simulation runtime design",
+    "phase, command, storage, scheduler, and diagnostics performance contracts",
+    "Unity-hosted runtime optimization with Unity kept at the host boundary",
     "performance-oriented architecture",
     "throughput and latency tradeoff analysis",
     "work budget design",
@@ -68,6 +82,7 @@
     "assembly analysis as a primary owner"
   ],
   "priority_order": [
+    "runtime-performance-architecture",
     "scheduler",
     "work-budgeting",
     "measurement-profiling",

@@ -47,6 +47,37 @@
         ]
       }
     },
+    "code-maintenance": {
+      "bug-investigation": {
+        "hard": [],
+        "optional": [
+          "refactoring",
+          "measurement-profiling",
+          "diagnostics"
+        ],
+        "contextual": [
+          "runtime-lifecycle",
+          "contracts",
+          "stage-contracts",
+          "dataflow-state"
+        ]
+      },
+      "refactoring": {
+        "hard": [],
+        "optional": [
+          "bug-investigation",
+          "contracts",
+          "diagnostics",
+          "measurement-profiling"
+        ],
+        "contextual": [
+          "runtime-lifecycle",
+          "composition-boundaries",
+          "stage-contracts",
+          "dataflow-state"
+        ]
+      }
+    },
     "data-oriented-pipeline": {
       "pipeline-architecture": {
         "hard": [
@@ -393,6 +424,27 @@
       }
     },
     "performance": {
+      "runtime-performance-architecture": {
+        "hard": [
+          "scheduler",
+          "data-oriented-design",
+          "measurement-profiling"
+        ],
+        "optional": [
+          "memory-management",
+          "memory-arenas",
+          "contention-shaping",
+          "work-budgeting",
+          "cache-optimization"
+        ],
+        "contextual": [
+          "pipeline-architecture",
+          "execution-model",
+          "stage-contracts",
+          "diagnostics",
+          "runtime-lifecycle"
+        ]
+      },
       "memory-management": {
         "hard": [],
         "optional": [

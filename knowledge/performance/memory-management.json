@@ -35,6 +35,25 @@
     "loader bootstrap",
     "metadata parsing"
   ],
+  "rules": [
+    "make ownership, lifetime, reset, and release responsibility explicit",
+    "reduce hot-path transient allocations before adding broad pooling",
+    "separate pass-local, short-lived, and long-lived memory",
+    "bound retained capacity and expose growth behavior",
+    "prefer measured allocation pressure over allocation-count folklore"
+  ],
+  "procedure": [
+    "Identify the allocation site, owner, lifetime, and hotness.",
+    "Classify memory as pass-local scratch, reusable short-lived object, long-lived state, or cold allocation.",
+    "Choose reuse, pooling, arena, or no change based on measured cost and lifetime stability.",
+    "Define reset, shrink, ownership transfer, and stale-state rules.",
+    "Re-measure allocation pressure, retained memory, and total runtime cost."
+  ],
+  "output": [
+    "memory ownership and lifetime policy",
+    "allocation reduction or reuse plan",
+    "bounded pool, buffer, or arena guidance"
+  ],
   "dependencies": {
     "hard": [],
     "optional": [

@@ -1,0 +1,206 @@
+{
+  "id": "bug-investigation",
+  "kind": "skill",
+  "title": "Bug Investigation",
+  "domain": "code-maintenance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "bug",
+      "error",
+      "regression",
+      "failing test",
+      "broken behavior",
+      "root cause",
+      "investigate failure",
+      "debug"
+    ],
+    "weak": [
+      "exception",
+      "incorrect state",
+      "does not work",
+      "unexpected behavior",
+      "bisect",
+      "reproduce"
+    ]
+  },
+  "use_for": [
+    "investigating failing behavior in existing code",
+    "localizing regressions and root causes",
+    "building reproduction and validation paths",
+    "separating symptom fixes from actual causes",
+    "fixing bugs with minimal scoped changes"
+  ],
+  "do_not_use_for": [
+    "broad redesign without a concrete failure",
+    "new feature implementation as the primary task",
+    "performance tuning without incorrect behavior",
+    "assembly reverse engineering as the primary owner"
+  ],
+  "rules": [
+    "start from the observable failure before changing code",
+    "separate symptom, trigger, root cause, and blast radius",
+    "prefer narrow evidence-backed fixes over speculative rewrites",
+    "protect existing user changes and avoid unrelated cleanup",
+    "validate the exact failure path and at least one nearby regression risk"
+  ],
+  "procedure": [
+    "Capture the failure signal: test, exception, log, user action, bad output, or broken state.",
+    "Reproduce or approximate the failure with the smallest available path.",
+    "Trace ownership, data flow, lifecycle, and recent changes around the failing path.",
+    "Form a concrete hypothesis that explains both why the bug happens and why it was not caught earlier.",
+    "Patch the smallest code path that removes the root cause.",
+    "Run targeted validation and inspect whether adjacent contracts still hold.",
+    "Report cause, fix, verification, and residual risk."
+  ],
+  "output": [
+    "root-cause explanation",
+    "scoped bug fix",
+    "targeted validation result",
+    "residual risk or follow-up notes"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "refactoring",
+      "measurement-profiling",
+      "diagnostics"
+    ],
+    "contextual": [
+      "runtime-lifecycle",
+      "contracts",
+      "stage-contracts",
+      "dataflow-state"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about a bug, failing test, exception, broken behavior, regression, or incorrect output",
+      "the user asks to investigate why something fails before deciding the fix"
+    ],
+    "must_not_own_when": [
+      "the request is mostly a planned refactor with no failing behavior",
+      "the primary work is a specialized domain task and debugging is only a support step"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to investigate failures in unfamiliar or evolving codebases without guessing",
+      "how to avoid fixing only symptoms",
+      "how to keep bug fixes small enough to validate and review"
+    ],
+    "does_not_solve": [
+      "large architectural simplification without a concrete failure",
+      "open-ended quality cleanup",
+      "feature design unrelated to a failing path"
+    ]
+  },
+  "core_principles": [
+    "A bug fix starts with a failure contract: what should happen, what happens, and where the mismatch appears.",
+    "The first useful artifact is often a narrow reproduction, not a patch.",
+    "Root cause must explain the trigger and the observed symptom.",
+    "Fixes should be as narrow as the cause allows, but broad enough to restore the violated contract.",
+    "Validation must target the failure path, not only compilation."
+  ],
+  "constraints": [
+    "Do not rewrite broad subsystems while investigating a localized bug unless the evidence forces it.",
+    "Do not delete suspicious code until its callers, lifecycle, and side effects are understood.",
+    "Do not assume comments, names, or intended architecture are current.",
+    "Do not treat absence of failing tests as evidence that the bug is fixed.",
+    "Do not ignore dirty worktree changes that affect the failing path."
+  ],
+  "decision_rules": [
+    "If the failure is reproducible, preserve the reproduction until after the fix is validated.",
+    "If the failure is not reproducible, collect logs, state snapshots, call paths, and invariants before editing.",
+    "If multiple causes are possible, instrument or inspect the boundary that distinguishes them.",
+    "If a fix touches lifecycle, storage, scheduling, or integration boundaries, validate at that boundary as well as the symptom.",
+    "If investigation reveals stale code or overengineering as the cause, attach refactoring but keep the first fix scoped."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "failure-to-contract mapping",
+      "call graph and dataflow tracing from symptom to owner",
+      "small reproduction or characterization test before patching",
+      "minimal root-cause patch with targeted regression validation",
+      "explicit residual-risk note when validation cannot cover the whole blast radius"
+    ],
+    "avoid_patterns": [
+      "shotgun edits across unrelated files",
+      "renaming and cleanup mixed into bug fixes",
+      "fixing the most visible symptom without explaining the invalid state",
+      "deleting code because it looks unused without reachability checks",
+      "trusting stale architecture docs over current call paths"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Narrow a regression",
+      "when": "Use when behavior recently broke or a test started failing.",
+      "steps": [
+        "Identify the last known expected behavior and current failing behavior.",
+        "Find the smallest input, test, scene, command, or path that shows the failure.",
+        "Trace recent changes or call paths that touch the failing contract.",
+        "Check whether stale adapters, lifecycle hooks, cached state, or removed feature remnants still execute.",
+        "Patch the root cause and rerun the failing path plus adjacent validation."
+      ]
+    },
+    {
+      "name": "Investigate an unknown runtime failure",
+      "when": "Use when there is an exception, broken state, or user-reported behavior without a clear owner.",
+      "steps": [
+        "Capture stack trace, logs, state snapshot, and triggering action.",
+        "Identify the boundary where valid input becomes invalid state.",
+        "Inspect ownership and lifecycle rules around that boundary.",
+        "Add temporary diagnostics only if static inspection cannot distinguish hypotheses.",
+        "Remove or gate temporary diagnostics after the fix unless they are useful permanent validation."
+      ]
+    },
+    {
+      "name": "Validate a bug fix",
+      "when": "Use before considering a defect resolved.",
+      "steps": [
+        "Run the original failing path.",
+        "Run the closest existing automated test or smoke path.",
+        "Check one adjacent contract that could regress from the patch.",
+        "Inspect logs or diagnostics for hidden exceptions.",
+        "State what was not validated if a full feedback path is unavailable."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Assuming the first suspicious line is the root cause.",
+    "Making the failure disappear by bypassing the contract that should have held.",
+    "Mixing large refactors with bug fixes and losing causal clarity.",
+    "Ignoring deleted-feature remnants because they compile cleanly.",
+    "Trusting cached or published state without checking where it was produced."
+  ],
+  "review_checklist": [
+    "Is the failure contract clear?",
+    "Is there a reproduction or a documented approximation?",
+    "Does the root cause explain the symptom and trigger?",
+    "Is the fix scoped to the violated contract?",
+    "Were adjacent lifecycle, dataflow, or integration boundaries checked?",
+    "Is residual risk stated if validation is incomplete?"
+  ],
+  "references": [
+    {
+      "title": "Bug Investigation",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/code-maintenance/references/bug-investigation.md",
+      "interpretation": "Use this first for root-cause workflow, reproduction strategy, and validation scope.",
+      "why": "It defines how to investigate failures without guessing."
+    },
+    {
+      "title": "Stale Coupling Audit",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/code-maintenance/references/stale-coupling-audit.md",
+      "interpretation": "Use when removed features, obsolete adapters, or hidden old links may be causing regressions.",
+      "why": "Stale code often compiles while still influencing runtime behavior."
+    }
+  ]
+}

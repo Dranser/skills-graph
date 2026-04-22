@@ -10,6 +10,14 @@
         "integration-surface-mapping.json"
       ]
     },
+    "code-maintenance": {
+      "entry": "knowledge/code-maintenance/code-maintenance_entry.json",
+      "manifest": "knowledge/code-maintenance/code-maintenance_manifest.json",
+      "skills": [
+        "bug-investigation.json",
+        "refactoring.json"
+      ]
+    },
     "data-oriented-pipeline": {
       "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
       "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
@@ -72,6 +80,7 @@
       "entry": "knowledge/performance/performance_entry.json",
       "manifest": "knowledge/performance/performance_manifest.json",
       "skills": [
+        "runtime-performance-architecture.json",
         "cache-optimization.json",
         "data-oriented-design.json",
         "memory-management.json",
