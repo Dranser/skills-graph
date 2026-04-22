@@ -23,10 +23,14 @@
   "use_for": [
     "designing tool windows, popups, overlays, and panel hosts in IMGUI",
     "defining window lifetime, identity, and registration",
-    "planning dock-like or multi-panel host structures"
+    "planning dock-like or multi-panel host structures",
+    "defining host-level focus, restore, and placement policy for multiple windows"
   ],
   "do_not_use_for": [
     "single-widget concerns",
+    "base window shell composition",
+    "header or sidebar module composition",
+    "content-host structure inside one window shell",
     "generic application bootstrap",
     "pure style topics"
   ],
@@ -67,7 +71,7 @@
     "can_be_primary": true,
     "default_mode": "support",
     "primary_when": [
-      "the request is specifically about IMGUI window hosts, popups, overlays, or dock-like UI composition"
+      "the request is specifically about IMGUI window hosts, popups, overlays, host registries, or dock-like host composition"
     ],
     "must_not_own_when": [
       "the request is mainly about generic IMGUI architecture or event mechanics"
@@ -76,9 +80,11 @@
   "problem_space": {
     "solves": [
       "how tool windows and panels are created, owned, and restored",
-      "how to organize multi-window IMGUI tooling without hidden orchestration"
+      "how to organize multi-window IMGUI tooling without hidden orchestration",
+      "how host-level focus, placement, and restore rules stay explicit across multiple windows"
     ],
     "does_not_solve": [
+      "single-window shell composition",
       "fine-grained widget rendering",
       "global diagnostics systems"
     ]
@@ -95,6 +101,7 @@
   ],
   "decision_rules": [
     "Use a registry when more than one tool window or popup participates in shared focus and placement.",
+    "Let imgui-modular-windowing own reusable shell composition inside one window; use this skill for host-level lifetime and registration.",
     "Keep overlays lightweight and clearly subordinate to their host window.",
     "Avoid generalized docking abstractions if the tool only needs a few known panel arrangements."
   ],
@@ -106,6 +113,7 @@
     ],
     "avoid_patterns": [
       "window creation hidden inside feature draw calls",
+      "mixing shell-module composition rules into host-registry concerns",
       "dock-like containers with hidden mutation rules",
       "window lifetime inferred solely from current event"
     ]
@@ -129,6 +137,7 @@
   "review_checklist": [
     "Is there a clear owner for each window and popup?",
     "Are identity and restore rules explicit?",
+    "Are host-level lifetime rules separated from single-window shell composition?",
     "Is dock-like behavior data-driven rather than hidden?",
     "Can focus and close behavior be traced at the host level?"
   ],

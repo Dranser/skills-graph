@@ -1,0 +1,184 @@
+{
+  "id": "imgui-modular-windowing",
+  "kind": "skill",
+  "title": "IMGUI Modular Windowing",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "modular window",
+      "window shell",
+      "header",
+      "context view",
+      "sidebar"
+    ],
+    "weak": [
+      "widget",
+      "hud",
+      "title bar",
+      "body layout",
+      "context switching"
+    ]
+  },
+  "use_for": [
+    "designing retained window and widget shells for an IMGUI-based framework",
+    "defining reusable base windows with optional header and injected content hosts",
+    "planning sidebar-driven context switching inside modular IMGUI window structures",
+    "defining single-window shell composition independently from host registry policy"
+  ],
+  "do_not_use_for": [
+    "uGUI prefab architecture",
+    "window registry ownership",
+    "host-level focus or restore policy",
+    "multi-window lifetime orchestration",
+    "generic app bootstrap",
+    "pure input routing tasks"
+  ],
+  "rules": [
+    "build modular windows over IMGUI using retained shell state and explicit geometry resolution",
+    "treat Window and Widget as separate framework primitives because their structure and adaptation needs differ",
+    "treat modular attachment of Header, Sidebar, ContextView, and nested Vertical/Horizontal layout regions as the primary mechanism of extensible shell composition",
+    "make Header optional but supported by the base shell contract",
+    "make ContextView the main injected content host of the shell body",
+    "treat Sidebar as an optional body module rather than as a separate window system"
+  ],
+  "procedure": [
+    "Classify the unit as Window or Widget.",
+    "Define the shell regions and which are optional.",
+    "Define how the shell hosts title, actions, and body content.",
+    "Define how context content is injected into the shell.",
+    "Define whether sidebar-driven context switching belongs in the body composition."
+  ],
+  "output": [
+    "window shell contract",
+    "widget contract",
+    "header and context host model",
+    "sidebar composition rules"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-layout-composition",
+      "imgui-state-model"
+    ],
+    "optional": [
+      "imgui-adaptive-layout"
+    ],
+    "contextual": [
+      "imgui-windowing"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about reusable base windows, widgets, headers, sidebars, or dynamic content hosting inside an IMGUI window shell"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about generic IMGUI event phases or input routing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to define a reusable base window shell in a custom IMGUI framework",
+      "how to separate shell structure from feature-specific content",
+      "how to keep context switching modular through sidebar and content-host composition",
+      "how to distinguish full windows from lightweight widgets"
+    ],
+    "does_not_solve": [
+      "window registry and restore policy across multiple windows",
+      "host-level focus orchestration",
+      "low-level IMGUI event mechanics",
+      "uGUI component usage",
+      "rendering backend details"
+    ]
+  },
+  "core_principles": [
+    "The base shell should own structure, while feature modules own only injected content.",
+    "Extensible shell composition should happen by attaching Header, Sidebar, ContextView, and nested layout regions as explicit modules.",
+    "Header is a shell concern for title and top-level actions, not the owner of business content.",
+    "ContextView is the core extension point for replacing or switching active content.",
+    "Sidebar is a body-level navigation module, not a separate window category.",
+    "Widgets should remain lighter than full windows even when they share shell concepts."
+  ],
+  "constraints": [
+    "The shell must remain valid with or without Header.",
+    "Context injection must not require changing shell structure.",
+    "Window shells must support both plain content and sidebar-plus-content body arrangements.",
+    "Widgets must not inherit unnecessary window-level complexity."
+  ],
+  "decision_rules": [
+    "Use Window when the UI unit owns a scenario, navigation, or multiple content contexts.",
+    "Use Widget when the unit is HUD-like, embedded, or structurally minimal.",
+    "Let imgui-windowing own registry, focus, restore, and placement across multiple windows.",
+    "Extend one shell by attaching Header, Sidebar, ContextView, and nested layout regions instead of forking new shell types.",
+    "Keep title and header actions in Header rather than mixing them into context content.",
+    "Place sidebar beside the content host inside the body when context switching matters.",
+    "Reuse one shell contract across contexts and replace only the hosted content."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "retained window shell with background, header slot, and body slot",
+      "dedicated content host inside the shell body",
+      "optional sidebar composed as a sibling of the context host",
+      "nested Vertical/Horizontal layout regions as modular shell-extension points",
+      "separate Window and Widget contracts with related but different policies",
+      "shell-driven geometry and feature-driven content injection"
+    ],
+    "avoid_patterns": [
+      "duplicating whole window structures for each context",
+      "mixing host-registry rules into shell composition logic",
+      "placing feature-specific logic directly in the shell",
+      "making sidebar mandatory for all windows",
+      "treating widgets as just undersized windows with all the same obligations"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define a modular retained window shell over IMGUI",
+      "when": "Use when multiple contexts should share one structural window contract.",
+      "steps": [
+        "Define the background and root shell regions.",
+        "Add an optional header region for title and top-level actions.",
+        "Define the body with a dedicated content host.",
+        "When needed, split the body into sidebar and content-host regions.",
+        "Use nested Vertical and Horizontal layout regions to extend the shell without changing its base contract.",
+        "Keep context-specific content injected through the host contract instead of changing shell identity."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating modular windows as scene-specific one-offs.",
+    "Coupling context content directly to shell structure.",
+    "Making widgets carry full window responsibilities.",
+    "Using sidebar as a separate architectural system instead of a body module."
+  ],
+  "review_checklist": [
+    "Is the shell clearly built over IMGUI rather than uGUI components?",
+    "Are Window and Widget distinct where their needs differ?",
+    "Is shell composition kept separate from host registry and restore policy?",
+    "Are Header, Sidebar, ContextView, and nested layout regions treated as the main shell-extension mechanism?",
+    "Is Header optional and structurally native to the shell?",
+    "Is ContextView the stable host for dynamic content?",
+    "Can Sidebar be added without redefining the base window contract?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI uGUI-Inspired Composition",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-ugui-inspired-composition.md",
+      "interpretation": "Use this first for modular window shells, widget distinction, and header plus sidebar plus content-host composition in an IMGUI-based framework.",
+      "why": "Use as the primary local guidance for the modular windowing extension."
+    },
+    {
+      "title": "Local Reference: IMGUI Composition",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/unity-ui/references/imgui-composition.md",
+      "interpretation": "Use this to align the new modular shell model with the domain's existing IMGUI host and slot composition guidance.",
+      "why": "Use to keep the modular windowing extension coherent with the rest of the IMGUI domain."
+    }
+  ]
+}

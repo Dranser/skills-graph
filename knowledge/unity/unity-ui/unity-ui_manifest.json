@@ -3,6 +3,9 @@
   "kind": "domain_manifest",
   "domain": "unity-ui",
   "files": [
+    "imgui-container-composition",
+    "imgui-adaptive-layout",
+    "imgui-modular-windowing",
     "imgui-core",
     "imgui-state-model",
     "imgui-layout-composition",

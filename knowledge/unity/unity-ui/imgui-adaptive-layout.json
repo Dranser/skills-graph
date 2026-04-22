@@ -1,0 +1,170 @@
+{
+  "id": "imgui-adaptive-layout",
+  "kind": "skill",
+  "title": "IMGUI Adaptive Layout",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "anchors",
+      "alignment",
+      "adaptive scale",
+      "resolution adaptation",
+      "reference resolution",
+      "ugui inspired"
+    ],
+    "weak": [
+      "widget sizing",
+      "max size",
+      "scale policy",
+      "size bounds"
+    ]
+  },
+  "use_for": [
+    "designing adaptation policy for IMGUI layout systems that borrow useful ideas from uGUI without using uGUI components",
+    "defining anchor-like placement, alignment, and scaling rules over manually computed IMGUI geometry",
+    "defining size constraints and adaptive scaling policies for windows and widgets across resolutions"
+  ],
+  "do_not_use_for": [
+    "uGUI runtime architecture",
+    "Canvas or RectTransform usage",
+    "panel composition structure",
+    "window slot decomposition",
+    "style-only tasks",
+    "input-only routing tasks"
+  ],
+  "rules": [
+    "treat uGUI only as a design reference, not as an implementation dependency",
+    "apply adaptation policy over retained IMGUI layout intent and explicit host geometry",
+    "treat anchors, alignment, and scale policy as separate concerns",
+    "do not let adaptation policy redefine the composition tree",
+    "allow smaller resolutions to reduce effective maximum component size rather than only applying uniform shrink"
+  ],
+  "procedure": [
+    "Start from an already defined layout structure.",
+    "Define root-host attachment semantics and local alignment semantics separately.",
+    "Define scaling rules and size bounds for each major shell region and component type.",
+    "Validate that nested layouts and adaptive rules stay deterministic across IMGUI phases."
+  ],
+  "output": [
+    "IMGUI adaptation model",
+    "anchor and alignment semantics",
+    "adaptive scale policy",
+    "size-bound rules across resolutions"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-layout-composition",
+      "imgui-state-model"
+    ],
+    "optional": [
+      "imgui-modular-windowing"
+    ],
+    "contextual": [
+      "imgui-performance"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about adaptive layout, anchor-like placement, scaling policy, or size bounds in an IMGUI framework"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about overall IMGUI framework ownership or input routing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to borrow the strongest layout ideas from uGUI while staying inside an IMGUI-based framework",
+      "how to keep adaptation policy separate from composition structure",
+      "how to adapt windows and widgets to multiple resolutions without relying on Unity retained UI components"
+    ],
+    "does_not_solve": [
+      "uGUI scene hierarchy design",
+      "UI Toolkit layout",
+      "low-level rendering code"
+    ]
+  },
+  "core_principles": [
+    "Use IMGUI as the rendering and event foundation, but keep layout intent retained and explicit.",
+    "Represent anchor-like placement, alignment, and scaling as framework concepts rather than Unity component dependencies.",
+    "Apply adaptation only after structure is known.",
+    "Adaptation must control both placement and bounded size, not just global scale.",
+    "Window shells and compact widgets may share one layout grammar while keeping different size policies."
+  ],
+  "constraints": [
+    "The framework must not depend on Canvas, RectTransform, or LayoutGroup components.",
+    "Layout intent must remain stable across IMGUI passes even when geometry is recomputed.",
+    "Adaptation policy must not mutate structural slot ownership.",
+    "Scaling rules must permit reduced effective maxima on smaller resolutions.",
+    "Anchor-like semantics must stay simple enough to reason about during review."
+  ],
+  "decision_rules": [
+    "Use anchor-like rules for host attachment semantics, not as a substitute for composition structure.",
+    "Let imgui-layout-composition own shell and panel structure; use this skill to adapt that structure across resolutions.",
+    "Apply scaling after structural layout intent is resolved, not before structure exists.",
+    "Constrain windows and widgets through min, preferred, and max size thinking where density matters.",
+    "Prefer one shared layout grammar for windows and widgets, with different policies rather than unrelated systems."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "retained layout tree adapted after structural resolution",
+      "framework-owned anchor and alignment semantics",
+      "resolution-aware size policies for shell regions and components",
+      "explicit separation of layout resolution and draw execution"
+    ],
+    "avoid_patterns": [
+      "direct dependence on uGUI runtime components",
+      "adaptation helpers that also decide composition structure",
+      "uniform scale-only adaptation with no size ceilings",
+      "mixing structural layout intent with immediate draw-time side effects"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a uGUI-inspired adaptive layout layer over IMGUI",
+      "when": "Use when the framework needs predictable composition and adaptation without using uGUI itself.",
+      "steps": [
+        "Start from the retained layout tree defined by the framework.",
+        "Define how anchor-like placement and local alignment apply to that tree.",
+        "Apply adaptive scaling and size bounds per region or component category.",
+        "Feed the resulting geometry into deterministic IMGUI draw passes."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating uGUI as a runtime dependency instead of a conceptual reference.",
+    "Collapsing anchors, alignment, sizing, and scaling into one opaque layout helper.",
+    "Letting adaptation logic rewrite structural composition rules.",
+    "Leaving size ceilings undefined so small resolutions break readability.",
+    "Encoding adaptation only in feature-specific Rect math with no shared policy."
+  ],
+  "review_checklist": [
+    "Is uGUI treated only as inspiration rather than dependency?",
+    "Is adaptation policy clearly separated from composition structure?",
+    "Are anchors, alignment, and scale policy separated clearly?",
+    "Can lower resolutions reduce effective maximum component size?",
+    "Can the same composition tree survive across resolutions with only policy changes?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI uGUI-Inspired Composition",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-ugui-inspired-composition.md",
+      "interpretation": "Use this first for the domain's stance that IMGUI remains the implementation base while uGUI contributes only reference concepts for adaptive layout and modular shell composition.",
+      "why": "Use as the primary local summary for adaptive retained layout concepts built over IMGUI."
+    },
+    {
+      "title": "Unity Manual: IMGUI Layout Modes",
+      "type": "official-doc",
+      "priority": "baseline-only",
+      "url": "https://docs.unity3d.com/cn/2018.3/Manual/gui-Layout.html",
+      "interpretation": "Use this to understand baseline IMGUI layout capabilities, not as the full framework architecture.",
+      "why": "Use as the baseline on what IMGUI provides before the custom framework adds retained layout semantics."
+    }
+  ]
+}

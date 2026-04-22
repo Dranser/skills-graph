@@ -1,0 +1,177 @@
+{
+  "id": "imgui-container-composition",
+  "kind": "skill",
+  "title": "IMGUI Container Composition",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "dashboard",
+      "surface ui",
+      "ui surface",
+      "container ui",
+      "container composition"
+    ],
+    "weak": [
+      "workspace ui",
+      "panel grid",
+      "timeline view",
+      "log view",
+      "metrics panel",
+      "section container"
+    ]
+  },
+  "use_for": [
+    "designing container-first or surface-first IMGUI interfaces",
+    "structuring dashboards, workspaces, sectioned screens, and multi-panel surfaces",
+    "choosing and defining composition around containers, sections, strips, grids, and regions instead of window shells"
+  ],
+  "do_not_use_for": [
+    "host registry and multi-window lifetime policy",
+    "single-window shell composition with header or sidebar as the primary abstraction",
+    "style-only tasks",
+    "input-only routing tasks"
+  ],
+  "rules": [
+    "treat Surface and Container as first-class composition units alongside Window and Widget",
+    "use container-first composition when the UI reads as one coordinated surface rather than a set of windows",
+    "treat Window as a specialization of container composition, not the default for every screen",
+    "let imgui-layout-composition own the shared slot grammar and geometry mechanics after the container-first path has been selected",
+    "structure dashboards and workspaces through explicit sections, regions, strips, and panels",
+    "keep section and region ownership explicit across IMGUI phases"
+  ],
+  "procedure": [
+    "Decide whether the UI is surface-first, container-first, or window-first.",
+    "Define the top-level surface and its major section containers.",
+    "Assign stable regions for metrics, logs, timelines, controls, and detail areas as needed.",
+    "Resolve section composition before discussing window-shell specializations.",
+    "Verify that the screen still reads as one coherent surface rather than accidental windows."
+  ],
+  "output": [
+    "surface-first or container-first design choice",
+    "surface composition model",
+    "container and section map",
+    "region ownership rules",
+    "dashboard or workspace composition scheme"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-layout-composition",
+      "imgui-state-model"
+    ],
+    "optional": [
+      "imgui-adaptive-layout"
+    ],
+    "contextual": [
+      "imgui-performance"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about dashboards, workspaces, surfaces, or container-first IMGUI composition",
+      "the request is about sectioned interfaces where window-shell semantics are secondary or absent"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about host-level window lifetime",
+      "the request is specifically about reusable base window shells with header, sidebar, and content host"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to design IMGUI interfaces that are organized as one surface instead of a set of windows",
+      "how to keep dashboards and multi-section tools structurally coherent",
+      "how to separate container-first design choice from shared layout grammar and window-shell composition"
+    ],
+    "does_not_solve": [
+      "window registry and restore behavior",
+      "single-window shell contracts",
+      "low-level event mechanics"
+    ]
+  },
+  "core_principles": [
+    "A coordinated UI surface may be the primary unit, with windows only as optional specializations.",
+    "Containers, sections, strips, and regions should express the structure of dashboards and workspaces directly.",
+    "Surface-first composition should not be forced through window semantics when the UI does not read as windows.",
+    "This skill owns the design-path choice and semantic model of surfaces and containers, not the generic slot grammar.",
+    "Region ownership should stay explicit enough to review and evolve.",
+    "The same layout grammar can support both container-first and window-first paths."
+  ],
+  "constraints": [
+    "Surface-first composition must remain stable across IMGUI phases.",
+    "Sections and regions must have explicit ownership and geometry rules.",
+    "Container-first screens must not be back-modeled into fake windows unless the interaction model truly needs them."
+  ],
+  "decision_rules": [
+    "Use this skill when the UI is perceived as one surface with coordinated sections rather than multiple windows.",
+    "After choosing the container-first path, let imgui-layout-composition define slots, nested regions, and manual geometry rules.",
+    "Let imgui-modular-windowing own reusable shell composition when the design truly centers on a base window contract.",
+    "Let imgui-windowing own registry, focus, restore, and lifetime across multiple windows.",
+    "Use explicit containers and regions for dashboards, timelines, logs, metric strips, and workspace panels.",
+    "Attach imgui-adaptive-layout when the surface must adapt across resolutions without changing its section map."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "top-level surface with named section containers",
+      "region-based composition for dashboards and workspaces",
+      "panel grids, strips, and timelines as explicit container regions",
+      "layout grammar delegated to shared composition rules after the container path is chosen",
+      "window shells used only where shell semantics are actually needed",
+      "manual Rect geometry derived from a retained section map"
+    ],
+    "avoid_patterns": [
+      "forcing every major region into a fake window shell",
+      "treating dashboards as just tiled windows without shared surface ownership",
+      "region structure implied only by draw order",
+      "container hierarchies that hide section ownership"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Compose a diagnostics dashboard as one IMGUI surface",
+      "when": "Use when the UI is a coordinated workspace of metrics, logs, and timelines rather than a set of windows.",
+      "steps": [
+        "Define the top-level surface and section boundaries.",
+        "Assign fixed or adaptive regions for worker state, timelines, analysis, and logs.",
+        "Represent each region as a named container with explicit ownership.",
+        "Attach nested layout regions only where they clarify section composition.",
+        "Keep the overall surface coherent instead of rephrasing each region as a separate window shell."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Forcing container-first screens into window metaphors they do not need.",
+    "Treating every section header as evidence that the UI should be a window shell.",
+    "Losing shared surface ownership by modeling all regions as unrelated panels.",
+    "Letting region composition drift into draw-order-only layout."
+  ],
+  "review_checklist": [
+    "Does the UI read as one coordinated surface or workspace?",
+    "Is this skill being used to choose a container-first path rather than to replace shared layout grammar?",
+    "Are containers and sections treated as first-class composition units?",
+    "Has window-shell composition been reserved for places where shell semantics are real?",
+    "Are region boundaries and ownership explicit?",
+    "Can the section map survive without inventing fake windows?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI uGUI-Inspired Composition",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-ugui-inspired-composition.md",
+      "interpretation": "Use this first for the broader domain stance that container and surface composition can be primary even when modular window shells remain available as a specialization.",
+      "why": "Use as the local reference that connects the window-based and container-based design paths."
+    },
+    {
+      "title": "Local Reference: IMGUI Composition",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/unity-ui/references/imgui-composition.md",
+      "interpretation": "Use this to align surface and container regions with the domain's existing rules for host-owned composition and manual geometry.",
+      "why": "Use to keep container-first composition consistent with the rest of the domain."
+    }
+  ]
+}

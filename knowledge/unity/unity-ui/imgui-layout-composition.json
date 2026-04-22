@@ -23,9 +23,11 @@
     "structuring windows, panels, and nested IMGUI sections",
     "defining stable composition trees for layout and repaint",
     "creating reusable panel and widget boundaries",
-    "designing manual layout geometry instead of relying on GUILayout orchestration"
+    "designing manual layout geometry instead of relying on GUILayout orchestration",
+    "providing the shared structural grammar used by both window-first and container-first UI paths"
   ],
   "do_not_use_for": [
+    "choosing between surface-first, container-first, and window-first design paths",
     "visual theming only",
     "input-only routing tasks",
     "generic ECS layout discussions",
@@ -35,19 +37,20 @@
     "keep the composition tree stable across IMGUI phases",
     "split containers from leaf widgets",
     "assign explicit slots for optional panels",
+    "treat modular attachment of Header, Sidebar, ContextView, and nested Vertical/Horizontal layout regions as the primary mechanism of extensible shell composition",
     "prefer narrow draw contracts over broad context mutation",
     "compute framework-level layout geometry manually",
     "treat GUILayout as an exception for trivial leaf content, not as the foundation of layout composition"
   ],
   "procedure": [
-    "Define top-level window and panel regions.",
+    "Start from the chosen design path and define the required structural regions.",
     "Compute the Rect allocation strategy for major regions explicitly.",
     "Assign stable composition slots and identities.",
     "Separate container draw code from leaf widgets.",
     "Verify structure remains compatible across layout and repaint."
   ],
   "output": [
-    "window and panel composition scheme",
+    "composition grammar for regions and slots",
     "stable IMGUI layout tree",
     "widget boundary rules"
   ],
@@ -68,15 +71,16 @@
     "can_be_primary": true,
     "default_mode": "support",
     "primary_when": [
-      "the request is specifically about panel composition, layout structure, or reusable IMGUI containers"
+      "the request is specifically about layout grammar, panel composition, slot structure, or reusable IMGUI containers"
     ],
     "must_not_own_when": [
+      "the request is mainly about selecting a surface-first versus window-first design path",
       "the request is mainly about overarching IMGUI architecture or performance tuning"
     ]
   },
   "problem_space": {
     "solves": [
-      "how to decompose large IMGUI windows into maintainable parts",
+      "how to decompose large IMGUI surfaces or windows into maintainable parts",
       "how to keep layout structure predictable while supporting feature growth",
       "how to control panel geometry directly instead of delegating it to GUILayout"
     ],
@@ -87,6 +91,8 @@
   },
   "core_principles": [
     "Compose containers explicitly; do not let optional features rewrite the layout tree ad hoc.",
+    "This skill defines composition grammar and slot structure, not the higher-level choice of surface-first versus window-first design.",
+    "Extensible shell composition should be expressed through explicit Header, Sidebar, ContextView, and nested layout regions rather than ad hoc hierarchy forks.",
     "Make widget boundaries small enough to review and reuse.",
     "Favor structural predictability over clever dynamic layout generation.",
     "Treat layout as explicit geometry owned by the framework host.",
@@ -98,17 +104,20 @@
     "Automatic layout must not decide the major structure of windows, panels, and dock-like regions."
   ],
   "decision_rules": [
+    "Let imgui-container-composition choose container-first or surface-first design when that design path is itself in question.",
     "Promote repeated multi-widget sections into panel or widget contracts.",
     "Use host-managed slots for sidebars, toolbars, and content panes.",
+    "Express shell extensibility by attaching Header, Sidebar, ContextView, and nested Vertical/Horizontal regions through explicit slots.",
     "Avoid deep helper stacks if they obscure where layout groups open and close.",
     "Use manually computed Rects for host regions, split views, overlays, and reusable panel shells.",
     "Avoid GUILayout for framework-level containers because it weakens geometry control and predictability."
   ],
   "architecture_guidance": {
     "preferred_patterns": [
-      "window host plus named panel regions",
+      "named structural regions independent of whether the screen is surface-first or window-first",
       "container widgets that call leaf widgets in deterministic order",
       "composition based on explicit panel registration",
+      "nested Vertical/Horizontal layout regions used as explicit shell-composition slots",
       "manual Rect calculation for major layout regions",
       "layout helpers that return deterministic geometry instead of invoking GUILayout state"
     ],
@@ -125,9 +134,10 @@
       "name": "Compose an inspector window with sidebar and content pane",
       "when": "Use when a tool has navigation plus detailed content.",
       "steps": [
-        "Define sidebar and content as fixed composition slots.",
+        "Define the required regions as fixed composition slots.",
         "Compute their Rects explicitly from the host geometry.",
         "Drive visible content from retained selection state.",
+        "Attach Header, Sidebar, ContextView, and nested layout regions through explicit shell slots rather than ad hoc hierarchy changes.",
         "Keep each slot's draw method narrow and phase-stable."
       ]
     }
@@ -141,8 +151,10 @@
   ],
   "review_checklist": [
     "Is the layout tree stable across passes?",
+    "Is this skill being used for composition grammar rather than design-path selection?",
     "Are container and leaf responsibilities separated?",
     "Do optional panels have explicit slots?",
+    "Are Header, Sidebar, ContextView, and nested layout regions used as the primary shell-composition mechanism?",
     "Can control boundaries be traced quickly during review?",
     "Is major geometry computed manually?",
     "Has GUILayout been kept out of framework-level containers?"
@@ -153,7 +165,7 @@
       "type": "local-reference",
       "priority": "preferred",
       "path": "knowledge/unity/unity-ui/references/imgui-composition.md",
-      "interpretation": "Use this first for domain-specific composition rules, especially the preference for manual Rect-based host geometry.",
+      "interpretation": "Use this first for the domain's shared composition grammar, especially the preference for manual Rect-based host geometry.",
       "why": "Use for panel-slot composition, stable layout-tree guidance, and inspector/window patterns."
     },
     {
