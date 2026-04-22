@@ -1,0 +1,139 @@
+{
+  "id": "execution-model",
+  "kind": "skill",
+  "title": "Execution Model",
+  "domain": "data-oriented-pipeline",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "execution model",
+      "pipeline execution",
+      "stage scheduling",
+      "dispatch model"
+    ],
+    "weak": [
+      "sequential stages",
+      "parallel stages",
+      "execution order"
+    ]
+  },
+  "use_for": [
+    "choosing how stages execute once boundaries and products are defined",
+    "deciding between sequential and parallel stage execution",
+    "making runtime dispatch reflect the pipeline's data dependencies"
+  ],
+  "do_not_use_for": [
+    "basic stage splitting by itself",
+    "generic DI discussions",
+    "UI-only redraw models"
+  ],
+  "rules": [
+    "derive execution order from data dependencies",
+    "keep dispatch subordinate to stage architecture",
+    "parallelize only where dependencies and ownership allow it",
+    "prefer predictable execution over opaque opportunistic scheduling"
+  ],
+  "procedure": [
+    "Start from stage dependency graph.",
+    "Mark sequential and parallel-safe regions.",
+    "Choose dispatch policy per region.",
+    "Validate synchronization cost against throughput benefit."
+  ],
+  "output": [
+    "execution plan",
+    "stage dispatch policy",
+    "parallel-safe region map"
+  ],
+  "dependencies": {
+    "hard": [
+      "stage-boundaries"
+    ],
+    "optional": [
+      "invalidation-propagation"
+    ],
+    "contextual": [
+      "scheduler",
+      "data-oriented-design"
+    ]
+  },
+  "conflicts": [
+    "bootstrap"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about how a data-oriented pipeline should execute, dispatch, or parallelize"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about stage ownership or source-versus-derived state"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to turn a stage architecture into an execution plan",
+      "how to parallelize only the regions the data model allows"
+    ],
+    "does_not_solve": [
+      "boundary ownership by itself",
+      "retained product design by itself"
+    ]
+  },
+  "core_principles": [
+    "Execution follows data dependency, not convenience.",
+    "Parallelism is a consequence of safe boundaries, not a substitute for them.",
+    "Dispatch should stay understandable during profiling and debugging."
+  ],
+  "constraints": [
+    "Synchronization must be cheaper than the throughput it enables.",
+    "Execution order must remain explainable from the stage graph."
+  ],
+  "decision_rules": [
+    "Run sequentially by default until a stage region is proven parallel-safe.",
+    "Use scheduler support only after stage ownership and invalidation boundaries are explicit."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "dependency-driven execution order",
+      "parallel-safe regions derived from clean stage boundaries",
+      "explicit dispatch policy per stage group"
+    ],
+    "avoid_patterns": [
+      "parallelizing across unclear shared state",
+      "scheduler-first architecture before stage design exists"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Choose a dispatch model from stage dependencies",
+      "when": "Use when stage boundaries are known but runtime execution is not.",
+      "steps": [
+        "Draw the stage dependency graph.",
+        "Find independent regions that share no unsafe mutable ownership.",
+        "Assign sequential or parallel dispatch by region.",
+        "Measure whether synchronization preserves real benefit."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Designing around the scheduler before stage boundaries exist.",
+    "Assuming parallelism without proving ownership separation.",
+    "Using dispatch complexity that obscures profiling."
+  ],
+  "review_checklist": [
+    "Does execution order follow the stage graph?",
+    "Are parallel-safe regions explicit?",
+    "Is synchronization cost justified?",
+    "Can profiling still explain where work ran and why?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Execution Model",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/data-oriented-pipeline/references/execution-model.md",
+      "interpretation": "Use this first for dispatch choices derived from stage dependencies and ownership clarity.",
+      "why": "Use as the primary local guide for pipeline execution planning."
+    }
+  ]
+}

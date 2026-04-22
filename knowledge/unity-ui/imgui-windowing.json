@@ -1,0 +1,152 @@
+{
+  "id": "imgui-windowing",
+  "kind": "skill",
+  "title": "IMGUI Windowing",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "windowing",
+      "tool window",
+      "panel host",
+      "popup",
+      "overlay"
+    ],
+    "weak": [
+      "dock-like ui",
+      "window registry",
+      "window lifetime",
+      "floating panel"
+    ]
+  },
+  "use_for": [
+    "designing tool windows, popups, overlays, and panel hosts in IMGUI",
+    "defining window lifetime, identity, and registration",
+    "planning dock-like or multi-panel host structures"
+  ],
+  "do_not_use_for": [
+    "single-widget concerns",
+    "generic application bootstrap",
+    "pure style topics"
+  ],
+  "rules": [
+    "window lifetime must be explicit",
+    "window identity must survive reopen and reposition operations",
+    "registry ownership belongs to the host layer",
+    "dock-like behavior must remain predictable and low-abstraction"
+  ],
+  "procedure": [
+    "Define window types and ownership boundaries.",
+    "Assign stable identities and retained placement state.",
+    "Register windows through an explicit host registry.",
+    "Define open, close, focus, and restore behavior."
+  ],
+  "output": [
+    "window host model",
+    "window registry rules",
+    "lifetime and placement policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-state-model",
+      "imgui-layout-composition"
+    ],
+    "optional": [
+      "imgui-input-routing"
+    ],
+    "contextual": [
+      "imgui-styling",
+      "imgui-debugging"
+    ]
+  },
+  "conflicts": [
+    "bootstrap"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about IMGUI window hosts, popups, overlays, or dock-like UI composition"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about generic IMGUI architecture or event mechanics"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how tool windows and panels are created, owned, and restored",
+      "how to organize multi-window IMGUI tooling without hidden orchestration"
+    ],
+    "does_not_solve": [
+      "fine-grained widget rendering",
+      "global diagnostics systems"
+    ]
+  },
+  "core_principles": [
+    "Windowing is a host concern, not a side effect of feature code.",
+    "Open/close/focus/restore behavior must be reviewable without reading draw helpers.",
+    "Dock-like arrangements should be implemented as explicit layout state, not magic containers."
+  ],
+  "constraints": [
+    "Window registry keys must remain stable.",
+    "Transient popups need tighter lifetime and focus rules than regular panels.",
+    "Reconstruction after reopen must not depend on incidental draw order."
+  ],
+  "decision_rules": [
+    "Use a registry when more than one tool window or popup participates in shared focus and placement.",
+    "Keep overlays lightweight and clearly subordinate to their host window.",
+    "Avoid generalized docking abstractions if the tool only needs a few known panel arrangements."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit host registry of windows and overlays",
+      "retained placement and visibility state",
+      "known panel arrangements encoded as data"
+    ],
+    "avoid_patterns": [
+      "window creation hidden inside feature draw calls",
+      "dock-like containers with hidden mutation rules",
+      "window lifetime inferred solely from current event"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Add a popup inspector owned by a parent tool window",
+      "when": "Use when auxiliary editing UI should follow the parent tool.",
+      "steps": [
+        "Register the popup through the host registry with a stable identity.",
+        "Store visibility and placement in retained window state.",
+        "Route focus and close behavior explicitly back to the parent host."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Spawning windows from arbitrary feature code.",
+    "Encoding layout arrangement only in imperative draw order.",
+    "Treating popups and persistent windows as if they share the same lifetime policy."
+  ],
+  "review_checklist": [
+    "Is there a clear owner for each window and popup?",
+    "Are identity and restore rules explicit?",
+    "Is dock-like behavior data-driven rather than hidden?",
+    "Can focus and close behavior be traced at the host level?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Composition",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-composition.md",
+      "interpretation": "Use this first for host-level window and panel composition, slot ownership, and manual geometry assumptions.",
+      "why": "Use for explicit host-window ownership, slot layout, and multi-panel composition rules."
+    },
+    {
+      "title": "Unity Scripting API: GUI.Window",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/ScriptReference/GUI.Window.html",
+      "interpretation": "Use this to confirm baseline API behavior for windows, not to justify hidden or automatic window orchestration.",
+      "why": "Use for baseline window behavior and constraints when designing host-level window systems."
+    }
+  ]
+}

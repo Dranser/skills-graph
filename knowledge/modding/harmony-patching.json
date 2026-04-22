@@ -1,0 +1,71 @@
+{
+  "id": "harmony-patching",
+  "kind": "skill",
+  "title": "Harmony Patching",
+  "domain": "modding",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "harmony",
+      "patch",
+      "prefix",
+      "postfix",
+      "transpiler"
+    ],
+    "weak": [
+      "method interception",
+      "runtime patch"
+    ]
+  },
+  "use_for": [
+    "runtime patching",
+    "method interception",
+    "prefix and postfix patches",
+    "controlled method alteration"
+  ],
+  "do_not_use_for": [
+    "assembly parsing",
+    "UI layout",
+    "large-scale refactoring"
+  ],
+  "rules": [
+    "patch smallest viable target",
+    "prefer prefix/postfix over transpiler",
+    "keep patch scope local",
+    "preserve original execution"
+  ],
+  "procedure": [
+    "Identify target method.",
+    "Choose patch type.",
+    "Define patch class.",
+    "Implement minimal logic.",
+    "Register patch.",
+    "Validate behavior."
+  ],
+  "output": [
+    "patch code",
+    "registration logic"
+  ],
+  "dependencies": {
+    "hard": [
+      "loader-integration"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "contracts",
+    "dump-pipeline"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about runtime patching",
+      "request involves harmony prefix/postfix/transpiler"
+    ],
+    "must_not_own_when": [
+      "request is about assembly parsing or UI"
+    ]
+  }
+}

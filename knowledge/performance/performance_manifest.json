@@ -1,0 +1,13 @@
+{
+  "id": "performance-manifest",
+  "kind": "domain_manifest",
+  "domain": "performance",
+  "files": [
+    "memory-management",
+    "cache-optimization",
+    "data-oriented-design",
+    "scheduler"
+  ],
+  "entry_file": "performance_entry.json",
+  "manifest_file": "performance_manifest.json"
+}

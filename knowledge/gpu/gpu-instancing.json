@@ -1,0 +1,71 @@
+{
+  "id": "gpu-instancing",
+  "kind": "skill",
+  "title": "GPU Instancing",
+  "domain": "gpu",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "gpu instancing",
+      "instancing",
+      "indirect draw",
+      "instance data"
+    ],
+    "weak": [
+      "draw call reduction",
+      "batched rendering",
+      "per-instance"
+    ]
+  },
+  "use_for": [
+    "instance rendering",
+    "draw-call reduction",
+    "per-instance data flow",
+    "indirect rendering setup",
+    "repeated object rendering"
+  ],
+  "do_not_use_for": [
+    "CPU scheduling",
+    "assembly parsing",
+    "Harmony patching",
+    "neural training"
+  ],
+  "rules": [
+    "define per-instance data layout explicitly",
+    "separate instance preparation from draw submission",
+    "batch by compatible render state",
+    "reduce CPU-side per-instance overhead",
+    "keep instance updates structured"
+  ],
+  "procedure": [
+    "Define instance data model.",
+    "Build instance buffer path.",
+    "Bind material or shader inputs.",
+    "Submit instanced draw path.",
+    "Update instance data in controlled batches.",
+    "Validate draw-call and throughput behavior."
+  ],
+  "output": [
+    "instancing setup code",
+    "per-instance data flow",
+    "batched render submission"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about instanced rendering",
+      "request is about reducing draw calls",
+      "request involves indirect draw or per-instance data"
+    ],
+    "must_not_own_when": [
+      "request is about CPU scheduling, patching, or neural training"
+    ]
+  }
+}

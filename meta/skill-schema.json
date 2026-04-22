@@ -1,0 +1,135 @@
+{
+  "version": "1.0",
+  "description": "Canonical shape for practical skill documents in Skills Graph.",
+  "applies_to": "knowledge/*/*.json",
+  "excludes": [
+    "knowledge/*/*_entry.json",
+    "knowledge/*/*_manifest.json"
+  ],
+  "rules": {
+    "skill_json_is_canonical_instruction_source": true,
+    "routing_layer_is_mandatory": true,
+    "execution_layer_is_mandatory_for_new_or_reworked_skills": true,
+    "references_should_include_local_material_when_available": true,
+    "official_external_docs_are_supporting_sources_not_primary_replacements": true,
+    "references_may_define_priority_and_interpretation": true
+  },
+  "sections": {
+    "routing_layer": {
+      "required": {
+        "id": "string",
+        "kind": "skill",
+        "title": "string",
+        "domain": "string",
+        "role": "primary|support|cross_cutting",
+        "signals": {
+          "strong": [
+            "string"
+          ],
+          "weak": [
+            "string"
+          ]
+        },
+        "use_for": [
+          "string"
+        ],
+        "do_not_use_for": [
+          "string"
+        ],
+        "rules": [
+          "string"
+        ],
+        "procedure": [
+          "string"
+        ],
+        "output": [
+          "string"
+        ],
+        "dependencies": {
+          "hard": [
+            "string"
+          ],
+          "optional": [
+            "string"
+          ],
+          "contextual": [
+            "string"
+          ]
+        },
+        "conflicts": [
+          "string"
+        ],
+        "ownership": {
+          "can_be_primary": "boolean",
+          "default_mode": "string",
+          "primary_when": [
+            "string"
+          ],
+          "must_not_own_when": [
+            "string"
+          ]
+        }
+      }
+    },
+    "execution_layer": {
+      "required_for_new_or_reworked_skills": {
+        "problem_space": {
+          "solves": [
+            "string"
+          ],
+          "does_not_solve": [
+            "string"
+          ]
+        },
+        "core_principles": [
+          "string"
+        ],
+        "constraints": [
+          "string"
+        ],
+        "decision_rules": [
+          "string"
+        ],
+        "architecture_guidance": {
+          "preferred_patterns": [
+            "string"
+          ],
+          "avoid_patterns": [
+            "string"
+          ]
+        },
+        "recipes": [
+          {
+            "name": "string",
+            "when": "string",
+            "steps": [
+              "string"
+            ]
+          }
+        ],
+        "pitfalls": [
+          "string"
+        ],
+        "review_checklist": [
+          "string"
+        ],
+        "references": [
+          {
+            "title": "string",
+            "type": "local-reference|official-doc|reference-note",
+            "priority": "preferred|supporting|baseline-only optional",
+            "path": "string optional for local-reference",
+            "url": "string optional for official-doc",
+            "interpretation": "string optional; explains how to use or not use the source",
+            "why": "string"
+          }
+        ]
+      }
+    }
+  },
+  "migration_guidance": {
+    "legacy_skill_docs_may_lack_execution_layer": true,
+    "all_new_domains_should_use_full_schema": true,
+    "reworked_legacy_skills_should_be_upgraded_to_full_schema": true
+  }
+}

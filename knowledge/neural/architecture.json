@@ -1,0 +1,68 @@
+{
+  "id": "neural-architecture",
+  "kind": "skill",
+  "title": "Neural Architecture",
+  "domain": "neural",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "neural architecture",
+      "network structure",
+      "layer",
+      "forward pass"
+    ],
+    "weak": [
+      "inference graph",
+      "model layout"
+    ]
+  },
+  "use_for": [
+    "network structure",
+    "layer composition",
+    "forward-pass organization",
+    "inference graph design"
+  ],
+  "do_not_use_for": [
+    "plugin lifecycle",
+    "IMGUI",
+    "assembly dump"
+  ],
+  "rules": [
+    "define layer responsibilities",
+    "separate layout from training",
+    "keep forward deterministic",
+    "avoid framework assumptions"
+  ],
+  "procedure": [
+    "Define inputs/outputs.",
+    "Define layer graph.",
+    "Bind forward order.",
+    "Expose inference entrypoint.",
+    "Separate training hooks."
+  ],
+  "output": [
+    "network structure code",
+    "forward pipeline"
+  ],
+  "dependencies": {
+    "hard": [
+      "optimization"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "loader-integration"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about neural network design",
+      "request involves layers or forward pass"
+    ],
+    "must_not_own_when": [
+      "request is about UI, patching, or loader systems"
+    ]
+  }
+}

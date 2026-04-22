@@ -1,0 +1,73 @@
+{
+  "id": "cache-optimization",
+  "kind": "skill",
+  "title": "Cache Optimization",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "cache",
+      "locality",
+      "false sharing",
+      "cache miss",
+      "hot path"
+    ],
+    "weak": [
+      "traversal order",
+      "layout tuning",
+      "contention reduction"
+    ]
+  },
+  "use_for": [
+    "locality improvements",
+    "traversal order changes",
+    "false sharing reduction",
+    "cache miss reduction",
+    "hot path layout tuning"
+  ],
+  "do_not_use_for": [
+    "generic cleanup",
+    "plugin lifecycle",
+    "IMGUI",
+    "raw metadata parsing"
+  ],
+  "rules": [
+    "optimize access order before micro-tuning instructions",
+    "keep related hot data adjacent",
+    "reduce shared write contention",
+    "batch operations when locality improves",
+    "keep cache tuning tied to actual traversal patterns"
+  ],
+  "procedure": [
+    "Identify hot traversal path.",
+    "Inspect data order and write patterns.",
+    "Group adjacent hot data.",
+    "Reduce cross-thread contention.",
+    "Reorder loops if locality improves.",
+    "Re-measure hot path behavior."
+  ],
+  "output": [
+    "locality-aware structures",
+    "reordered hot-path traversal",
+    "reduced contention layout"
+  ],
+  "dependencies": {
+    "hard": [
+      "data-oriented-design"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is specifically about cache locality, false sharing, or cache miss reduction",
+      "request is about hot-path traversal order and layout"
+    ],
+    "must_not_own_when": [
+      "request is mainly about plugin lifecycle, IMGUI, or metadata parsing"
+    ]
+  }
+}

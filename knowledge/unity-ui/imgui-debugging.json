@@ -1,0 +1,145 @@
+{
+  "id": "imgui-debugging",
+  "kind": "skill",
+  "title": "IMGUI Debugging",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "imgui debugging",
+      "focus bug",
+      "layout mismatch",
+      "repaint trace"
+    ],
+    "weak": [
+      "event trace",
+      "control diagnostics",
+      "ui instrumentation"
+    ]
+  },
+  "use_for": [
+    "diagnosing IMGUI event-flow, focus, and layout problems",
+    "adding instrumentation for repaint, control, and routing issues",
+    "making UI framework behavior reviewable during development"
+  ],
+  "do_not_use_for": [
+    "generic logging setup only",
+    "visual design discussions",
+    "state modeling without diagnostics needs"
+  ],
+  "rules": [
+    "instrument event flow before rewriting architecture",
+    "trace focus and control ownership at framework boundaries",
+    "prefer compact diagnostics that are cheap to disable",
+    "make debugging tools align with host, panel, and widget boundaries"
+  ],
+  "procedure": [
+    "Identify the failing event, focus, or layout behavior.",
+    "Add tracing at the host and boundary levels before leaf widgets.",
+    "Record layout or repaint counts and event consumption decisions.",
+    "Use the trace to isolate ownership rather than guessing."
+  ],
+  "output": [
+    "IMGUI diagnostics strategy",
+    "event and focus tracing points",
+    "layout mismatch debugging checklist"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics"
+    ],
+    "optional": [],
+    "contextual": [
+      "imgui-input-routing",
+      "imgui-windowing"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about debugging focus, event consumption, repaint behavior, or layout mismatches in IMGUI"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about the initial architecture of the framework"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to debug invisible IMGUI ownership and event-flow failures",
+      "how to add useful traces without overwhelming the UI framework"
+    ],
+    "does_not_solve": [
+      "full diagnostics architecture outside UI",
+      "performance optimization by itself"
+    ]
+  },
+  "core_principles": [
+    "Debug from framework boundaries inward.",
+    "Prefer traces that reveal ownership transitions over noisy per-widget logs.",
+    "Keep diagnostics cheap enough to leave available during active development."
+  ],
+  "constraints": [
+    "Instrumentation must not change the control structure it is observing.",
+    "Tracing should be correlated to concrete windows, panels, and event phases.",
+    "Diagnostic overlays must not become new hidden owners of focus."
+  ],
+  "decision_rules": [
+    "Instrument host-level event routing before inspecting leaf widgets.",
+    "Add layout mismatch diagnostics when structure differs between layout and repaint.",
+    "Trace focus changes whenever keyboard handling appears nondeterministic."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "host and panel-level event traces",
+      "compact counters for repaint and layout frequency",
+      "opt-in overlays for state and focus debugging"
+    ],
+    "avoid_patterns": [
+      "leaf-widget logging everywhere",
+      "diagnostics coupled to feature business logic",
+      "debug helpers that consume the events they inspect"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Investigate a focus bug in a multi-panel tool window",
+      "when": "Use when keyboard input seems to jump between panels unpredictably.",
+      "steps": [
+        "Trace focus ownership at the host boundary.",
+        "Record the active panel and consumed events.",
+        "Compare transitions across consecutive IMGUI events until the owner mismatch is visible."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Adding logging so deep that the actual owner boundary stays invisible.",
+    "Using diagnostics that alter timing or event consumption.",
+    "Capturing too much data to see the routing mistake clearly."
+  ],
+  "review_checklist": [
+    "Do traces start at host boundaries?",
+    "Are focus and consumed events visible?",
+    "Can repaint or layout anomalies be counted?",
+    "Are debug tools passive relative to the event flow?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Debugging",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-debugging.md",
+      "interpretation": "Use this first for tracing ownership, focus bugs, and layout anomalies from framework boundaries inward.",
+      "why": "Use for tracing event ownership, repaint/layout anomalies, and focus bugs at framework boundaries."
+    },
+    {
+      "title": "Unity Scripting API: Event",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/530/ScriptReference/Event.html",
+      "interpretation": "Use this to confirm event inspection details after the domain's debugging workflow is established.",
+      "why": "Use for event inspection details when designing event and focus tracing."
+    }
+  ]
+}

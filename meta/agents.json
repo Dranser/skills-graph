@@ -1,0 +1,197 @@
+{
+  "version": "1.0",
+  "description": "Execution policy for Skills Graph",
+  "source_of_truth": {
+    "skill_documents": "knowledge/*/*.json",
+    "entry_documents": "knowledge/*/*_entry.json",
+    "manifest_documents": "knowledge/*/*_manifest.json",
+    "skill_schema_document": "meta/skill-schema.json",
+    "skill_template_document": "meta/skill-template.json",
+    "index_role": "discovery_only",
+    "router_role": "routing_policy",
+    "execution_plan_role": "attachment_and_order_policy",
+    "depgraph_role": "dependency_expansion_only",
+    "ignore_missing_source_path_metadata": true
+  },
+
+  "agent": {
+    "id": "primary-agent",
+
+    "execution_model": {
+      "type": "single-agent",
+      "mode": "domain-owned"
+    },
+
+    "constraints": {
+      "must_follow_primary_domain": true,
+      "cannot_change_primary_domain": true,
+      "cannot_use_dependencies_for_routing": true,
+      "must_respect_execution_plan": true
+    },
+
+    "capabilities": {
+      "can_execute_primary": true,
+      "can_use_same_domain_skills": true,
+      "can_use_cross_domain_skills": true,
+      "can_use_cross_cutting": true
+    },
+
+    "limitations": {
+      "cannot_promote_support_to_primary": true,
+      "cannot_promote_cross_cutting_to_primary_without_direct_ownership_match": true,
+      "cannot_ignore_conflicts": true,
+      "cannot_expand_dependencies_implicitly": true,
+      "cannot_execute_manifest_files": true,
+      "cannot_execute_entry_files_as_skills": true,
+      "cannot_treat_metadata_pointers_as_instruction_sources": true
+    }
+  },
+
+  "execution_context": {
+    "input": {
+      "primary_domain": "string",
+      "primary_file": "string",
+      "same_domain_skills": ["string"],
+      "cross_domain_skills": ["string"],
+      "cross_cutting_skills": ["string"],
+      "matched_signals": ["string"]
+    },
+
+    "rules": {
+      "primary_first": true,
+      "skills_after_primary": true,
+      "cross_cutting_last": true,
+      "preserve_domain_coherence": true
+    }
+  },
+
+  "skill_usage_policy": {
+    "same_domain": {
+      "priority": "high",
+      "usage": "unrestricted"
+    },
+    "cross_domain": {
+      "priority": "medium",
+      "usage": "limited",
+      "requires_relevance": true
+    },
+    "cross_cutting": {
+      "priority": "low",
+      "usage": "optional",
+      "domains": ["framework"]
+    }
+  },
+  "skill_document_policy": {
+    "skill_json_is_canonical_instruction_source": true,
+    "routing_layer_is_required": true,
+    "execution_layer_is_required_for_new_or_reworked_skills": true,
+    "prefer_local_references_for_practical_guidance": true,
+    "official_external_references_are_allowed_as_supporting_sources": true,
+    "references_may_encode_priority_and_interpretation": true,
+    "entry_and_manifest_are_metadata_only": true,
+    "new_skills_should_follow_template": "meta/skill-template.json"
+  },
+  "skill_document_sections": {
+    "routing_layer_required": [
+      "id",
+      "kind",
+      "title",
+      "domain",
+      "role",
+      "signals",
+      "use_for",
+      "do_not_use_for",
+      "dependencies",
+      "conflicts",
+      "ownership"
+    ],
+    "execution_layer_required_for_new_or_reworked_skills": [
+      "problem_space",
+      "core_principles",
+      "constraints",
+      "decision_rules",
+      "architecture_guidance",
+      "recipes",
+      "pitfalls",
+      "review_checklist",
+      "references"
+    ],
+    "references_requirements": {
+      "allow_local_reference_entries": true,
+      "allow_official_doc_entries": true,
+      "prefer_at_least_one_local_reference": true,
+      "prefer_explicit_path_or_url": true,
+      "allow_reference_priority": [
+        "preferred",
+        "supporting",
+        "baseline-only"
+      ],
+      "allow_reference_interpretation_notes": true
+    }
+  },
+
+  "global_engineering_policy": {
+    "non_negotiable_constraints": {
+      "no_third_party_dependencies": true,
+      "no_native_unity_frameworks_as_foundation": true,
+      "write_core_systems_from_scratch": true,
+      "cpu_performance_first": true
+    },
+    "technology_policy": {
+      "prefer_custom_runtime_systems": true,
+      "prefer_custom_ui_frameworks": true,
+      "prefer_custom_diagnostics": true,
+      "prefer_custom_bootstrap_and_composition": true,
+      "external_technology_may_be_used_only_as_reference": true,
+      "do_not_introduce_packages_as_default_path": true
+    },
+    "performance_doctrine": {
+      "prefer_predictable_cpu_cost": true,
+      "prefer_explicit_lifecycle": true,
+      "prefer_explicit_data_ownership": true,
+      "prefer_contiguous_or_cache_friendly_data_layout": true,
+      "minimize_heap_allocations_in_hot_paths": true,
+      "minimize_hidden_indirection": true,
+      "avoid_reflection_heavy_or_attribute_driven_runtime": true,
+      "avoid_allocation_per_frame_architecture": true,
+      "prefer_profiler_friendly_control_flow": true
+    },
+    "global_anti_patterns": [
+      "third-party framework adoption as default implementation path",
+      "native Unity high-level frameworks as architectural foundation",
+      "service locator in runtime feature code",
+      "hidden lifecycle orchestration",
+      "reflection-heavy auto wiring",
+      "allocation-heavy frame loop",
+      "abstraction layers without measurable runtime value"
+    ],
+    "response_bias": {
+      "prefer_low_abstraction_solutions": true,
+      "prefer_deterministic_startup_and_update_flow": true,
+      "prefer_measurable_tradeoffs_over_convenience": true,
+      "require_explicit_justification_for_runtime_cost": true
+    }
+  },
+
+  "conflict_handling": {
+    "exclude_conflicting_skills": true,
+    "never_override_primary": true,
+    "allow_manual_override": false
+  },
+
+  "validation_expectations": {
+    "all_index_domains_must_exist_in_router": true,
+    "all_router_domains_must_exist_in_index": true,
+    "all_manifest_files_must_exist": true,
+    "all_entry_points_must_exist_as_skills_or_owned_primary_candidates": true,
+    "all_dependencies_must_resolve_to_known_skills": true,
+    "new_or_reworked_skills_should_include_execution_layer": true,
+    "new_or_reworked_skills_should_include_references": true
+  },
+
+  "output_requirements": {
+    "must_reflect_primary_domain": true,
+    "must_integrate_skills_coherently": true,
+    "must_not_fragment_response": true
+  }
+}

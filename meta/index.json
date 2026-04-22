@@ -1,0 +1,86 @@
+{
+  "knowledge": {
+    "assembly-analysis": {
+      "entry": "knowledge/assembly-analysis/assembly-analysis_entry.json",
+      "manifest": "knowledge/assembly-analysis/assembly-analysis_manifest.json",
+      "skills": [
+        "assembly-reading.json",
+        "dump-pipeline.json",
+        "metadata-parsing.json"
+      ]
+    },
+    "data-oriented-pipeline": {
+      "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
+      "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
+      "skills": [
+        "pipeline-architecture.json",
+        "stage-boundaries.json",
+        "dataflow-state.json",
+        "invalidation-propagation.json",
+        "execution-model.json"
+      ]
+    },
+    "framework": {
+      "entry": "knowledge/framework/framework_entry.json",
+      "manifest": "knowledge/framework/framework_manifest.json",
+      "skills": [
+        "bootstrap.json",
+        "contracts.json",
+        "di.json",
+        "diagnostics.json"
+      ]
+    },
+    "gpu": {
+      "entry": "knowledge/gpu/gpu_entry.json",
+      "manifest": "knowledge/gpu/gpu_manifest.json",
+      "skills": [
+        "gpu-compute.json",
+        "gpu-instancing.json"
+      ]
+    },
+    "modding": {
+      "entry": "knowledge/modding/modding_entry.json",
+      "manifest": "knowledge/modding/modding_manifest.json",
+      "skills": [
+        "harmony-patching.json",
+        "loader-integration.json",
+        "plugin-lifecycle.json"
+      ]
+    },
+    "neural": {
+      "entry": "knowledge/neural/neural_entry.json",
+      "manifest": "knowledge/neural/neural_manifest.json",
+      "skills": [
+        "architecture.json",
+        "optimization.json",
+        "training.json"
+      ]
+    },
+    "performance": {
+      "entry": "knowledge/performance/performance_entry.json",
+      "manifest": "knowledge/performance/performance_manifest.json",
+      "skills": [
+        "cache-optimization.json",
+        "data-oriented-design.json",
+        "memory-management.json",
+        "scheduler.json"
+      ]
+    },
+    "unity-ui": {
+      "entry": "knowledge/unity-ui/unity-ui_entry.json",
+      "manifest": "knowledge/unity-ui/unity-ui_manifest.json",
+      "skills": [
+        "imgui-core.json",
+        "imgui-state-model.json",
+        "imgui-layout-composition.json",
+        "imgui-manual-layout.json",
+        "imgui-incremental-update.json",
+        "imgui-input-routing.json",
+        "imgui-windowing.json",
+        "imgui-styling.json",
+        "imgui-performance.json",
+        "imgui-debugging.json"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "gpu-manifest",
+  "kind": "domain_manifest",
+  "domain": "gpu",
+  "files": [
+    "gpu-compute",
+    "gpu-instancing"
+  ],
+  "entry_file": "gpu_entry.json",
+  "manifest_file": "gpu_manifest.json"
+}

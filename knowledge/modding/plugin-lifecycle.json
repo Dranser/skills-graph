@@ -1,0 +1,73 @@
+{
+  "id": "plugin-lifecycle",
+  "kind": "skill",
+  "title": "Plugin Lifecycle",
+  "domain": "modding",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "plugin lifecycle",
+      "awake",
+      "start",
+      "initialize plugin",
+      "shutdown"
+    ],
+    "weak": [
+      "lifecycle phases",
+      "activation",
+      "teardown"
+    ]
+  },
+  "use_for": [
+    "plugin init order",
+    "plugin start and stop behavior",
+    "lifecycle-bound resources",
+    "runtime service activation"
+  ],
+  "do_not_use_for": [
+    "Harmony patch mechanics",
+    "assembly parsing",
+    "generic performance work",
+    "IMGUI layout"
+  ],
+  "rules": [
+    "separate allocation, initialization, and activation",
+    "initialize diagnostics first",
+    "keep startup and shutdown explicit",
+    "dispose runtime state when needed",
+    "do not hide lifecycle transitions"
+  ],
+  "procedure": [
+    "Define lifecycle phases.",
+    "Bind diagnostics to earliest phase.",
+    "Allocate and register services.",
+    "Activate runtime features.",
+    "Handle teardown.",
+    "Keep state deterministic."
+  ],
+  "output": [
+    "lifecycle orchestration code",
+    "startup and teardown flow"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics"
+    ],
+    "optional": [
+      "loader-integration"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is explicitly about plugin lifecycle phases",
+      "request is about startup/shutdown sequencing"
+    ],
+    "must_not_own_when": [
+      "request is mainly about patching, UI, or parsing"
+    ]
+  }
+}

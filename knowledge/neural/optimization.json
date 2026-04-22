@@ -1,0 +1,74 @@
+{
+  "id": "optimization",
+  "kind": "skill",
+  "title": "Neural Optimization",
+  "domain": "neural",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "neural optimization",
+      "inference speed",
+      "training throughput",
+      "numerical stability",
+      "memory layout"
+    ],
+    "weak": [
+      "stability",
+      "throughput",
+      "forward-path optimization",
+      "update-path optimization"
+    ]
+  },
+  "use_for": [
+    "numerical stability",
+    "training throughput",
+    "inference cost reduction",
+    "memory layout tuning for networks",
+    "custom optimization paths"
+  ],
+  "do_not_use_for": [
+    "general project optimization without neural intent",
+    "loader integration",
+    "IMGUI",
+    "assembly parsing"
+  ],
+  "rules": [
+    "preserve correctness before speed",
+    "optimize data layout before micro-tuning",
+    "separate stability fixes from throughput changes",
+    "keep optimization tied to forward or training path explicitly",
+    "avoid hidden precision changes without intent"
+  ],
+  "procedure": [
+    "Identify neural bottleneck.",
+    "Classify it as layout, math, or update-path issue.",
+    "Apply targeted optimization.",
+    "Preserve network correctness.",
+    "Re-evaluate throughput or stability.",
+    "Keep optimized path explicit."
+  ],
+  "output": [
+    "targeted neural optimization code",
+    "layout or stability improvements",
+    "explicit optimized execution path"
+  ],
+  "dependencies": {
+    "hard": [
+      "memory-management"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is specifically about neural throughput, numerical stability, or network layout optimization",
+      "request is about optimizing inference or training paths for neural systems"
+    ],
+    "must_not_own_when": [
+      "request is mainly about loader integration, IMGUI, or assembly parsing"
+    ]
+  }
+}

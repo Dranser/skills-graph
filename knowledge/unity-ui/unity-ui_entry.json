@@ -1,0 +1,61 @@
+{
+  "id": "unity-ui-entry",
+  "kind": "domain_entry",
+  "domain": "unity-ui",
+  "entry_points": [
+    "imgui-core",
+    "imgui-windowing",
+    "imgui-layout-composition",
+    "imgui-state-model",
+    "imgui-manual-layout",
+    "imgui-incremental-update",
+    "imgui-input-routing"
+  ],
+  "signals": [
+    "unity ui",
+    "imgui",
+    "immediate mode gui",
+    "ongui",
+    "ui framework",
+    "editor tooling ui",
+    "windowing",
+    "layout",
+    "manual layout",
+    "rect layout",
+    "binding",
+    "data binding",
+    "dirty propagation",
+    "dirty flags",
+    "partial update",
+    "incremental update",
+    "subtree update",
+    "resource reuse",
+    "input system",
+    "input actions",
+    "legacy input disabled",
+    "focus",
+    "control id"
+  ],
+  "use_for": [
+    "designing Unity IMGUI-based UI frameworks",
+    "defining retained state over immediate mode drawing",
+    "structuring windows, panels, and inspectors",
+    "routing input, focus, and command flow in IMGUI",
+    "establishing styling, debugging, and performance rules for IMGUI",
+    "using Unity Input System as the primary signal source for IMGUI framework commands",
+    "building framework-level layout with manual Rect computation instead of GUILayout orchestration",
+    "building optimized retained update pipelines with reusable resources, data binding, and subtree-level invalidation"
+  ],
+  "priority_order": [
+    "imgui-core",
+    "imgui-incremental-update",
+    "imgui-input-routing",
+    "imgui-manual-layout",
+    "imgui-windowing",
+    "imgui-layout-composition",
+    "imgui-state-model",
+    "imgui-performance",
+    "imgui-debugging",
+    "imgui-styling"
+  ]
+}

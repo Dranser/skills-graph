@@ -1,0 +1,14 @@
+{
+  "id": "data-oriented-pipeline-manifest",
+  "kind": "domain_manifest",
+  "domain": "data-oriented-pipeline",
+  "files": [
+    "pipeline-architecture",
+    "stage-boundaries",
+    "dataflow-state",
+    "invalidation-propagation",
+    "execution-model"
+  ],
+  "entry_file": "data-oriented-pipeline_entry.json",
+  "manifest_file": "data-oriented-pipeline_manifest.json"
+}

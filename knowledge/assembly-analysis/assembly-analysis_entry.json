@@ -1,0 +1,28 @@
+{
+  "id": "assembly-analysis-entry",
+  "kind": "domain_entry",
+  "domain": "assembly-analysis",
+  "entry_points": [
+    "assembly-reading",
+    "dump-pipeline",
+    "metadata-parsing"
+  ],
+  "signals": [
+    "assembly reading",
+    "metadata parsing",
+    "dump pipeline",
+    "dll inspection",
+    "mono assembly"
+  ],
+  "use_for": [
+    "assembly analysis",
+    "assembly structure extraction",
+    "dump generation",
+    "metadata recovery"
+  ],
+  "priority_order": [
+    "assembly-reading",
+    "dump-pipeline",
+    "metadata-parsing"
+  ]
+}

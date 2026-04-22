@@ -1,0 +1,70 @@
+{
+  "id": "loader-integration",
+  "kind": "skill",
+  "title": "Loader Integration",
+  "domain": "modding",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "bepinex",
+      "loader",
+      "plugin entry",
+      "loader lifecycle"
+    ],
+    "weak": [
+      "bootstrap plugin",
+      "entry integration"
+    ]
+  },
+  "use_for": [
+    "plugin entry",
+    "loader bootstrap",
+    "loader lifecycle alignment",
+    "plugin initialization under mod loader"
+  ],
+  "do_not_use_for": [
+    "Harmony patch procedure",
+    "assembly dump generation",
+    "UI layout"
+  ],
+  "rules": [
+    "align entrypoint with loader lifecycle",
+    "keep bootstrap deterministic",
+    "initialize diagnostics first",
+    "separate loader boundary"
+  ],
+  "procedure": [
+    "Define plugin entry class.",
+    "Bind diagnostics initialization.",
+    "Resolve loader lifecycle hook.",
+    "Start core systems.",
+    "Route optional systems.",
+    "Handle shutdown if supported."
+  ],
+  "output": [
+    "plugin entry code",
+    "loader bootstrap code"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics",
+      "plugin-lifecycle"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "assembly-reading"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about plugin loader integration",
+      "request involves bepinex or loader startup"
+    ],
+    "must_not_own_when": [
+      "request is about assembly parsing or UI"
+    ]
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "id": "data-oriented-design",
+  "kind": "skill",
+  "title": "Data-Oriented Design",
+  "domain": "performance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "data-oriented",
+      "dod",
+      "layout",
+      "throughput",
+      "cache-friendly"
+    ],
+    "weak": [
+      "linear traversal",
+      "hot/cold split",
+      "contiguous storage"
+    ]
+  },
+  "use_for": [
+    "data layout design",
+    "cache-friendly structures",
+    "linear traversal",
+    "throughput-oriented systems",
+    "low-overhead data processing"
+  ],
+  "do_not_use_for": [
+    "generic code cleanup",
+    "plugin bootstrap",
+    "IMGUI rendering",
+    "assembly metadata parsing"
+  ],
+  "rules": [
+    "structure data for access patterns first",
+    "minimize pointer chasing",
+    "prefer contiguous storage where possible",
+    "separate hot and cold data",
+    "keep iteration predictable"
+  ],
+  "procedure": [
+    "Identify hot data paths.",
+    "Group data by access pattern.",
+    "Flatten structures where useful.",
+    "Separate infrequent state.",
+    "Optimize iteration order.",
+    "Validate layout against workload."
+  ],
+  "output": [
+    "data layout definitions",
+    "traversal-oriented structures",
+    "cache-aware processing model"
+  ],
+  "dependencies": {
+    "hard": [
+      "cache-optimization",
+      "memory-management"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about data layout, cache-friendly traversal, or throughput-oriented structure design",
+      "request is about minimizing pointer chasing or separating hot and cold data"
+    ],
+    "must_not_own_when": [
+      "request is mainly about plugin bootstrap, IMGUI, or assembly metadata parsing"
+    ]
+  }
+}

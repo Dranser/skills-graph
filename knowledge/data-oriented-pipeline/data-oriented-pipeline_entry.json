@@ -1,0 +1,36 @@
+{
+  "id": "data-oriented-pipeline-entry",
+  "kind": "domain_entry",
+  "domain": "data-oriented-pipeline",
+  "entry_points": [
+    "pipeline-architecture",
+    "execution-model",
+    "stage-boundaries",
+    "dataflow-state"
+  ],
+  "signals": [
+    "data-oriented pipeline",
+    "pipeline architecture",
+    "stage pipeline",
+    "data flow",
+    "dataflow",
+    "incremental pipeline",
+    "dirty propagation",
+    "partial recompute",
+    "stage invalidation",
+    "execution model"
+  ],
+  "use_for": [
+    "designing software around explicit data-oriented pipelines",
+    "treating architecture and optimization as one pipeline-first system design path",
+    "structuring stages, data flow, invalidation, and execution order for predictable runtime cost",
+    "avoiding whole-system recomputation through explicit stage boundaries and selective refresh"
+  ],
+  "priority_order": [
+    "pipeline-architecture",
+    "execution-model",
+    "stage-boundaries",
+    "dataflow-state",
+    "invalidation-propagation"
+  ]
+}

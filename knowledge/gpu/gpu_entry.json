@@ -1,0 +1,24 @@
+{
+  "id": "gpu-entry",
+  "kind": "domain_entry",
+  "domain": "gpu",
+  "entry_points": [
+    "gpu-compute",
+    "gpu-instancing"
+  ],
+  "signals": [
+    "gpu compute",
+    "gpu instancing",
+    "compute shader",
+    "indirect draw"
+  ],
+  "use_for": [
+    "gpu-side execution",
+    "compute workloads",
+    "instanced rendering"
+  ],
+  "priority_order": [
+    "gpu-compute",
+    "gpu-instancing"
+  ]
+}

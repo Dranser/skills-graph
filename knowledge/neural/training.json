@@ -1,0 +1,76 @@
+{
+  "id": "training",
+  "kind": "skill",
+  "title": "Neural Training",
+  "domain": "neural",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "training",
+      "weights",
+      "backprop",
+      "optimizer",
+      "gradient",
+      "batch"
+    ],
+    "weak": [
+      "loss",
+      "update step",
+      "training loop",
+      "targets"
+    ]
+  },
+  "use_for": [
+    "training loops",
+    "weight update flow",
+    "gradient propagation",
+    "batch processing",
+    "optimizer application"
+  ],
+  "do_not_use_for": [
+    "UI rendering",
+    "runtime patching",
+    "assembly metadata parsing",
+    "generic CPU task systems without neural intent"
+  ],
+  "rules": [
+    "keep training state explicit",
+    "separate forward, backward, and update phases",
+    "keep parameter ownership clear",
+    "keep batch handling deterministic",
+    "do not mix training orchestration with unrelated runtime systems"
+  ],
+  "procedure": [
+    "Define training inputs and targets.",
+    "Run forward pass.",
+    "Compute loss.",
+    "Run backward pass.",
+    "Apply update step.",
+    "Record training metrics if needed."
+  ],
+  "output": [
+    "training loop code",
+    "update path",
+    "optimizer integration"
+  ],
+  "dependencies": {
+    "hard": [
+      "architecture",
+      "optimization"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about neural training loops, backpropagation, optimizer application, or batch processing",
+      "request is about updating model weights from loss and gradients"
+    ],
+    "must_not_own_when": [
+      "request is mainly about UI rendering, runtime patching, or non-neural CPU task systems"
+    ]
+  }
+}

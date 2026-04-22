@@ -1,0 +1,19 @@
+{
+  "id": "unity-ui-manifest",
+  "kind": "domain_manifest",
+  "domain": "unity-ui",
+  "files": [
+    "imgui-core",
+    "imgui-state-model",
+    "imgui-layout-composition",
+    "imgui-manual-layout",
+    "imgui-incremental-update",
+    "imgui-input-routing",
+    "imgui-windowing",
+    "imgui-styling",
+    "imgui-performance",
+    "imgui-debugging"
+  ],
+  "entry_file": "unity-ui_entry.json",
+  "manifest_file": "unity-ui_manifest.json"
+}

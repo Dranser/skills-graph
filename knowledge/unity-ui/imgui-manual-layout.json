@@ -1,0 +1,149 @@
+{
+  "id": "imgui-manual-layout",
+  "kind": "skill",
+  "title": "IMGUI Manual Layout",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "manual layout",
+      "rect layout",
+      "explicit geometry",
+      "custom layout",
+      "no guilayout"
+    ],
+    "weak": [
+      "split pane",
+      "panel rects",
+      "layout engine",
+      "manual positioning"
+    ]
+  },
+  "use_for": [
+    "designing explicit Rect-based layout for IMGUI framework hosts and panels",
+    "replacing GUILayout as the main composition mechanism",
+    "controlling geometry deterministically for windows, overlays, toolbars, and content panes"
+  ],
+  "do_not_use_for": [
+    "leaf-only styling questions",
+    "generic retained-state design",
+    "architectures that accept GUILayout as the main layout engine"
+  ],
+  "rules": [
+    "compute major layout geometry explicitly",
+    "keep ownership of Rect allocation at host and container boundaries",
+    "treat GUILayout as an exception for trivial leaf convenience only",
+    "make split, dock-like, and overlay geometry deterministic and reviewable"
+  ],
+  "procedure": [
+    "Define the major host regions that require explicit geometry ownership.",
+    "Compute Rect allocation rules for those regions from retained layout state.",
+    "Pass resolved Rects into container and leaf draw boundaries.",
+    "Keep geometry decisions separate from feature logic and style logic."
+  ],
+  "output": [
+    "manual layout policy",
+    "Rect allocation rules",
+    "deterministic geometry model for IMGUI framework composition"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "imgui-performance"
+    ],
+    "contextual": [
+      "imgui-layout-composition"
+    ]
+  },
+  "conflicts": [
+    "scheduler"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about manual Rect-based layout, custom geometry allocation, or avoiding GUILayout in IMGUI framework design"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about overall IMGUI architecture or input routing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to own framework geometry directly instead of delegating it to GUILayout",
+      "how to keep panel placement and split behavior deterministic and reviewable"
+    ],
+    "does_not_solve": [
+      "input signal sourcing",
+      "window state ownership by itself"
+    ]
+  },
+  "core_principles": [
+    "Host-level structure should be expressed as explicit geometry.",
+    "Framework layout must be predictable before any leaf widget is drawn.",
+    "Geometry ownership belongs to the framework, not to automatic layout helpers."
+  ],
+  "constraints": [
+    "Major layout regions must not depend on GUILayout state.",
+    "Split and overlay calculations must be stable across IMGUI passes.",
+    "Geometry helpers must remain transparent enough to review quickly."
+  ],
+  "decision_rules": [
+    "Use manual Rect computation for host shells, sidebars, content panes, overlays, and reusable panel containers.",
+    "Allow GUILayout only when a tiny leaf section would not affect host geometry ownership.",
+    "Reject abstractions that hide where panel bounds come from."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "host-owned Rect calculation",
+      "container APIs that receive bounds explicitly",
+      "layout state records that drive deterministic geometry"
+    ],
+    "avoid_patterns": [
+      "GUILayout-driven host composition",
+      "geometry inferred implicitly from nested layout groups",
+      "feature modules choosing their own host-level panel bounds"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a split-pane host without GUILayout",
+      "when": "Use when a tool window needs stable sidebar and content geometry.",
+      "steps": [
+        "Store split ratio or pixel width in retained layout state.",
+        "Compute sidebar and content Rects at the host level.",
+        "Pass those Rects into the corresponding panel draw functions.",
+        "Keep resizing behavior explicit and separate from leaf rendering."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Letting convenience layout helpers slowly reclaim ownership of host geometry.",
+    "Mixing style concerns into geometry computation.",
+    "Hiding split logic in nested helpers until panel bounds are no longer obvious."
+  ],
+  "review_checklist": [
+    "Are major panel bounds computed manually?",
+    "Can reviewers see where each Rect comes from?",
+    "Has GUILayout been kept out of host-level composition?",
+    "Is geometry stable across layout and repaint?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Composition",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-composition.md",
+      "interpretation": "Use this first for the domain's explicit preference for manual host geometry and slot-based composition.",
+      "why": "Use for the domain-wide position that major framework geometry should be manual and host-owned."
+    },
+    {
+      "title": "Unity Manual: IMGUI Layout Modes",
+      "type": "official-doc",
+      "priority": "baseline-only",
+      "url": "https://docs.unity3d.com/cn/2018.3/Manual/gui-Layout.html",
+      "interpretation": "Use this to understand what Unity provides, not as a reason to make GUILayout the architectural default.",
+      "why": "Use as the baseline description of what Unity offers, while keeping manual layout as the preferred framework design choice."
+    }
+  ]
+}

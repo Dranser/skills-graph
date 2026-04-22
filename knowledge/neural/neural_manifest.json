@@ -1,0 +1,12 @@
+{
+  "id": "neural-manifest",
+  "kind": "domain_manifest",
+  "domain": "neural",
+  "files": [
+    "architecture",
+    "optimization",
+    "training"
+  ],
+  "entry_file": "neural_entry.json",
+  "manifest_file": "neural_manifest.json"
+}

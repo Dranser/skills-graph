@@ -1,0 +1,79 @@
+{
+  "id": "dump-pipeline",
+  "kind": "skill",
+  "title": "Dump Pipeline",
+  "domain": "assembly-analysis",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "dump",
+      "dump pipeline",
+      "export structure",
+      "library snapshot",
+      "reverse dump"
+    ],
+    "weak": [
+      "snapshot",
+      "structured export",
+      "repeatable dump workflow"
+    ]
+  },
+  "use_for": [
+    "dump generation",
+    "structured assembly export",
+    "library snapshot creation",
+    "reverse data staging",
+    "repeatable dump workflows"
+  ],
+  "do_not_use_for": [
+    "runtime integration",
+    "Harmony patching",
+    "UI workflows",
+    "framework bootstrap"
+  ],
+  "rules": [
+    "use deterministic output structure",
+    "preserve original assembly organization",
+    "separate raw extraction from formatted output",
+    "keep repeated runs comparable",
+    "avoid mixing runtime logic into dump generation"
+  ],
+  "procedure": [
+    "Read assembly structures.",
+    "Normalize extracted data.",
+    "Build dump model.",
+    "Emit stable files or records.",
+    "Preserve naming and signatures.",
+    "Store outputs for later lookup and comparison."
+  ],
+  "output": [
+    "structured dump library",
+    "repeatable export pipeline",
+    "comparable assembly snapshots"
+  ],
+  "dependencies": {
+    "hard": [
+      "assembly-reading",
+      "metadata-parsing"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "loader-integration",
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about generating a dump or structured export",
+      "the request is about repeatable assembly snapshots",
+      "the request is about turning raw assembly data into stable dump output"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about runtime integration",
+      "the request is mainly about Harmony patching"
+    ]
+  }
+}

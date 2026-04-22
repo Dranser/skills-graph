@@ -1,0 +1,281 @@
+{
+  "id": "imgui-core",
+  "kind": "skill",
+  "title": "IMGUI Core",
+  "domain": "unity-ui",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "imgui",
+      "immediate mode gui",
+      "ongui",
+      "unity ui framework",
+      "imgui architecture"
+    ],
+    "weak": [
+      "editor tool ui",
+      "draw loop ui",
+      "control id",
+      "layout repaint",
+      "window host"
+    ]
+  },
+  "use_for": [
+    "designing the architecture of a Unity IMGUI-based UI framework",
+    "defining IMGUI ownership boundaries and event-phase model",
+    "deciding how retained state sits above immediate drawing",
+    "structuring reusable UI composition for tools, panels, and windows",
+    "integrating Unity Input System as the primary input source for modern IMGUI frameworks",
+    "planning a retained optimization model with reusable resources, data binding, and partial subtree updates"
+  ],
+  "do_not_use_for": [
+    "uGUI or UI Toolkit architecture",
+    "generic dependency injection design",
+    "render pipeline work",
+    "assembly parsing"
+  ],
+  "rules": [
+    "treat IMGUI as an immediate drawing API over retained application state",
+    "keep event flow explicit across layout, input, and repaint phases",
+    "make call order deterministic across passes",
+    "separate framework orchestration from feature drawing code",
+    "prefer explicit ownership of state, focus, and window lifetime",
+    "treat Unity Input System as the preferred source of input intent in modern Unity projects",
+    "prefer manual layout computation over GUILayout-driven layout orchestration",
+    "generate reusable UI resources once and reuse them until explicit invalidation",
+    "treat data binding and dirty propagation as first-class framework concerns rather than feature-local conveniences"
+  ],
+  "procedure": [
+    "Define the UI host boundary and who owns the IMGUI loop.",
+    "Separate retained state from draw-time logic.",
+    "Establish deterministic draw order and stable control identity rules.",
+    "Define contracts for windows, panels, and widgets.",
+    "Attach routing, styling, debugging, and performance support only where needed.",
+    "Validate that abstractions do not hide event flow or runtime cost."
+  ],
+  "output": [
+    "IMGUI framework architecture",
+    "ownership boundaries for state and drawing",
+    "event-phase design rules",
+    "composition model for windows and panels"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-state-model",
+      "imgui-layout-composition"
+    ],
+    "optional": [
+      "imgui-input-routing",
+      "imgui-windowing",
+      "imgui-styling"
+    ],
+    "contextual": [
+      "imgui-performance",
+      "imgui-debugging",
+      "contracts",
+      "bootstrap",
+      "diagnostics"
+    ]
+  },
+  "conflicts": [
+    "bootstrap",
+    "di"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about designing a Unity UI framework on top of IMGUI",
+      "the request is about IMGUI architecture, event phases, retained state boundaries, or framework-level window composition"
+    ],
+    "must_not_own_when": [
+      "the request is primarily about generic framework bootstrap, raw performance systems, or non-IMGUI Unity UI technologies"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to use IMGUI as a framework foundation without hiding its event model",
+      "how to keep UI state retained while rendering remains immediate",
+      "how to decompose windows, panels, and widgets without losing determinism",
+      "how to bridge modern Input System signals into an IMGUI-driven tool framework",
+      "how to avoid redrawing and rebuilding more UI than the state change actually requires"
+    ],
+    "does_not_solve": [
+      "high-fidelity production game HUDs",
+      "UI Toolkit stylesheet architecture",
+      "low-level rendering code"
+    ]
+  },
+  "core_principles": [
+    "Retain domain and view state explicitly; do not infer it from draw calls.",
+    "Treat layout and repaint as phases of one deterministic pipeline, not separate feature paths.",
+    "Let the framework own orchestration, while feature modules only declare state and render intent.",
+    "Use explicit contracts for windows, panels, and widgets rather than hidden auto-registration.",
+    "Accept IMGUI constraints and design around them instead of emulating a retained DOM.",
+    "Derive high-level input intent from Input System actions or device reads before handing control to IMGUI widgets.",
+    "Compute layout geometry explicitly instead of delegating framework structure to GUILayout.",
+    "Build expensive UI resources once and keep them alive behind explicit invalidation rules.",
+    "Use retained bindings so the framework can skip work when source data has not changed.",
+    "Propagate dirty state through explicit subtree boundaries so updates can stay local."
+  ],
+  "constraints": [
+    "The same logical UI tree must be reachable in every IMGUI event phase.",
+    "Branching that changes control structure across passes must be deliberate and state-backed.",
+    "Abstractions must not hide focus, hot control, or event consumption.",
+    "Framework code must avoid allocation-heavy helper patterns in OnGUI paths.",
+    "Input routing must continue to function when legacy Input Manager is disabled and only Input System is active.",
+    "Automatic GUILayout orchestration must not become the primary layout engine for framework-level UI.",
+    "Resource caches, bindings, and dirty flags must have explicit ownership and invalidation semantics.",
+    "State changes must be able to target individual windows, panels, or component subtrees without forcing whole-tree rebuilds."
+  ],
+  "decision_rules": [
+    "Use IMGUI as primary owner when the task is framework design for tools, inspectors, overlays, or debug UI.",
+    "Attach framework/contracts when extension points between host and feature UI are needed.",
+    "Attach imgui-performance when the task discusses repaint cost, allocations, or high-frequency panels.",
+    "Reject retained-tree emulation if it obscures event sequencing or creates unpredictable per-frame cost.",
+    "Prefer Input System actions or explicit device polling over legacy Input Manager reads in new Unity projects.",
+    "Prefer manually computed Rect-based layout when building reusable host, panel, and widget composition.",
+    "Introduce retained bindings when repeated redraws are driven by data that changes less often than the IMGUI loop runs.",
+    "Use dirty propagation when state changes can be localized to one host region or component subtree.",
+    "Cache generated GUI resources only when the invalidation rule is explicit and cheaper than rebuilding them.",
+    "Attach data-oriented-pipeline support when the UI framework should be designed explicitly as a staged dataflow architecture rather than only as retained widget orchestration."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "single explicit UI host driving event phases",
+      "retained window and panel state stored outside draw methods",
+      "thin feature render functions fed by explicit context objects",
+      "stable identifiers for windows, panels, and repeated controls",
+      "host-level input adapter that translates Input System actions into framework commands",
+      "manual Rect allocation and deterministic panel geometry computed by the host",
+      "host-owned caches for GUIContent, style lookups, and derived presentation resources",
+      "binding layer that compares source data to retained presentation state before marking UI dirty",
+      "explicit dirty flags or version stamps on window, panel, and component subtree boundaries"
+    ],
+    "avoid_patterns": [
+      "service locator access from draw code",
+      "reflection-driven widget discovery",
+      "control flow hidden inside registration callbacks",
+      "stateful GUI behavior derived implicitly from layout side effects",
+      "framework logic that depends on legacy Input Manager being enabled",
+      "GUILayout as the primary composition mechanism for complex framework UI",
+      "rebuilding all presentation resources on every pass",
+      "binding systems that always push updates even when source data is unchanged",
+      "whole-window invalidation when a single component subtree could be updated"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Host a retained tool window on top of IMGUI",
+      "when": "Use when the framework needs a reusable tool window shell.",
+      "steps": [
+        "Define window identity, persistent state, and draw contract separately.",
+        "Collect Input System signals and resolve framework commands before drawing nested content.",
+        "Emit layout and repaint through the same structural call graph.",
+        "Compute major panel Rects explicitly at the host level instead of delegating the structure to GUILayout.",
+        "Prebuild reusable GUI resources and presentation caches behind explicit invalidation rules.",
+        "Bind state changes to subtree-level dirty markers so only affected regions refresh their derived data.",
+        "Store foldouts, scroll, selection, and dock-like placement in retained state."
+      ]
+    },
+    {
+      "name": "Add a feature panel without breaking deterministic passes",
+      "when": "Use when extending an existing tool window with optional panels.",
+      "steps": [
+        "Gate panel presence through retained feature state, not transient event checks.",
+        "Assign a stable slot in the composition tree.",
+        "Pass only the required context into the panel draw method.",
+        "Verify the panel creates the same control structure during layout and repaint."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Mixing persistent UI state with domain model state until reset and undo behavior become unclear.",
+    "Creating helpers that allocate GUIContent, strings, or style objects every pass.",
+    "Letting feature code consume events without explicit routing rules.",
+    "Building a pseudo-retained hierarchy that hides IMGUI phases but still pays IMGUI costs.",
+    "Assuming UnityEngine.Input is available when the project uses Input System only.",
+    "Letting GUILayout determine framework structure and control geometry in large tool windows.",
+    "Recreating generated resources every pass instead of invalidating them selectively.",
+    "Pushing binding updates through the whole UI tree regardless of which data actually changed.",
+    "Marking the whole UI dirty when one component subtree changed."
+  ],
+  "review_checklist": [
+    "Is retained state explicit and owned outside draw methods?",
+    "Is UI structure deterministic across layout and repaint?",
+    "Are extension points contract-based rather than reflection-based?",
+    "Is focus and event consumption visible in the design?",
+    "Are performance-sensitive paths kept simple and allocation-aware?",
+    "Can the framework operate correctly with legacy Input Manager disabled?",
+    "Is major layout geometry computed manually rather than delegated to GUILayout?",
+    "Are generated resources reused behind explicit invalidation rules?",
+    "Can bindings avoid work when source data is unchanged?",
+    "Can updates target a single subtree instead of the entire UI?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Foundations",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-foundations.md",
+      "interpretation": "Use this first for the domain's architectural stance on IMGUI ownership, event phases, Input System preference, manual layout preference, and retained optimization model.",
+      "why": "Use as the primary local summary of IMGUI scope, event phases, and framework-level architectural rules."
+    },
+    {
+      "title": "Unity Manual: Immediate Mode GUI (IMGUI)",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/2018.3/Manual/GUIScriptingGuide.html",
+      "interpretation": "Use this to confirm IMGUI scope and intended use, not to replace the local architectural guidance.",
+      "why": "Use as the baseline behavioral model for IMGUI scope, intended use, and OnGUI-driven rendering."
+    },
+    {
+      "title": "Unity Scripting API: Event",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/530/ScriptReference/Event.html",
+      "interpretation": "Use this for event semantics and phase details that support the framework's explicit routing model.",
+      "why": "Use for event type handling, input interpretation, and phase-specific behavior."
+    },
+    {
+      "title": "Unity Scripting API: GUIUtility",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/es/530/ScriptReference/GUIUtility.html",
+      "interpretation": "Use this for control identity and focus mechanics that the framework must expose rather than hide.",
+      "why": "Use for control identity, focus, and lower-level IMGUI mechanics."
+    },
+    {
+      "title": "Local Reference: IMGUI Input System Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-input-system.md",
+      "interpretation": "Use this first when modern Unity input architecture matters or when legacy input is disabled.",
+      "why": "Use for framework-level guidance when Input System is the primary source of UI intent and legacy input is disabled."
+    },
+    {
+      "title": "Local Reference: IMGUI Incremental Update Model",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-incremental-update-model.md",
+      "interpretation": "Use this first when the framework needs retained resources, data binding, dirty propagation, or subtree-level updates.",
+      "why": "Use for the domain's optimized update model, including resource reuse, data binding, and partial UI invalidation."
+    },
+    {
+      "title": "Local Reference: Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/data-oriented-pipeline/references/pipeline-architecture.md",
+      "interpretation": "Use this when the UI framework should explicitly adopt a data-oriented pipeline path as an architectural design method and optimization model.",
+      "why": "Use to connect retained UI architecture with broader stage-based dataflow design."
+    },
+    {
+      "title": "Unity Manual: Input System",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://docs.unity3d.com/ja/2020.3/Manual/com.unity.inputsystem.html",
+      "interpretation": "Use this to confirm official Input System scope and activation model for modern Unity projects.",
+      "why": "Use as the official baseline for modern Unity projects where Input System replaces or supplements the classic input backend."
+    }
+  ]
+}

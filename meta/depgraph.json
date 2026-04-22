@@ -1,0 +1,385 @@
+{
+  "version": "1.1",
+  "description": "Central dependency graph for Skills Graph. Used only for capability expansion, never for primary routing.",
+  "rules": {
+    "dependencies_expand_capability_not_authority": true,
+    "never_use_depgraph_for_primary_selection": true,
+    "support_skills_cannot_override_primary": true,
+    "cross_cutting_skills_cannot_override_primary": true
+  },
+  "domains": {
+    "assembly-analysis": {
+      "assembly-reading": {
+        "hard": [
+          "metadata-parsing"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "dump-pipeline": {
+        "hard": [
+          "assembly-reading",
+          "metadata-parsing"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "metadata-parsing": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      }
+    },
+    "data-oriented-pipeline": {
+      "pipeline-architecture": {
+        "hard": [
+          "stage-boundaries",
+          "dataflow-state"
+        ],
+        "optional": [
+          "execution-model"
+        ],
+        "contextual": [
+          "invalidation-propagation",
+          "data-oriented-design",
+          "scheduler",
+          "memory-management"
+        ]
+      },
+      "stage-boundaries": {
+        "hard": [],
+        "optional": [
+          "dataflow-state"
+        ],
+        "contextual": [
+          "pipeline-architecture"
+        ]
+      },
+      "dataflow-state": {
+        "hard": [],
+        "optional": [
+          "invalidation-propagation"
+        ],
+        "contextual": [
+          "memory-management"
+        ]
+      },
+      "invalidation-propagation": {
+        "hard": [
+          "dataflow-state"
+        ],
+        "optional": [],
+        "contextual": [
+          "pipeline-architecture",
+          "scheduler"
+        ]
+      },
+      "execution-model": {
+        "hard": [
+          "stage-boundaries"
+        ],
+        "optional": [
+          "invalidation-propagation"
+        ],
+        "contextual": [
+          "scheduler",
+          "data-oriented-design"
+        ]
+      }
+    },
+    "framework": {
+      "bootstrap": {
+        "hard": [
+          "diagnostics",
+          "di"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "contracts": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      },
+      "di": {
+        "hard": [
+          "contracts",
+          "bootstrap"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "diagnostics": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      }
+    },
+    "gpu": {
+      "gpu-compute": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      },
+      "gpu-instancing": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      }
+    },
+    "modding": {
+      "harmony-patching": {
+        "hard": [
+          "loader-integration"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "loader-integration": {
+        "hard": [
+          "diagnostics",
+          "plugin-lifecycle"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "plugin-lifecycle": {
+        "hard": [
+          "diagnostics"
+        ],
+        "optional": [
+          "loader-integration"
+        ],
+        "contextual": []
+      }
+    },
+    "neural": {
+      "architecture": {
+        "hard": [
+          "optimization"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "optimization": {
+        "hard": [
+          "memory-management"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "training": {
+        "hard": [
+          "architecture",
+          "optimization"
+        ],
+        "optional": [],
+        "contextual": []
+      }
+    },
+    "performance": {
+      "memory-management": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      },
+      "cache-optimization": {
+        "hard": [
+          "data-oriented-design"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "data-oriented-design": {
+        "hard": [
+          "cache-optimization",
+          "memory-management"
+        ],
+        "optional": [],
+        "contextual": []
+      },
+      "scheduler": {
+        "hard": [
+          "data-oriented-design",
+          "memory-management",
+          "cache-optimization"
+        ],
+        "optional": [],
+        "contextual": []
+      }
+    },
+    "unity-ui": {
+      "imgui-core": {
+        "hard": [
+          "imgui-state-model",
+          "imgui-layout-composition",
+          "imgui-manual-layout",
+          "imgui-incremental-update"
+        ],
+        "optional": [
+          "imgui-input-routing",
+          "imgui-windowing",
+          "imgui-styling"
+        ],
+        "contextual": [
+          "imgui-performance",
+          "imgui-debugging",
+          "pipeline-architecture",
+          "execution-model",
+          "contracts",
+          "bootstrap",
+          "diagnostics"
+        ]
+      },
+      "imgui-state-model": {
+        "hard": [],
+        "optional": [
+          "imgui-performance"
+        ],
+        "contextual": [
+          "memory-management"
+        ]
+      },
+      "imgui-layout-composition": {
+        "hard": [
+          "imgui-state-model",
+          "imgui-manual-layout"
+        ],
+        "optional": [
+          "imgui-windowing",
+          "imgui-styling"
+        ],
+        "contextual": [
+          "imgui-performance"
+        ]
+      },
+      "imgui-manual-layout": {
+        "hard": [],
+        "optional": [
+          "imgui-performance"
+        ],
+        "contextual": [
+          "imgui-layout-composition"
+        ]
+      },
+      "imgui-incremental-update": {
+        "hard": [
+          "imgui-state-model"
+        ],
+        "optional": [
+          "imgui-performance",
+          "invalidation-propagation"
+        ],
+        "contextual": [
+          "imgui-core",
+          "imgui-manual-layout",
+          "pipeline-architecture",
+          "dataflow-state",
+          "execution-model"
+        ]
+      },
+      "imgui-input-routing": {
+        "hard": [
+          "imgui-state-model"
+        ],
+        "optional": [],
+        "contextual": [
+          "imgui-debugging"
+        ]
+      },
+      "imgui-windowing": {
+        "hard": [
+          "imgui-state-model",
+          "imgui-layout-composition"
+        ],
+        "optional": [
+          "imgui-input-routing"
+        ],
+        "contextual": [
+          "imgui-styling",
+          "imgui-debugging"
+        ]
+      },
+      "imgui-styling": {
+        "hard": [],
+        "optional": [],
+        "contextual": []
+      },
+      "imgui-performance": {
+        "hard": [
+          "memory-management"
+        ],
+        "optional": [
+          "cache-optimization"
+        ],
+        "contextual": [
+          "imgui-core"
+        ]
+      },
+      "imgui-debugging": {
+        "hard": [
+          "diagnostics"
+        ],
+        "optional": [],
+        "contextual": [
+          "imgui-input-routing",
+          "imgui-windowing"
+        ]
+      }
+    }
+  },
+  "cross_cutting_domains": [
+    "framework"
+  ],
+  "conflict_hints": {
+    "assembly-reading": [
+      "harmony-patching"
+    ],
+    "dump-pipeline": [
+      "loader-integration",
+      "harmony-patching"
+    ],
+    "pipeline-architecture": [
+      "bootstrap"
+    ],
+    "execution-model": [
+      "bootstrap"
+    ],
+    "bootstrap": [
+      "loader-integration",
+      "harmony-patching"
+    ],
+    "gpu-compute": [
+      "imgui-basics"
+    ],
+    "loader-integration": [
+      "assembly-reading"
+    ],
+    "harmony-patching": [
+      "contracts",
+      "dump-pipeline"
+    ],
+    "architecture": [
+      "loader-integration"
+    ],
+    "training": [
+      "loader-integration"
+    ],
+    "imgui-core": [
+      "bootstrap",
+      "di"
+    ],
+    "imgui-windowing": [
+      "bootstrap"
+    ],
+    "imgui-manual-layout": [
+      "scheduler"
+    ],
+    "imgui-incremental-update": [
+      "scheduler"
+    ],
+    "imgui-performance": [
+      "scheduler"
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "metadata-parsing",
+  "kind": "skill",
+  "title": "Metadata Parsing",
+  "domain": "assembly-analysis",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "metadata",
+      "token",
+      "signature",
+      "attribute",
+      "member resolution"
+    ],
+    "weak": [
+      "flags",
+      "member metadata",
+      "type/member tokens"
+    ]
+  },
+  "use_for": [
+    "token parsing",
+    "signature resolution",
+    "attribute extraction",
+    "member metadata lookup",
+    "assembly detail recovery"
+  ],
+  "do_not_use_for": [
+    "plugin bootstrap",
+    "Harmony patching",
+    "IMGUI",
+    "CPU scheduling"
+  ],
+  "rules": [
+    "preserve original tokens where available",
+    "separate metadata recovery from semantic interpretation",
+    "keep member signatures lossless",
+    "treat attributes and flags as first-class data",
+    "avoid speculative reconstruction beyond available metadata"
+  ],
+  "procedure": [
+    "Read metadata tables.",
+    "Resolve type and member tokens.",
+    "Extract signatures and flags.",
+    "Extract attributes and references.",
+    "Attach metadata to assembly model.",
+    "Emit structured metadata output."
+  ],
+  "output": [
+    "parsed metadata records",
+    "resolved signatures",
+    "enriched assembly model"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about metadata tables, tokens, signatures, or attributes",
+      "the request is about enriching an assembly model with metadata details"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about plugin bootstrap, IMGUI, or CPU scheduling"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "id": "framework-manifest",
+  "kind": "domain_manifest",
+  "domain": "framework",
+  "files": [
+    "bootstrap",
+    "contracts",
+    "di",
+    "diagnostics"
+  ],
+  "entry_file": "framework_entry.json",
+  "manifest_file": "framework_manifest.json"
+}

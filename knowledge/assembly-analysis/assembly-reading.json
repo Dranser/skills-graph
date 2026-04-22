@@ -1,0 +1,77 @@
+{
+  "id": "assembly-reading",
+  "kind": "skill",
+  "title": "Assembly Reading",
+  "domain": "assembly-analysis",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "read assembly",
+      "inspect dll",
+      "mono assembly",
+      "decompile",
+      "inspect binary"
+    ],
+    "weak": [
+      "type structure",
+      "member resolution",
+      "library inspection"
+    ]
+  },
+  "use_for": [
+    "reading managed assemblies",
+    "extracting type structure",
+    "resolving members",
+    "inspecting Mono-targeted libraries",
+    "decompiled structure recovery"
+  ],
+  "do_not_use_for": [
+    "runtime patching",
+    "loader bootstrap",
+    "UI rendering",
+    "generic optimization"
+  ],
+  "rules": [
+    "read assemblies directly",
+    "separate raw reading from interpretation",
+    "preserve namespace, type, and member hierarchy",
+    "keep token and signature data available when relevant",
+    "avoid speculative renaming during initial pass"
+  ],
+  "procedure": [
+    "Load assembly.",
+    "Enumerate modules and types.",
+    "Extract fields, properties, methods, and signatures.",
+    "Preserve hierarchy and metadata references.",
+    "Emit stable intermediate representation.",
+    "Store output for downstream dump or analysis stages."
+  ],
+  "output": [
+    "extracted assembly structure",
+    "stable intermediate representation",
+    "type and member inventory"
+  ],
+  "dependencies": {
+    "hard": [
+      "metadata-parsing"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about reading or inspecting managed assemblies",
+      "the request is about recovering type/member structure from a binary",
+      "the request mentions DLL inspection, Mono assemblies, or decompilation"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about patching runtime behavior",
+      "the request is about UI rendering or generic optimization"
+    ]
+  }
+}

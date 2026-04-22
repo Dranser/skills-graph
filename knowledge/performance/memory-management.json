@@ -1,0 +1,73 @@
+{
+  "id": "memory-management",
+  "kind": "skill",
+  "title": "Memory Management",
+  "domain": "performance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "memory",
+      "allocation",
+      "pooling",
+      "gc",
+      "ownership",
+      "lifetime"
+    ],
+    "weak": [
+      "allocation control",
+      "reuse",
+      "object lifetime",
+      "gc pressure"
+    ]
+  },
+  "use_for": [
+    "allocation control",
+    "pooling",
+    "lifetime management",
+    "GC pressure reduction",
+    "memory ownership discipline"
+  ],
+  "do_not_use_for": [
+    "runtime patching",
+    "UI layout",
+    "loader bootstrap",
+    "metadata parsing"
+  ],
+  "rules": [
+    "make ownership explicit",
+    "reduce transient allocations on hot paths",
+    "pool only when lifecycle is clear",
+    "keep release paths deterministic",
+    "separate long-lived and short-lived data"
+  ],
+  "procedure": [
+    "Identify hot allocations.",
+    "Classify object lifetimes.",
+    "Replace repeated hot allocations where justified.",
+    "Introduce pooling or reuse path.",
+    "Bind ownership and release rules.",
+    "Validate behavior under repeated workload."
+  ],
+  "output": [
+    "allocation control code",
+    "pooling structures",
+    "explicit lifetime model"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "request is specifically about memory ownership, pooling, or allocation behavior",
+      "request is about reducing GC pressure or defining lifetime rules"
+    ],
+    "must_not_own_when": [
+      "request is mainly about UI layout, runtime patching, loader bootstrap, or metadata parsing"
+    ]
+  }
+}

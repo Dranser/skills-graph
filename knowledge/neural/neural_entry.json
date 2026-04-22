@@ -1,0 +1,34 @@
+{
+  "id": "neural-entry",
+  "kind": "domain_entry",
+  "domain": "neural",
+  "entry_points": [
+    "architecture",
+    "training",
+    "optimization"
+  ],
+  "signals": [
+    "neural architecture",
+    "network structure",
+    "forward pass",
+    "layers",
+    "training",
+    "backprop",
+    "optimizer",
+    "gradient",
+    "inference speed",
+    "numerical stability"
+  ],
+  "use_for": [
+    "neural model design",
+    "forward graph design",
+    "training loop design",
+    "optimizer application",
+    "neural performance and stability tuning"
+  ],
+  "priority_order": [
+    "architecture",
+    "training",
+    "optimization"
+  ]
+}

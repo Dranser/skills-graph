@@ -1,0 +1,37 @@
+{
+  "id": "framework-entry",
+  "kind": "domain_entry",
+  "domain": "framework",
+  "entry_points": [
+    "bootstrap",
+    "contracts",
+    "di",
+    "diagnostics"
+  ],
+  "signals": [
+    "bootstrap",
+    "contracts",
+    "dependency injection",
+    "diagnostics",
+    "composition root",
+    "startup order",
+    "service lifetimes",
+    "runtime boundaries",
+    "logging"
+  ],
+  "use_for": [
+    "framework setup",
+    "service composition",
+    "diagnostics",
+    "runtime contracts",
+    "deterministic startup and composition root design",
+    "service lifetime and registration policy",
+    "file-backed runtime diagnostics"
+  ],
+  "priority_order": [
+    "bootstrap",
+    "contracts",
+    "di",
+    "diagnostics"
+  ]
+}

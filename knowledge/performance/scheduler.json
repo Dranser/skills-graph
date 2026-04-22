@@ -1,0 +1,79 @@
+{
+  "id": "scheduler",
+  "kind": "skill",
+  "title": "Scheduler",
+  "domain": "performance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "scheduler",
+      "task system",
+      "worker",
+      "queue",
+      "parallel tasks",
+      "dispatch"
+    ],
+    "weak": [
+      "job queue",
+      "worker dispatch",
+      "contention",
+      "parallel pipeline"
+    ]
+  },
+  "use_for": [
+    "task scheduling",
+    "worker dispatch",
+    "CPU parallel pipelines",
+    "job queue design",
+    "task system orchestration"
+  ],
+  "do_not_use_for": [
+    "Harmony patching",
+    "IMGUI",
+    "assembly dumps",
+    "neural architecture definitions"
+  ],
+  "rules": [
+    "keep task boundaries explicit",
+    "minimize synchronization scope",
+    "avoid hidden shared mutable state",
+    "separate scheduling from task logic",
+    "make work distribution deterministic when required"
+  ],
+  "procedure": [
+    "Define task unit.",
+    "Define queue or scheduling structure.",
+    "Define worker ownership model.",
+    "Bind synchronization points.",
+    "Route tasks through explicit dispatch path.",
+    "Measure contention and rebalance if needed."
+  ],
+  "output": [
+    "scheduler code",
+    "queue and worker logic",
+    "deterministic dispatch flow"
+  ],
+  "dependencies": {
+    "hard": [
+      "data-oriented-design",
+      "memory-management",
+      "cache-optimization"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "request is about task scheduling, worker dispatch, or job queue design",
+      "request is about CPU parallel pipelines or deterministic task orchestration"
+    ],
+    "must_not_own_when": [
+      "request is mainly about Harmony patching, IMGUI, assembly dumps, or neural architecture definitions"
+    ]
+  }
+}

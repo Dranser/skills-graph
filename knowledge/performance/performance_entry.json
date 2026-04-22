@@ -1,0 +1,34 @@
+{
+  "id": "performance-entry",
+  "kind": "domain_entry",
+  "domain": "performance",
+  "entry_points": [
+    "data-oriented-design",
+    "scheduler",
+    "memory-management",
+    "cache-optimization"
+  ],
+  "signals": [
+    "performance",
+    "memory",
+    "allocation",
+    "cache",
+    "scheduler",
+    "task system",
+    "data-oriented",
+    "throughput"
+  ],
+  "use_for": [
+    "performance-oriented architecture",
+    "memory discipline",
+    "cache behavior",
+    "parallel scheduling",
+    "data-oriented execution"
+  ],
+  "priority_order": [
+    "scheduler",
+    "data-oriented-design",
+    "memory-management",
+    "cache-optimization"
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "id": "gpu-compute",
+  "kind": "skill",
+  "title": "GPU Compute",
+  "domain": "gpu",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "compute shader",
+      "dispatch",
+      "kernel",
+      "structured buffer",
+      "graphics buffer",
+      "gpu compute"
+    ],
+    "weak": [
+      "gpu-side processing",
+      "buffer-backed workload",
+      "readback"
+    ]
+  },
+  "use_for": [
+    "compute shader pipelines",
+    "dispatch logic",
+    "buffer-backed compute workloads",
+    "GPU-side data processing",
+    "kernel-driven execution"
+  ],
+  "do_not_use_for": [
+    "CPU-only scheduling",
+    "IMGUI",
+    "plugin lifecycle",
+    "assembly parsing"
+  ],
+  "rules": [
+    "keep CPU and GPU responsibilities explicit",
+    "define buffer layout before kernel logic",
+    "keep dispatch dimensions explicit",
+    "separate upload, execute, and readback stages",
+    "avoid hidden synchronization costs"
+  ],
+  "procedure": [
+    "Define compute workload.",
+    "Define buffer layout.",
+    "Bind kernel and parameters.",
+    "Upload data to GPU.",
+    "Dispatch compute work.",
+    "Read back only when required."
+  ],
+  "output": [
+    "compute shader integration code",
+    "dispatch path",
+    "buffer management flow"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "imgui-basics"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about compute shaders, kernel dispatch, or GPU-side data processing",
+      "the request is about structured buffers or GPU compute workflows"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about CPU-only scheduling, IMGUI, plugin lifecycle, or assembly parsing"
+    ]
+  }
+}

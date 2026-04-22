@@ -1,0 +1,12 @@
+{
+  "id": "assembly-analysis-manifest",
+  "kind": "domain_manifest",
+  "domain": "assembly-analysis",
+  "files": [
+    "assembly-reading",
+    "dump-pipeline",
+    "metadata-parsing"
+  ],
+  "entry_file": "assembly-analysis_entry.json",
+  "manifest_file": "assembly-analysis_manifest.json"
+}

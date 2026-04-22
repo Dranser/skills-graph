@@ -1,0 +1,147 @@
+{
+  "version": "1.0",
+  "description": "Execution planner for Skills Graph. Builds final execution context after router selects the primary domain.",
+  "inputs": {
+    "routing_result": {
+      "required": [
+        "primary_domain",
+        "primary_file",
+        "matched_signals",
+        "confidence"
+      ]
+    },
+    "index_source": "meta/index.json",
+    "knowledge_source": "knowledge/*/*.json",
+    "canonical_instruction_source": "knowledge skill json files",
+    "skill_schema_source": "meta/skill-schema.json",
+    "skill_template_source": "meta/skill-template.json"
+  },
+  "rules": {
+    "primary_is_immutable": true,
+    "attach_same_domain_before_cross_domain": true,
+    "include_hard_dependencies": true,
+    "include_optional_dependencies_when_relevant": true,
+    "include_contextual_dependencies_when_triggered": true,
+    "cross_cutting_domains_attach_last": true,
+    "manifest_files_never_execute": true,
+    "entry_files_never_execute_as_skills": true,
+    "deduplicate_attached_skills": true,
+    "ignore_missing_source_path_metadata": true,
+    "cross_cutting_may_be_primary_only_from_routing_result": true,
+    "must_apply_global_engineering_policy": true,
+    "must_consume_routing_and_execution_layers_from_skill_json": true,
+    "prefer_local_references_before_external_docs": true,
+    "respect_reference_priority_when_loading_supporting_material": true
+  },
+  "selection_order": [
+    "primary_file",
+    "same_domain_hard_dependencies",
+    "same_domain_optional_dependencies",
+    "same_domain_contextual_dependencies",
+    "cross_domain_dependencies",
+    "cross_cutting_skills"
+  ],
+  "attachment_policy": {
+    "max_same_domain_skills": 6,
+    "max_cross_domain_skills": 3,
+    "max_cross_cutting_skills": 4,
+    "cross_cutting_domains": [
+      "framework"
+    ]
+  },
+  "dependency_resolution": {
+    "hard": {
+      "attach": true,
+      "requires_relevance_check": false
+    },
+    "optional": {
+      "attach": true,
+      "requires_relevance_check": true
+    },
+    "contextual": {
+      "attach": true,
+      "requires_relevance_check": true,
+      "requires_trigger_match": true
+    }
+  },
+  "conflict_policy": {
+    "exclude_conflicting_skills_by_default": true,
+    "allow_conflicting_skill_only_with_explicit_override": true,
+    "never_replace_primary_with_conflict": true
+  },
+  "validation_policy": {
+    "drop_unknown_dependencies": false,
+    "fail_on_unknown_primary": true,
+    "fail_on_unknown_same_domain_skill": true,
+    "fail_on_unknown_cross_domain_skill": true,
+    "require_execution_layer_for_new_or_reworked_skills": true,
+    "require_references_for_new_or_reworked_skills": true
+  },
+  "execution_order_policy": {
+    "domain_owner_first": true,
+    "support_skills_after_owner": true,
+    "cross_cutting_last": true
+  },
+  "solution_constraints": {
+    "forbid_third_party_dependencies": true,
+    "forbid_native_unity_framework_foundation": true,
+    "prefer_custom_from_scratch_implementation": true,
+    "prefer_cpu_predictability_over_convenience": true,
+    "require_explicit_runtime_cost_justification": true,
+    "avoid_reflection_driven_runtime_patterns": true,
+    "avoid_allocation_heavy_hot_paths": true
+  },
+  "output_contract": {
+    "primary_domain": "string",
+    "primary_file": "string",
+    "same_domain_skills": [
+      "string"
+    ],
+    "cross_domain_skills": [
+      "string"
+    ],
+    "cross_cutting_skills": [
+      "string"
+    ],
+    "execution_order": [
+      "string"
+    ],
+    "excluded_candidates": [
+      {
+        "id": "string",
+        "reason": "string"
+      }
+    ],
+    "execution_guidance_loaded": [
+      "string"
+    ],
+    "reference_priorities_loaded": [
+      "string"
+    ],
+    "references_loaded": [
+      "string"
+    ]
+  },
+  "example": {
+    "input": {
+      "primary_domain": "modding",
+      "primary_file": "knowledge/modding/loader-integration.json"
+    },
+    "output": {
+      "primary_domain": "modding",
+      "primary_file": "knowledge/modding/loader-integration.json",
+      "same_domain_skills": [
+        "knowledge/modding/plugin-lifecycle.json"
+      ],
+      "cross_domain_skills": [],
+      "cross_cutting_skills": [
+        "knowledge/framework/diagnostics.json"
+      ],
+      "execution_order": [
+        "knowledge/modding/loader-integration.json",
+        "knowledge/modding/plugin-lifecycle.json",
+        "knowledge/framework/diagnostics.json"
+      ]
+    }
+  }
+}

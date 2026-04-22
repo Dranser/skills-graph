@@ -1,0 +1,259 @@
+{
+  "version": "1.0",
+  "description": "Primary-domain router for Skills Graph.",
+  "index_source": "meta/index.json",
+  "routing_mode": "single_primary_with_attached_skills",
+  "rules": {
+    "select_primary_from_entry_and_skills": true,
+    "ignore_dependencies_during_primary_selection": true,
+    "freeze_primary_after_selection": true,
+    "allow_support_attachment_after_primary_selection": true,
+    "allow_cross_domain_skills": true,
+    "allow_cross_cutting_skills": true,
+    "disallow_support_override_primary": true,
+    "disallow_cross_cutting_override_primary_without_direct_ownership_match": true,
+    "disallow_manifest_as_primary": true,
+    "skill_json_is_canonical_instruction_source": true
+  },
+  "scoring": {
+    "strong_signal_weight": 10,
+    "weak_signal_weight": 4,
+    "use_for_weight": 6,
+    "ownership_weight": 8,
+    "domain_entry_bonus": 5,
+    "manifest_bonus": 0,
+    "do_not_use_penalty": 9,
+    "conflict_penalty": 12,
+    "primary_role_bonus": 6,
+    "support_role_penalty": 3,
+    "cross_cutting_role_penalty": 2
+  },
+  "matching": {
+    "case_sensitive": false,
+    "normalize_hyphen_underscore": true,
+    "tokenize_query": true,
+    "substring_match": true,
+    "exact_phrase_bonus": 3,
+    "minimum_primary_score": 8,
+    "minimum_attachment_score": 4
+  },
+  "resolution": {
+    "tie_break_order": [
+      "higher_strong_signal_count",
+      "higher_ownership_match_count",
+      "higher_primary_role_priority",
+      "higher_total_score",
+      "stable_index_order"
+    ],
+    "fallback_mode": "domain_entry_first",
+    "fallback_priority": [
+      "entry",
+      "primary_skill",
+      "support_skill"
+    ]
+  },
+  "role_policy": {
+    "primary": {
+      "can_be_primary": true,
+      "can_be_attached": true
+    },
+    "support": {
+      "can_be_primary": true,
+      "default_primary": false,
+      "can_be_attached": true
+    },
+    "cross_cutting": {
+      "can_be_primary": true,
+      "default_primary": false,
+      "can_be_attached": true
+    },
+    "domain_entry": {
+      "can_be_primary": true,
+      "can_be_attached": false
+    },
+    "domain_manifest": {
+      "can_be_primary": false,
+      "can_be_attached": false
+    }
+  },
+  "attachment_policy": {
+    "attach_from_same_domain_first": true,
+    "include_hard_dependencies": true,
+    "include_optional_dependencies_when_relevant": true,
+    "include_contextual_dependencies_when_triggered": true,
+    "require_declared_relevance_for_cross_domain": true,
+    "prefer_attached_cross_cutting_unless_cross_cutting_has_stronger_ownership_match": true,
+    "max_same_domain_attachments": 4,
+    "max_cross_domain_attachments": 3,
+    "cross_cutting_domains": [
+      "framework"
+    ]
+  },
+  "domains": {
+    "assembly-analysis": {
+      "entry": "knowledge/assembly-analysis/assembly-analysis_entry.json",
+      "manifest": "knowledge/assembly-analysis/assembly-analysis_manifest.json",
+      "skills": [
+        "knowledge/assembly-analysis/assembly-reading.json",
+        "knowledge/assembly-analysis/dump-pipeline.json",
+        "knowledge/assembly-analysis/metadata-parsing.json"
+      ],
+      "default_primary_candidates": [
+        "assembly-reading",
+        "dump-pipeline"
+      ],
+      "default_support_candidates": [
+        "metadata-parsing"
+      ]
+    },
+    "data-oriented-pipeline": {
+      "entry": "knowledge/data-oriented-pipeline/data-oriented-pipeline_entry.json",
+      "manifest": "knowledge/data-oriented-pipeline/data-oriented-pipeline_manifest.json",
+      "skills": [
+        "knowledge/data-oriented-pipeline/pipeline-architecture.json",
+        "knowledge/data-oriented-pipeline/stage-boundaries.json",
+        "knowledge/data-oriented-pipeline/dataflow-state.json",
+        "knowledge/data-oriented-pipeline/invalidation-propagation.json",
+        "knowledge/data-oriented-pipeline/execution-model.json"
+      ],
+      "default_primary_candidates": [
+        "pipeline-architecture",
+        "execution-model"
+      ],
+      "default_support_candidates": [
+        "stage-boundaries",
+        "dataflow-state",
+        "invalidation-propagation"
+      ]
+    },
+    "framework": {
+      "entry": "knowledge/framework/framework_entry.json",
+      "manifest": "knowledge/framework/framework_manifest.json",
+      "skills": [
+        "knowledge/framework/bootstrap.json",
+        "knowledge/framework/contracts.json",
+        "knowledge/framework/di.json",
+        "knowledge/framework/diagnostics.json"
+      ],
+      "default_primary_candidates": [
+        "bootstrap",
+        "contracts",
+        "di",
+        "diagnostics"
+      ],
+      "default_support_candidates": []
+    },
+    "gpu": {
+      "entry": "knowledge/gpu/gpu_entry.json",
+      "manifest": "knowledge/gpu/gpu_manifest.json",
+      "skills": [
+        "knowledge/gpu/gpu-compute.json",
+        "knowledge/gpu/gpu-instancing.json"
+      ],
+      "default_primary_candidates": [
+        "gpu-compute",
+        "gpu-instancing"
+      ],
+      "default_support_candidates": []
+    },
+    "modding": {
+      "entry": "knowledge/modding/modding_entry.json",
+      "manifest": "knowledge/modding/modding_manifest.json",
+      "skills": [
+        "knowledge/modding/harmony-patching.json",
+        "knowledge/modding/loader-integration.json",
+        "knowledge/modding/plugin-lifecycle.json"
+      ],
+      "default_primary_candidates": [
+        "harmony-patching",
+        "loader-integration"
+      ],
+      "default_support_candidates": [
+        "plugin-lifecycle"
+      ]
+    },
+    "neural": {
+      "entry": "knowledge/neural/neural_entry.json",
+      "manifest": "knowledge/neural/neural_manifest.json",
+      "skills": [
+        "knowledge/neural/architecture.json",
+        "knowledge/neural/optimization.json",
+        "knowledge/neural/training.json"
+      ],
+      "default_primary_candidates": [
+        "architecture",
+        "training"
+      ],
+      "default_support_candidates": []
+    },
+    "performance": {
+      "entry": "knowledge/performance/performance_entry.json",
+      "manifest": "knowledge/performance/performance_manifest.json",
+      "skills": [
+        "knowledge/performance/cache-optimization.json",
+        "knowledge/performance/data-oriented-design.json",
+        "knowledge/performance/memory-management.json",
+        "knowledge/performance/scheduler.json"
+      ],
+      "default_primary_candidates": [
+        "scheduler",
+        "data-oriented-design"
+      ],
+      "default_support_candidates": [
+        "memory-management",
+        "cache-optimization"
+      ]
+    },
+    "unity-ui": {
+      "entry": "knowledge/unity-ui/unity-ui_entry.json",
+      "manifest": "knowledge/unity-ui/unity-ui_manifest.json",
+      "skills": [
+        "knowledge/unity-ui/imgui-core.json",
+        "knowledge/unity-ui/imgui-state-model.json",
+        "knowledge/unity-ui/imgui-layout-composition.json",
+        "knowledge/unity-ui/imgui-manual-layout.json",
+        "knowledge/unity-ui/imgui-incremental-update.json",
+        "knowledge/unity-ui/imgui-input-routing.json",
+        "knowledge/unity-ui/imgui-windowing.json",
+        "knowledge/unity-ui/imgui-styling.json",
+        "knowledge/unity-ui/imgui-performance.json",
+        "knowledge/unity-ui/imgui-debugging.json"
+      ],
+      "default_primary_candidates": [
+        "imgui-core",
+        "imgui-windowing",
+        "imgui-incremental-update"
+      ],
+      "default_support_candidates": [
+        "imgui-state-model",
+        "imgui-layout-composition",
+        "imgui-manual-layout",
+        "imgui-incremental-update",
+        "imgui-input-routing",
+        "imgui-styling",
+        "imgui-performance",
+        "imgui-debugging"
+      ]
+    }
+  },
+  "output_contract": {
+    "primary_domain": "string",
+    "primary_file": "string",
+    "attached_skills": [
+      "string"
+    ],
+    "cross_domain_skills": [
+      "string"
+    ],
+    "matched_signals": [
+      "string"
+    ],
+    "rejected_candidates": [
+      {
+        "id": "string",
+        "reason": "string"
+      }
+    ],
+    "confidence": "number"
+  }
+}

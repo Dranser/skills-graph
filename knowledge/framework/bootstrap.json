@@ -1,0 +1,158 @@
+{
+  "id": "bootstrap",
+  "kind": "skill",
+  "title": "Bootstrap",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "bootstrap",
+      "entrypoint",
+      "startup",
+      "initialize systems",
+      "composition root"
+    ],
+    "weak": [
+      "startup order",
+      "system registration",
+      "initialization"
+    ]
+  },
+  "use_for": [
+    "entrypoint setup",
+    "startup order",
+    "composition root creation",
+    "system registration",
+    "early infrastructure initialization"
+  ],
+  "do_not_use_for": [
+    "runtime patching",
+    "assembly parsing",
+    "UI layout",
+    "isolated feature logic"
+  ],
+  "rules": [
+    "define startup order explicitly",
+    "initialize diagnostics before optional systems",
+    "keep bootstrap thin",
+    "move feature logic out of bootstrap",
+    "register core services before consumers"
+  ],
+  "procedure": [
+    "Define entrypoint.",
+    "Initialize diagnostics.",
+    "Register core services.",
+    "Register dependent services.",
+    "Construct startup sequence.",
+    "Start systems in deterministic order."
+  ],
+  "output": [
+    "minimal bootstrap code",
+    "deterministic startup flow",
+    "explicit registration order"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics",
+      "di"
+    ],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [
+    "loader-integration",
+    "harmony-patching"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about composition root, startup sequence, or entrypoint setup",
+      "the request is about deterministic startup order"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about UI layout, runtime patching, or assembly parsing"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to bring runtime systems up in a deterministic order",
+      "how to keep composition root logic explicit and reviewable",
+      "how to separate startup orchestration from feature implementation"
+    ],
+    "does_not_solve": [
+      "feature-local business logic",
+      "UI composition details",
+      "runtime patching"
+    ]
+  },
+  "core_principles": [
+    "Bootstrap should orchestrate startup, not absorb feature behavior.",
+    "Initialization order must be explicit and stable.",
+    "Diagnostics should be available before optional systems start."
+  ],
+  "constraints": [
+    "Startup dependencies must be reviewable without executing hidden registration logic.",
+    "Optional systems must not become implicit prerequisites accidentally.",
+    "Composition root logic should remain thin enough to inspect quickly."
+  ],
+  "decision_rules": [
+    "Use bootstrap as the owner when startup order, entrypoint wiring, or composition root policy dominates the task.",
+    "Push boundary contracts into contracts before binding implementations in bootstrap.",
+    "Keep one authoritative startup path per host or runtime surface."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "thin composition root",
+      "deterministic startup phases",
+      "explicit registration order",
+      "diagnostics initialized before optional systems"
+    ],
+    "avoid_patterns": [
+      "feature logic inside the entrypoint",
+      "startup side effects hidden in registration callbacks",
+      "multiple competing bootstrap paths for one runtime host"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build a deterministic composition root",
+      "when": "Use when a runtime host must start core systems in a reviewable order.",
+      "steps": [
+        "Define the entrypoint boundary and startup phases.",
+        "Initialize diagnostics first.",
+        "Register core services before dependents.",
+        "Start systems in one explicit sequence."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Growing bootstrap until it owns feature logic.",
+    "Initializing optional services before core diagnostics.",
+    "Depending on registration side effects to determine startup order."
+  ],
+  "review_checklist": [
+    "Is startup order explicit?",
+    "Is diagnostics available early?",
+    "Is composition root thin enough to review quickly?",
+    "Have feature concerns been kept out of bootstrap?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Framework Bootstrap",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/framework/references/bootstrap.md",
+      "interpretation": "Use this first for startup-phase design, composition root boundaries, and deterministic initialization policy.",
+      "why": "Use as the primary local guide for explicit bootstrap and startup ordering."
+    },
+    {
+      "title": "Local Reference: Framework Diagnostics",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/framework/references/diagnostics.md",
+      "interpretation": "Use this to align early bootstrap with diagnostics initialization and failure visibility.",
+      "why": "Use to ensure bootstrap initializes diagnostics at the correct point in startup."
+    }
+  ]
+}

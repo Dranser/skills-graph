@@ -1,0 +1,194 @@
+{
+  "id": "imgui-incremental-update",
+  "kind": "skill",
+  "title": "IMGUI Incremental Update",
+  "domain": "unity-ui",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "incremental update",
+      "partial update",
+      "dirty propagation",
+      "dirty flags",
+      "data binding",
+      "subtree update"
+    ],
+    "weak": [
+      "resource reuse",
+      "selective refresh",
+      "binding cache",
+      "version stamp",
+      "incremental refresh"
+    ]
+  },
+  "use_for": [
+    "designing retained update pipelines for IMGUI frameworks",
+    "planning reusable presentation resources with explicit invalidation",
+    "building binding-aware partial updates for windows, panels, and component subtrees"
+  ],
+  "do_not_use_for": [
+    "raw input routing design",
+    "visual styling questions without update-model concerns",
+    "architectures that accept whole-tree invalidation as the default"
+  ],
+  "rules": [
+    "generate expensive presentation resources once and reuse them until explicit invalidation",
+    "compare source data cheaply before recomputing derived presentation",
+    "mark only the smallest affected host, panel, or subtree dirty",
+    "stop recomputation at the first clean boundary"
+  ],
+  "procedure": [
+    "List the expensive derived resources and bound presentation data.",
+    "Assign ownership and invalidation rules for each resource.",
+    "Define binding checks or version stamps for source changes.",
+    "Introduce dirty propagation through explicit subtree boundaries.",
+    "Verify that clean siblings can skip recomputation safely."
+  ],
+  "output": [
+    "incremental update model",
+    "binding and invalidation policy",
+    "subtree refresh strategy"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-state-model"
+    ],
+    "optional": [
+      "imgui-performance",
+      "invalidation-propagation"
+    ],
+    "contextual": [
+      "imgui-core",
+      "imgui-manual-layout",
+      "pipeline-architecture",
+      "dataflow-state",
+      "execution-model"
+    ]
+  },
+  "conflicts": [
+    "scheduler"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about bindings, dirty flags, partial refresh, resource reuse, or subtree-level updates in an IMGUI framework"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about overall host architecture, input routing, or basic layout composition"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to avoid recomputing more presentation than the state change requires",
+      "how to combine resource reuse, binding checks, and dirty propagation coherently"
+    ],
+    "does_not_solve": [
+      "manual geometry ownership by itself",
+      "window lifetime orchestration by itself"
+    ]
+  },
+  "core_principles": [
+    "Derived presentation should be retained separately from domain truth.",
+    "Binding checks should be cheaper than the recomputation they guard.",
+    "Dirty propagation should stop at meaningful subtree boundaries."
+  ],
+  "constraints": [
+    "Invalidation ownership must be explicit.",
+    "Binding state must not become authoritative application state.",
+    "Incremental update paths must remain understandable during debugging and review."
+  ],
+  "decision_rules": [
+    "Use version stamps or similarly cheap source signals before considering deeper comparisons.",
+    "Invalidate at panel or component subtree scope before escalating to whole-window scope.",
+    "Treat global restyles or structural changes as legitimate broad invalidation events.",
+    "Attach data-oriented-pipeline support when the UI update model should be designed as an explicit stage pipeline rather than only as widget-local invalidation logic."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "host or panel-owned derived presentation caches",
+      "binding snapshots or source versions",
+      "explicit dirty boundaries at host, panel, and component subtree levels",
+      "incremental UI updates expressed as explicit pipeline stages when architectural scale justifies it"
+    ],
+    "avoid_patterns": [
+      "whole-tree invalidation by default",
+      "deep per-frame equality checks over large source graphs",
+      "ad hoc per-widget cache ownership with unclear cleanup",
+      "treating the update model as a collection of widget-local tricks instead of one owned dataflow path"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Refresh only one bound panel subtree",
+      "when": "Use when one panel depends on data that changed but sibling panels do not.",
+      "steps": [
+        "Detect the change through a source version or explicit dirty notification.",
+        "Mark the owning panel subtree dirty.",
+        "Recompute only the derived resources used by that subtree.",
+        "Leave clean siblings and their presentation caches untouched."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Making everything dirty so often that the incremental model gives no benefit.",
+    "Using binding comparisons that cost more than recomputation.",
+    "Allowing stale derived resources because invalidation ownership is unclear."
+  ],
+  "review_checklist": [
+    "Are expensive derived resources reused?",
+    "Are invalidation rules explicit?",
+    "Can updates stop at a subtree boundary?",
+    "Are binding checks cheaper than the work they skip?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: IMGUI Incremental Update Model",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity-ui/references/imgui-incremental-update-model.md",
+      "interpretation": "Use this first for retained resource reuse, binding-aware updates, and subtree-level dirty propagation.",
+      "why": "Use as the primary local guide for optimized incremental UI updates in the domain."
+    },
+    {
+      "title": "Local Reference: IMGUI State Patterns",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity-ui/references/imgui-state-patterns.md",
+      "interpretation": "Use this to align binding and dirty-state ownership with the broader retained-state model.",
+      "why": "Use to ground incremental updates in explicit state ownership."
+    },
+    {
+      "title": "Local Reference: IMGUI Performance Guidelines",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity-ui/references/imgui-performance-guidelines.md",
+      "interpretation": "Use this to evaluate whether the incremental model actually reduces cost instead of shifting it.",
+      "why": "Use to validate the performance tradeoffs of bindings, caches, and partial refresh."
+    },
+    {
+      "title": "Local Reference: Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/data-oriented-pipeline/references/pipeline-architecture.md",
+      "interpretation": "Use this when the UI update path should be elevated from local invalidation rules to an explicit data-oriented pipeline architecture.",
+      "why": "Use to treat UI update flow as a pipeline-first architectural path where scale and performance justify it."
+    },
+    {
+      "title": "Local Reference: Invalidation Propagation",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/data-oriented-pipeline/references/invalidation-propagation.md",
+      "interpretation": "Use this to formalize how local UI state changes should propagate through a broader pipeline of derived presentation products.",
+      "why": "Use to connect UI dirty propagation with explicit stage-level invalidation rules."
+    },
+    {
+      "title": "Local Reference: Execution Model",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/data-oriented-pipeline/references/execution-model.md",
+      "interpretation": "Use this when UI updates must be scheduled as a predictable execution graph rather than an informal redraw cascade.",
+      "why": "Use to connect incremental UI refresh with explicit pipeline execution planning."
+    }
+  ]
+}

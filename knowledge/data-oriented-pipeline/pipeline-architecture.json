@@ -1,0 +1,158 @@
+{
+  "id": "pipeline-architecture",
+  "kind": "skill",
+  "title": "Pipeline Architecture",
+  "domain": "data-oriented-pipeline",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "data-oriented pipeline",
+      "pipeline architecture",
+      "stage pipeline",
+      "processing pipeline",
+      "pipeline-first"
+    ],
+    "weak": [
+      "data flow architecture",
+      "incremental recompute",
+      "pipeline invalidation",
+      "architecture as optimization"
+    ]
+  },
+  "use_for": [
+    "designing architecture around explicit processing stages and data flow",
+    "treating optimization as a consequence of pipeline structure rather than late cleanup",
+    "defining predictable recompute boundaries and execution paths"
+  ],
+  "do_not_use_for": [
+    "generic OOP layering without dataflow concerns",
+    "UI composition details",
+    "assembly parsing"
+  ],
+  "rules": [
+    "organize systems as explicit stages over explicit data",
+    "make stage inputs and outputs reviewable",
+    "optimize by limiting recompute scope rather than by hiding work",
+    "prefer stable stage order and deterministic data ownership"
+  ],
+  "procedure": [
+    "Identify the data products the system must produce.",
+    "Split the work into explicit stages with clear inputs and outputs.",
+    "Define ownership of intermediate state and derived products.",
+    "Define recompute and invalidation boundaries per stage.",
+    "Choose an execution model only after stage boundaries are clear."
+  ],
+  "output": [
+    "pipeline architecture",
+    "stage map",
+    "recompute boundary plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "stage-boundaries",
+      "dataflow-state"
+    ],
+    "optional": [
+      "execution-model"
+    ],
+    "contextual": [
+      "invalidation-propagation",
+      "data-oriented-design",
+      "scheduler",
+      "memory-management"
+    ]
+  },
+  "conflicts": [
+    "bootstrap"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the request is about architecture built around data-oriented processing stages, recompute boundaries, or pipeline-first optimization",
+      "the request treats architecture and runtime optimization as one pipeline design problem"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about one isolated algorithm, one container type, or generic startup wiring"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to make architecture itself carry the optimization model",
+      "how to replace broad opaque systems with explicit stage-based processing"
+    ],
+    "does_not_solve": [
+      "one-off micro-optimizations",
+      "UI-specific rendering concerns",
+      "generic framework bootstrap"
+    ]
+  },
+  "core_principles": [
+    "Optimization should fall out of explicit pipeline structure.",
+    "Stages should produce named data products rather than hidden side effects.",
+    "Recompute scope should be a first-class architectural concept."
+  ],
+  "constraints": [
+    "Each stage must have a reviewable input and output boundary.",
+    "Derived data ownership must remain explicit.",
+    "The pipeline must not depend on hidden cross-stage mutation."
+  ],
+  "decision_rules": [
+    "Use a pipeline-first design when the system repeatedly transforms source data into derived products.",
+    "Split stages where recompute cost, ownership, or invalidation boundaries differ meaningfully.",
+    "Reject architectures that cannot explain which stage must rerun after a local state change."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "named stages with explicit inputs and outputs",
+      "derived data products retained between runs",
+      "recompute boundaries aligned to owned stage outputs"
+    ],
+    "avoid_patterns": [
+      "hidden shared mutable state across stages",
+      "architecture that only becomes data-oriented during optimization patches",
+      "broad monolithic update passes with unclear products"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Turn a broad update loop into a stage pipeline",
+      "when": "Use when one large update path mixes many transformations and becomes hard to optimize.",
+      "steps": [
+        "List the derived outputs the loop really produces.",
+        "Group operations into explicit stages by data dependency.",
+        "Assign owned intermediate products to each stage.",
+        "Define when each stage must rerun and when it can stay clean."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Splitting stages without clear data products.",
+    "Keeping hidden cross-stage mutation that defeats recompute boundaries.",
+    "Treating the pipeline as documentation instead of runtime architecture."
+  ],
+  "review_checklist": [
+    "Are stage boundaries explicit?",
+    "Are outputs and intermediate products named?",
+    "Can recompute scope be explained per stage?",
+    "Is optimization embodied in architecture rather than patched in later?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/data-oriented-pipeline/references/pipeline-architecture.md",
+      "interpretation": "Use this first for stage-first architecture, ownership of derived data, and pipeline-as-optimization reasoning.",
+      "why": "Use as the primary local guide for the domain's architectural stance."
+    },
+    {
+      "title": "Local Reference: Execution Model",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/data-oriented-pipeline/references/execution-model.md",
+      "interpretation": "Use this after stage boundaries are defined to choose sequencing and dispatch strategy.",
+      "why": "Use to connect architecture to runtime execution."
+    }
+  ]
+}

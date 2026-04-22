@@ -1,0 +1,114 @@
+{
+  "id": "skill-id",
+  "kind": "skill",
+  "title": "Human Readable Skill Title",
+  "domain": "domain-name",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "strong trigger phrase"
+    ],
+    "weak": [
+      "weak trigger phrase"
+    ]
+  },
+  "use_for": [
+    "practical task this skill should own or support"
+  ],
+  "do_not_use_for": [
+    "task this skill should not own"
+  ],
+  "rules": [
+    "short routing or execution rule"
+  ],
+  "procedure": [
+    "first execution step",
+    "second execution step"
+  ],
+  "output": [
+    "expected artifact or outcome"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "specific requests this skill should own"
+    ],
+    "must_not_own_when": [
+      "requests that should be routed elsewhere"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "practical difficulty this skill resolves"
+    ],
+    "does_not_solve": [
+      "out-of-scope area"
+    ]
+  },
+  "core_principles": [
+    "non-obvious guiding principle"
+  ],
+  "constraints": [
+    "important design or execution constraint"
+  ],
+  "decision_rules": [
+    "if X then attach or prefer Y"
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "recommended structural pattern"
+    ],
+    "avoid_patterns": [
+      "pattern to reject"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Concrete workflow name",
+      "when": "When to apply this recipe",
+      "steps": [
+        "first practical step",
+        "second practical step"
+      ]
+    }
+  ],
+  "pitfalls": [
+    "common failure mode"
+  ],
+  "review_checklist": [
+    "review question or acceptance criterion"
+  ],
+  "references": [
+    {
+      "title": "Local Reference Title",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/domain/references/example.md",
+      "interpretation": "Use this first for practical domain guidance.",
+      "why": "why this local reference matters"
+    },
+    {
+      "title": "Official Doc Title",
+      "type": "official-doc",
+      "priority": "supporting",
+      "url": "https://example.com/doc",
+      "interpretation": "Use this to confirm behavior, scope, or official API details.",
+      "why": "why this external reference matters"
+    },
+    {
+      "title": "Baseline Capability Doc",
+      "type": "official-doc",
+      "priority": "baseline-only",
+      "url": "https://example.com/baseline-doc",
+      "interpretation": "Use this to understand what the platform offers, not as the default architectural recommendation.",
+      "why": "why this source matters but should not dominate the design"
+    }
+  ]
+}
