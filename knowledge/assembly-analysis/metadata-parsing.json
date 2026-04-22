@@ -67,5 +67,116 @@
     "must_not_own_when": [
       "the request is mainly about plugin bootstrap, IMGUI, or CPU scheduling"
     ]
-  }
+  },
+  "problem_space": {
+    "solves": [
+      "preserving low-level member identity needed for reliable assembly analysis",
+      "resolving signatures, attributes, flags, and references without semantic guesswork",
+      "supporting repeatable dumps and exact runtime target selection"
+    ],
+    "does_not_solve": [
+      "choosing patch behavior",
+      "understanding full gameplay semantics by itself",
+      "recovering information absent from the assembly metadata"
+    ]
+  },
+  "core_principles": [
+    "Metadata is identity data first and interpretation support second.",
+    "Tokens, flags, attributes, and signatures should remain attached to the member they describe.",
+    "Lossless signature preservation matters for overload-heavy game code.",
+    "Attributes and compiler-generated markers can explain lifecycle and serialization behavior but should not be overread.",
+    "Unresolved references should stay explicit."
+  ],
+  "constraints": [
+    "Do not collapse overloads by method name alone.",
+    "Do not discard custom attributes, access modifiers, or declaring type context.",
+    "Do not infer semantic ownership from token order alone.",
+    "Keep generic arguments and array/ref/out details visible where available.",
+    "Preserve enough data for later lookup even when formatted output is simplified."
+  ],
+  "decision_rules": [
+    "Attach metadata-parsing whenever assembly-reading needs exact member matching.",
+    "Use metadata-parsing as primary only when the user explicitly asks about tokens, signatures, attributes, or metadata tables.",
+    "If a method will become a Harmony target, require exact signature and declaring type information.",
+    "If a field will be read by reflection, record visibility, declaring type, and fallback names.",
+    "If metadata cannot resolve a reference, surface the uncertainty to dump-pipeline or assembly-reading."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "metadata records attached to raw assembly model nodes",
+      "signature-preserving member indexes",
+      "attribute and flag extraction as first-class records",
+      "explicit unresolved-reference reporting"
+    ],
+    "avoid_patterns": [
+      "string-only method inventories",
+      "dropping private members because they are inconvenient",
+      "flattening nested types without declaring context",
+      "using metadata tokens as semantic meaning without corroboration"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Prepare metadata for exact hook targeting",
+      "when": "Use when a runtime integration layer needs to patch or call an exact overloaded member.",
+      "steps": [
+        "Resolve the declaring type and member name.",
+        "Preserve parameter types, return type, generic arguments, and modifiers.",
+        "Attach visibility flags, attributes, and token identity where available.",
+        "Record overload alternatives and why the selected member is the intended target.",
+        "Emit unresolved or ambiguous references as review blockers for runtime integration."
+      ]
+    },
+    {
+      "name": "Validate reflected member identity",
+      "when": "Use when a probe depends on private fields, properties, or methods discovered in decompiled code.",
+      "steps": [
+        "Record declaring type, member name, visibility, member kind, and expected value shape.",
+        "Capture alternate names only when they come from real version differences or decompiler evidence.",
+        "Preserve attribute and flag details that may explain serialization, networking, or lifecycle behavior.",
+        "Mark ambiguous or missing metadata as a probe confidence risk.",
+        "Hand the exact member identity to integration-surface-mapping before runtime implementation."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Selecting a method by name while ignoring overloads.",
+    "Dropping attributes that explain serialization, networking, or engine lifecycle behavior.",
+    "Losing nested type context in formatted output.",
+    "Treating unresolved references as absent behavior.",
+    "Allowing semantic interpretation to overwrite raw metadata facts."
+  ],
+  "review_checklist": [
+    "Are overloads distinguishable?",
+    "Are attributes, flags, and visibility preserved?",
+    "Are unresolved references explicit?",
+    "Can a Harmony target or reflection member be re-identified exactly?",
+    "Is metadata attached to the raw model rather than stored as detached notes?"
+  ],
+  "references": [
+    {
+      "title": "Reverse Integration Map",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/assembly-analysis/references/reverse-integration-map.md",
+      "interpretation": "Use this to decide which metadata details matter for runtime integration handoff.",
+      "why": "It keeps metadata parsing connected to practical modding contracts."
+    },
+    {
+      "title": "Dump Pipeline",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/assembly-analysis/references/dump-pipeline.md",
+      "interpretation": "Use when metadata must be emitted into repeatable dump output.",
+      "why": "It defines how metadata should remain searchable and diff-friendly."
+    },
+    {
+      "title": "Integration Surface Mapping",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/assembly-analysis/references/integration-surface-mapping.md",
+      "interpretation": "Use when exact metadata must become hook or probe selection evidence.",
+      "why": "It defines the handoff from metadata identity to runtime contract classification."
+    }
+  ]
 }

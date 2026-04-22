@@ -6,7 +6,8 @@
       "skills": [
         "assembly-reading.json",
         "dump-pipeline.json",
-        "metadata-parsing.json"
+        "metadata-parsing.json",
+        "integration-surface-mapping.json"
       ]
     },
     "data-oriented-pipeline": {

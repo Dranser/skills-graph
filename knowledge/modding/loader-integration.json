@@ -66,5 +66,112 @@
     "must_not_own_when": [
       "request is about assembly parsing or UI"
     ]
-  }
+  },
+  "problem_space": {
+    "solves": [
+      "attaching a mod runtime to a Unity game through a loader entry point",
+      "establishing deterministic startup before patches, modules, UI, and feature systems depend on it",
+      "keeping loader-specific code outside feature modules"
+    ],
+    "does_not_solve": [
+      "selecting Harmony target methods",
+      "parsing game assemblies",
+      "designing feature domain behavior"
+    ]
+  },
+  "core_principles": [
+    "The loader boundary should be thin and deterministic.",
+    "Diagnostics and emergency logging should be available before optional systems start.",
+    "Attach/update/fixed-update/GUI/shutdown phases should be explicit.",
+    "Loader API details should be hidden behind a toolkit or runtime entry surface.",
+    "Feature modules should depend on runtime contracts, not on the loader."
+  ],
+  "constraints": [
+    "Do not perform expensive reverse lookup or feature initialization directly in the loader constructor when a later phase is safer.",
+    "Do not let feature modules call loader APIs directly.",
+    "Do not start patch-heavy systems before diagnostics are configured.",
+    "Do not assume shutdown is always called; runtime state should tolerate partial teardown.",
+    "Keep mod scope, config paths, and logging context explicit."
+  ],
+  "decision_rules": [
+    "Use loader-integration when the task is about plugin entry, attach, bootstrap, or loader lifecycle alignment.",
+    "Attach plugin-lifecycle when startup/shutdown sequencing or runtime resource ownership matters.",
+    "Attach diagnostics when the runtime must report hook, module, probe, or config failures.",
+    "Attach harmony-patching only after the loader can safely initialize and report patch availability.",
+    "If multiple mods will consume the toolkit, expose a stable public runtime facade instead of loader-specific entry points."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "single plugin entry that delegates to a runtime attach method",
+      "explicit update, late update, fixed update, GUI, and shutdown forwarding",
+      "composition root configured before module initialization",
+      "diagnostics-first startup",
+      "public facade over internal runtime and module systems"
+    ],
+    "avoid_patterns": [
+      "feature initialization scattered across loader callbacks",
+      "global mutable state initialized before logging and config are ready",
+      "loader-specific APIs leaking into feature code",
+      "implicit startup ordering through static constructors",
+      "silent loader attach failure"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Create a deterministic loader entry",
+      "when": "Use when a Unity mod must attach a reusable runtime/toolkit through a plugin loader.",
+      "steps": [
+        "Keep the plugin entry class minimal and delegate to a runtime attach method.",
+        "Configure logging, config paths, and composition root before modules start.",
+        "Initialize dispatcher or main-thread bridge before queued runtime work can be scheduled.",
+        "Register modules and patches only after diagnostics can record failures.",
+        "Forward loader update, fixed update, GUI, and shutdown callbacks explicitly.",
+        "Expose health or module state snapshots for runtime verification."
+      ]
+    },
+    {
+      "name": "Expose a reusable toolkit attach surface",
+      "when": "Use when more than one feature or mod should consume the same runtime foundation.",
+      "steps": [
+        "Move loader-specific details behind a public attach facade.",
+        "Resolve mod scope, config paths, logging, and composition root inside the runtime boundary.",
+        "Keep feature modules dependent on toolkit contracts rather than loader classes.",
+        "Expose lifecycle forwarding methods for update, fixed update, GUI, and shutdown.",
+        "Expose diagnostics so consumers can verify attach and module readiness."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Using loader callbacks as the architecture instead of a boundary.",
+    "Starting Harmony patches before a failure can be logged.",
+    "Depending on shutdown for all cleanup in a loader that may not guarantee it.",
+    "Letting every feature create its own config/logging/runtime conventions.",
+    "Hiding attach order behind static initialization."
+  ],
+  "review_checklist": [
+    "Is the loader entry thin?",
+    "Are diagnostics configured before optional systems?",
+    "Are lifecycle phases explicit?",
+    "Can module and hook failures be inspected?",
+    "Is feature code isolated from loader details?",
+    "Is shutdown or partial teardown handled deliberately?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/modding/references/runtime-integration.md",
+      "interpretation": "Use this first for loader-to-runtime layering and lifecycle boundaries.",
+      "why": "It defines the architecture around attach, modules, patches, probes, events, diagnostics, and facades."
+    },
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use when loader attach must expose health, module state, queue pressure, or unavailable integrations.",
+      "why": "It defines what a ready or degraded runtime should report."
+    }
+  ]
 }

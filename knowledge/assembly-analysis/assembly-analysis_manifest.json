@@ -5,7 +5,8 @@
   "files": [
     "assembly-reading",
     "dump-pipeline",
-    "metadata-parsing"
+    "metadata-parsing",
+    "integration-surface-mapping"
   ],
   "entry_file": "assembly-analysis_entry.json",
   "manifest_file": "assembly-analysis_manifest.json"

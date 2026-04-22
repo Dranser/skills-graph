@@ -96,9 +96,11 @@
       "skills": [
         "knowledge/assembly-analysis/assembly-reading.json",
         "knowledge/assembly-analysis/dump-pipeline.json",
-        "knowledge/assembly-analysis/metadata-parsing.json"
+        "knowledge/assembly-analysis/metadata-parsing.json",
+        "knowledge/assembly-analysis/integration-surface-mapping.json"
       ],
       "default_primary_candidates": [
+        "integration-surface-mapping",
         "assembly-reading",
         "dump-pipeline"
       ],

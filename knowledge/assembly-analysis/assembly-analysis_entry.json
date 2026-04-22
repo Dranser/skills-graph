@@ -5,22 +5,30 @@
   "entry_points": [
     "assembly-reading",
     "dump-pipeline",
-    "metadata-parsing"
+    "metadata-parsing",
+    "integration-surface-mapping"
   ],
   "signals": [
     "assembly reading",
     "metadata parsing",
     "dump pipeline",
     "dll inspection",
-    "mono assembly"
+    "mono assembly",
+    "integration surface",
+    "hook candidate",
+    "runtime integration map",
+    "probe map",
+    "from dump to patch"
   ],
   "use_for": [
     "assembly analysis",
     "assembly structure extraction",
     "dump generation",
-    "metadata recovery"
+    "metadata recovery",
+    "mapping decompiled game internals to runtime hooks, probes, snapshots, and facades"
   ],
   "priority_order": [
+    "integration-surface-mapping",
     "assembly-reading",
     "dump-pipeline",
     "metadata-parsing"

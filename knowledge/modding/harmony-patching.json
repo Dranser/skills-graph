@@ -67,5 +67,121 @@
     "must_not_own_when": [
       "request is about assembly parsing or UI"
     ]
-  }
+  },
+  "problem_space": {
+    "solves": [
+      "intercepting Unity game behavior through small, reviewable runtime hooks",
+      "turning discovered game methods into internal mod events without coupling features to patch classes",
+      "handling missing or changed targets through diagnostics and graceful degradation"
+    ],
+    "does_not_solve": [
+      "finding target methods without assembly analysis",
+      "loader startup and shutdown policy by itself",
+      "feature-level gameplay design"
+    ]
+  },
+  "core_principles": [
+    "A patch is an interception boundary, not a feature module.",
+    "Patch the smallest semantic lifecycle anchor that gives the needed payload.",
+    "Prefer postfix observation when the original game behavior should remain authoritative.",
+    "Use prefix only when state must be captured before mutation or execution must be guarded.",
+    "Use transpilers only when prefix/postfix/finalizer cannot express the requirement safely.",
+    "Every patch should report whether it is active."
+  ],
+  "constraints": [
+    "Do not put UI, persistence, business rules, or large state machines inside patch methods.",
+    "Do not patch broad update loops when a semantic lifecycle method exists.",
+    "Do not assume target type or method presence across game versions.",
+    "Unpatch explicitly during shutdown when the loader/runtime supports teardown.",
+    "Keep patch payloads minimal and hand them to handlers, events, or runtime modules."
+  ],
+  "decision_rules": [
+    "If the target method was not confirmed by dump or assembly reading, attach assembly-reading before implementing the patch.",
+    "If the patch only needs to observe completion, choose postfix.",
+    "If the patch needs pre-mutation state, choose prefix and pass only the required values to a handler.",
+    "If the feature needs many game internals after interception, create a reflection probe instead of expanding the patch method.",
+    "If a patch can be absent without breaking the whole mod, expose an unavailable diagnostic state and disable only dependent features."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "thin patch class that locates, applies, removes, and reports the hook",
+      "separate hook handler for interpretation and event publication",
+      "central hook registration module with hook state snapshots",
+      "patch diagnostics that include target description and enabled state",
+      "runtime events and facades downstream from patches"
+    ],
+    "avoid_patterns": [
+      "feature logic directly inside prefix or postfix methods",
+      "transpiler-first design",
+      "silent failure when target lookup fails",
+      "patching every nearby method to discover behavior at runtime",
+      "unbounded reflection inside hot patch paths"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Add a thin lifecycle patch",
+      "when": "Use when a decompiled game method marks a useful lifecycle transition such as object loaded, race started, loading finished, or menu opened.",
+      "steps": [
+        "Confirm exact target type, method name, and signature from assembly analysis or dump output.",
+        "Create a patch class that only resolves the target and installs prefix/postfix/finalizer.",
+        "Forward the minimal runtime payload to a dedicated handler.",
+        "Publish an internal event or update a lifecycle snapshot from the handler.",
+        "Record hook availability in diagnostics.",
+        "Define fallback behavior when the target type or method is missing."
+      ]
+    },
+    {
+      "name": "Diagnose a broken hook after a game update",
+      "when": "Use when a previously working patch no longer fires or target lookup fails.",
+      "steps": [
+        "Check hook diagnostics to confirm whether the target type and method were found.",
+        "Compare current dump signatures against the recorded integration surface map.",
+        "Identify whether the target was renamed, overloaded, moved, removed, or delayed by lifecycle changes.",
+        "Update the integration map before changing patch code.",
+        "Keep dependent features disabled until the hook is confirmed active again."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Using a patch class as a convenient place for all feature behavior.",
+    "Choosing a fragile target because it is easy to find rather than semantically correct.",
+    "Ignoring patch ordering and existing patch owners when sharing a game method.",
+    "Failing to unpatch or mark disabled hooks during shutdown.",
+    "Letting a missing patch crash unrelated modules."
+  ],
+  "review_checklist": [
+    "Is the target method exact and documented?",
+    "Is the patch method thin?",
+    "Is feature logic outside the patch class?",
+    "Does failure to find the target produce diagnostics?",
+    "Is there a clear fallback or feature-disable path?",
+    "Is unpatch behavior explicit?"
+  ],
+  "references": [
+    {
+      "title": "Harmony Patching",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/modding/references/harmony-patching.md",
+      "interpretation": "Use this first for patch selection, thin patch structure, and review expectations.",
+      "why": "It encodes the domain policy that Harmony is an interception layer, not the mod architecture."
+    },
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/modding/references/runtime-integration.md",
+      "interpretation": "Use this to place patches inside the larger runtime, event, probe, and facade architecture.",
+      "why": "It connects Harmony hooks to stable mod runtime contracts."
+    },
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use when patch availability should gate runtime features or expose health state.",
+      "why": "It defines the readiness and diagnostic expectations around fragile integrations."
+    }
+  ]
 }

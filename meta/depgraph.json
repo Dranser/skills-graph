@@ -21,13 +21,30 @@
           "assembly-reading",
           "metadata-parsing"
         ],
-        "optional": [],
+        "optional": [
+          "integration-surface-mapping"
+        ],
         "contextual": []
       },
       "metadata-parsing": {
         "hard": [],
         "optional": [],
         "contextual": []
+      },
+      "integration-surface-mapping": {
+        "hard": [
+          "assembly-reading",
+          "metadata-parsing"
+        ],
+        "optional": [
+          "dump-pipeline"
+        ],
+        "contextual": [
+          "harmony-patching",
+          "plugin-lifecycle",
+          "diagnostics",
+          "contracts"
+        ]
       }
     },
     "data-oriented-pipeline": {
@@ -518,6 +535,9 @@
     "dump-pipeline": [
       "loader-integration",
       "harmony-patching"
+    ],
+    "integration-surface-mapping": [
+      "loader-integration"
     ],
     "pipeline-architecture": [
       "bootstrap"
