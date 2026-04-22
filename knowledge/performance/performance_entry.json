@@ -7,7 +7,11 @@
     "scheduler",
     "data-oriented-design",
     "memory-management",
-    "cache-optimization"
+    "cache-optimization",
+    "work-budgeting",
+    "measurement-profiling",
+    "memory-arenas",
+    "contention-shaping"
   ],
   "signals": [
     "performance",
@@ -23,25 +27,38 @@
     "latency",
     "work budget",
     "frame budget",
+    "phase budget",
     "contention",
     "hot path",
     "main thread",
     "spike",
     "burst workload",
     "profiling",
-    "data-oriented"
+    "data-oriented",
+    "backlog",
+    "overflow strategy",
+    "measurement",
+    "instrumentation",
+    "arena",
+    "scratch buffer",
+    "contention",
+    "backpressure"
   ],
   "use_for": [
     "performance-oriented architecture",
     "throughput and latency tradeoff analysis",
     "work budget design",
+    "phase budget and overflow strategy design",
     "lifecycle-first execution design",
     "memory discipline",
     "cache behavior",
     "parallel scheduling",
     "workload smoothing and spike prevention",
     "data-oriented execution",
-    "profiling-driven optimization planning"
+    "profiling-driven optimization planning",
+    "measurement-first bottleneck diagnosis",
+    "arena-based temporary memory design",
+    "contention and backpressure shaping"
   ],
   "do_not_use_for": [
     "feature ownership without a performance goal",
@@ -52,6 +69,10 @@
   ],
   "priority_order": [
     "scheduler",
+    "work-budgeting",
+    "measurement-profiling",
+    "memory-arenas",
+    "contention-shaping",
     "data-oriented-design",
     "memory-management",
     "cache-optimization"

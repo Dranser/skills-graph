@@ -53,7 +53,9 @@
   ],
   "dependencies": {
     "hard": [],
-    "optional": [],
+    "optional": [
+      "extension-points"
+    ],
     "contextual": []
   },
   "conflicts": [

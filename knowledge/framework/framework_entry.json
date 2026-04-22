@@ -6,7 +6,11 @@
     "bootstrap",
     "contracts",
     "di",
-    "diagnostics"
+    "diagnostics",
+    "runtime-lifecycle",
+    "extension-points",
+    "composition-boundaries",
+    "service-lifetimes"
   ],
   "signals": [
     "bootstrap",
@@ -17,7 +21,16 @@
     "startup order",
     "service lifetimes",
     "runtime boundaries",
-    "logging"
+    "logging",
+    "runtime lifecycle",
+    "update loop",
+    "shutdown order",
+    "extension point",
+    "plugin contract",
+    "composition boundary",
+    "module composition",
+    "service lifetime",
+    "scoped service"
   ],
   "use_for": [
     "framework setup",
@@ -26,10 +39,18 @@
     "runtime contracts",
     "deterministic startup and composition root design",
     "service lifetime and registration policy",
-    "file-backed runtime diagnostics"
+    "file-backed runtime diagnostics",
+    "host phase design and deterministic shutdown sequencing",
+    "explicit extension surface and plugin contract design",
+    "host-module seam and composition boundary design",
+    "service lifetime and scope policy"
   ],
   "priority_order": [
     "bootstrap",
+    "runtime-lifecycle",
+    "composition-boundaries",
+    "service-lifetimes",
+    "extension-points",
     "contracts",
     "di",
     "diagnostics"

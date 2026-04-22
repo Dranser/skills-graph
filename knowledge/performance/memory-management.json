@@ -38,7 +38,8 @@
   "dependencies": {
     "hard": [],
     "optional": [
-      "data-oriented-design"
+      "data-oriented-design",
+      "memory-arenas"
     ],
     "contextual": [
       "cache-optimization"

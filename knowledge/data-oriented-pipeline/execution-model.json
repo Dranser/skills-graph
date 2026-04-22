@@ -49,11 +49,14 @@
       "stage-boundaries"
     ],
     "optional": [
-      "invalidation-propagation"
+      "invalidation-propagation",
+      "incremental-recompute",
+      "change-batching"
     ],
     "contextual": [
       "scheduler",
-      "data-oriented-design"
+      "data-oriented-design",
+      "work-budgeting"
     ]
   },
   "conflicts": [

@@ -37,7 +37,8 @@
           "dataflow-state"
         ],
         "optional": [
-          "execution-model"
+          "execution-model",
+          "incremental-recompute"
         ],
         "contextual": [
           "invalidation-propagation",
@@ -49,7 +50,8 @@
       "stage-boundaries": {
         "hard": [],
         "optional": [
-          "dataflow-state"
+          "dataflow-state",
+          "stage-contracts"
         ],
         "contextual": [
           "pipeline-architecture"
@@ -61,14 +63,17 @@
           "invalidation-propagation"
         ],
         "contextual": [
-          "memory-management"
+          "memory-management",
+          "incremental-recompute"
         ]
       },
       "invalidation-propagation": {
         "hard": [
           "dataflow-state"
         ],
-        "optional": [],
+        "optional": [
+          "incremental-recompute"
+        ],
         "contextual": [
           "pipeline-architecture",
           "scheduler"
@@ -79,11 +84,68 @@
           "stage-boundaries"
         ],
         "optional": [
-          "invalidation-propagation"
+          "invalidation-propagation",
+          "incremental-recompute",
+          "change-batching"
         ],
         "contextual": [
           "scheduler",
-          "data-oriented-design"
+          "data-oriented-design",
+          "work-budgeting"
+        ]
+      },
+      "incremental-recompute": {
+        "hard": [
+          "dataflow-state",
+          "invalidation-propagation"
+        ],
+        "optional": [
+          "execution-model",
+          "change-batching"
+        ],
+        "contextual": [
+          "work-budgeting",
+          "scheduler"
+        ]
+      },
+      "change-batching": {
+        "hard": [
+          "incremental-recompute"
+        ],
+        "optional": [
+          "execution-model"
+        ],
+        "contextual": [
+          "work-budgeting",
+          "scheduler",
+          "invalidation-propagation",
+          "structural-rerun-policy"
+        ]
+      },
+      "structural-rerun-policy": {
+        "hard": [
+          "incremental-recompute"
+        ],
+        "optional": [
+          "change-batching"
+        ],
+        "contextual": [
+          "pipeline-architecture",
+          "execution-model",
+          "work-budgeting",
+          "stage-contracts"
+        ]
+      },
+      "stage-contracts": {
+        "hard": [
+          "stage-boundaries"
+        ],
+        "optional": [
+          "dataflow-state"
+        ],
+        "contextual": [
+          "pipeline-architecture",
+          "incremental-recompute"
         ]
       }
     },
@@ -94,11 +156,15 @@
           "di"
         ],
         "optional": [],
-        "contextual": []
+        "contextual": [
+          "runtime-lifecycle"
+        ]
       },
       "contracts": {
         "hard": [],
-        "optional": [],
+        "optional": [
+          "extension-points"
+        ],
         "contextual": []
       },
       "di": {
@@ -106,13 +172,69 @@
           "contracts",
           "bootstrap"
         ],
-        "optional": [],
+        "optional": [
+          "composition-boundaries",
+          "service-lifetimes"
+        ],
         "contextual": []
       },
       "diagnostics": {
         "hard": [],
         "optional": [],
         "contextual": []
+      },
+      "runtime-lifecycle": {
+        "hard": [
+          "bootstrap",
+          "contracts"
+        ],
+        "optional": [
+          "diagnostics",
+          "extension-points"
+        ],
+        "contextual": [
+          "di"
+        ]
+      },
+      "extension-points": {
+        "hard": [
+          "contracts"
+        ],
+        "optional": [
+          "runtime-lifecycle",
+          "di"
+        ],
+        "contextual": [
+          "bootstrap",
+          "diagnostics",
+          "composition-boundaries"
+        ]
+      },
+      "composition-boundaries": {
+        "hard": [
+          "contracts"
+        ],
+        "optional": [
+          "di",
+          "extension-points",
+          "service-lifetimes"
+        ],
+        "contextual": [
+          "bootstrap",
+          "runtime-lifecycle"
+        ]
+      },
+      "service-lifetimes": {
+        "hard": [
+          "di"
+        ],
+        "optional": [
+          "composition-boundaries",
+          "runtime-lifecycle"
+        ],
+        "contextual": [
+          "bootstrap"
+        ]
       }
     },
     "gpu": {
@@ -180,7 +302,9 @@
     "performance": {
       "memory-management": {
         "hard": [],
-        "optional": [],
+        "optional": [
+          "memory-arenas"
+        ],
         "contextual": []
       },
       "cache-optimization": {
@@ -204,8 +328,64 @@
           "memory-management",
           "cache-optimization"
         ],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "work-budgeting",
+          "contention-shaping"
+        ],
+        "contextual": [
+          "measurement-profiling"
+        ]
+      },
+      "work-budgeting": {
+        "hard": [
+          "scheduler"
+        ],
+        "optional": [
+          "memory-management",
+          "measurement-profiling"
+        ],
+        "contextual": [
+          "data-oriented-design"
+        ]
+      },
+      "measurement-profiling": {
+        "hard": [],
+        "optional": [
+          "work-budgeting"
+        ],
+        "contextual": [
+          "scheduler",
+          "memory-management",
+          "memory-arenas",
+          "contention-shaping",
+          "cache-optimization",
+          "data-oriented-design"
+        ]
+      },
+      "contention-shaping": {
+        "hard": [
+          "scheduler"
+        ],
+        "optional": [
+          "measurement-profiling"
+        ],
+        "contextual": [
+          "cache-optimization",
+          "work-budgeting",
+          "data-oriented-design"
+        ]
+      },
+      "memory-arenas": {
+        "hard": [
+          "memory-management"
+        ],
+        "optional": [
+          "work-budgeting"
+        ],
+        "contextual": [
+          "data-oriented-design",
+          "scheduler"
+        ]
       }
     },
     "unity-ui": {

@@ -6,7 +6,11 @@
     "memory-management",
     "cache-optimization",
     "data-oriented-design",
-    "scheduler"
+    "scheduler",
+    "work-budgeting",
+    "measurement-profiling",
+    "memory-arenas",
+    "contention-shaping"
   ],
   "entry_file": "performance_entry.json",
   "manifest_file": "performance_manifest.json"

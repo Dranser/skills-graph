@@ -1,0 +1,161 @@
+{
+  "id": "service-lifetimes",
+  "kind": "skill",
+  "title": "Service Lifetimes",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "service lifetime",
+      "singleton",
+      "scoped service",
+      "transient service",
+      "lifetime policy"
+    ],
+    "weak": [
+      "lifetime mismatch",
+      "service scope",
+      "object lifetime policy",
+      "lifetime ownership"
+    ]
+  },
+  "use_for": [
+    "defining service lifetime policies",
+    "detecting and preventing lifetime mismatches",
+    "aligning services with host and module lifecycle boundaries",
+    "choosing singleton, scoped, or transient ownership intentionally",
+    "keeping lifetime decisions explicit at composition time"
+  ],
+  "do_not_use_for": [
+    "general contract design without lifecycle concerns",
+    "UI composition",
+    "assembly parsing",
+    "feature-local object creation with trivial ownership"
+  ],
+  "rules": [
+    "assign service lifetimes explicitly and justify them",
+    "align lifetime policy with the host lifecycle and composition seam",
+    "avoid longer-lived services depending on shorter-lived state implicitly",
+    "treat scoped lifetime as a real ownership boundary, not a naming convention",
+    "keep lifetime mismatches visible during composition review"
+  ],
+  "procedure": [
+    "Classify each service by the lifecycle boundary it should live within.",
+    "Define singleton, scoped, or transient policy intentionally.",
+    "Check dependencies for lifetime inversion or leakage.",
+    "Define disposal and reset expectations per lifetime class.",
+    "Verify the policy remains valid across host, module, and runtime phases."
+  ],
+  "output": [
+    "service lifetime policy",
+    "lifetime ownership map",
+    "mismatch review for composed services"
+  ],
+  "dependencies": {
+    "hard": [
+      "di"
+    ],
+    "optional": [
+      "composition-boundaries",
+      "runtime-lifecycle"
+    ],
+    "contextual": [
+      "bootstrap"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about singleton versus scoped versus transient policy",
+      "the request is about lifetime mismatches, scope boundaries, or ownership across runtime phases"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about contract shape, feature-local construction, or extension hook design with no lifetime problem"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how long services should live and who owns that duration",
+      "how to prevent long-lived services from leaking shorter-lived state",
+      "how to align composition policy with real runtime boundaries"
+    ],
+    "does_not_solve": [
+      "whether a contract should exist in the first place",
+      "feature-local memory management",
+      "container mechanics by themselves"
+    ]
+  },
+  "core_principles": [
+    "A lifetime is an ownership boundary, not just a container label.",
+    "Long-lived services must not quietly capture shorter-lived state.",
+    "Lifetime policy should reflect real host and module phases, not convenience defaults."
+  ],
+  "constraints": [
+    "Lifetime rules must remain inspectable at the composition boundary.",
+    "Disposal or reset expectations should exist for every non-transient lifetime.",
+    "Scoped policies should map to real runtime or request boundaries."
+  ],
+  "decision_rules": [
+    "Use service-lifetimes as the owner when the core question is how service duration aligns with host, module, or request boundaries.",
+    "If the mismatch arises at a larger host-module seam, attach composition-boundaries before patching registrations.",
+    "If lifetime policy depends on runtime phases, attach runtime-lifecycle to anchor scope boundaries explicitly.",
+    "If a service needs data from a shorter-lived scope, prefer a boundary redesign over quiet capture."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "lifetime classes mapped to real runtime boundaries",
+      "explicit scope ownership",
+      "mismatch review during registration and composition",
+      "clear disposal or reset policy per non-transient service"
+    ],
+    "avoid_patterns": [
+      "singletons capturing scoped state indirectly",
+      "scopes that exist only in container configuration with no runtime meaning",
+      "transient churn used as a substitute for clear ownership",
+      "lifetime defaults applied without architectural justification"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Audit service lifetime mismatches",
+      "when": "Use when a composed runtime has unclear ownership or services outlive the state they depend on.",
+      "steps": [
+        "List services by intended lifetime boundary.",
+        "Find dependencies that point from longer-lived services to shorter-lived ones.",
+        "Redesign the seam or adjust lifetime policy explicitly.",
+        "Define disposal and reset behavior for remaining long-lived services."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating singleton, scoped, and transient as container defaults rather than architecture choices.",
+    "Allowing long-lived services to retain short-lived state implicitly.",
+    "Creating scopes that have no real runtime meaning."
+  ],
+  "review_checklist": [
+    "Are lifetimes mapped to real runtime boundaries?",
+    "Do longer-lived services avoid shorter-lived state capture?",
+    "Are scoped boundaries explicit and meaningful?",
+    "Is disposal or reset policy defined where needed?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Service Lifetimes",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/framework/references/service-lifetimes.md",
+      "interpretation": "Use this first for lifetime classes, mismatch review, and ownership boundaries across composed services.",
+      "why": "Use as the primary local guide for service lifetime policy."
+    },
+    {
+      "title": "Local Reference: Framework DI",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/framework/references/di.md",
+      "interpretation": "Use this to keep lifetime policy tied to explicit registration and composition-root ownership.",
+      "why": "Use to align lifetime choices with DI and registration flow."
+    }
+  ]
+}

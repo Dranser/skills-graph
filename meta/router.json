@@ -114,11 +114,19 @@
         "knowledge/data-oriented-pipeline/stage-boundaries.json",
         "knowledge/data-oriented-pipeline/dataflow-state.json",
         "knowledge/data-oriented-pipeline/invalidation-propagation.json",
-        "knowledge/data-oriented-pipeline/execution-model.json"
+        "knowledge/data-oriented-pipeline/execution-model.json",
+        "knowledge/data-oriented-pipeline/incremental-recompute.json",
+        "knowledge/data-oriented-pipeline/change-batching.json",
+        "knowledge/data-oriented-pipeline/structural-rerun-policy.json",
+        "knowledge/data-oriented-pipeline/stage-contracts.json"
       ],
       "default_primary_candidates": [
         "pipeline-architecture",
-        "execution-model"
+        "execution-model",
+        "incremental-recompute",
+        "change-batching",
+        "structural-rerun-policy",
+        "stage-contracts"
       ],
       "default_support_candidates": [
         "stage-boundaries",
@@ -133,13 +141,21 @@
         "knowledge/framework/bootstrap.json",
         "knowledge/framework/contracts.json",
         "knowledge/framework/di.json",
-        "knowledge/framework/diagnostics.json"
+        "knowledge/framework/diagnostics.json",
+        "knowledge/framework/runtime-lifecycle.json",
+        "knowledge/framework/extension-points.json",
+        "knowledge/framework/composition-boundaries.json",
+        "knowledge/framework/service-lifetimes.json"
       ],
       "default_primary_candidates": [
         "bootstrap",
         "contracts",
         "di",
-        "diagnostics"
+        "diagnostics",
+        "runtime-lifecycle",
+        "extension-points",
+        "composition-boundaries",
+        "service-lifetimes"
       ],
       "default_support_candidates": []
     },
@@ -193,10 +209,18 @@
         "knowledge/performance/cache-optimization.json",
         "knowledge/performance/data-oriented-design.json",
         "knowledge/performance/memory-management.json",
-        "knowledge/performance/scheduler.json"
+        "knowledge/performance/scheduler.json",
+        "knowledge/performance/work-budgeting.json",
+        "knowledge/performance/measurement-profiling.json",
+        "knowledge/performance/memory-arenas.json",
+        "knowledge/performance/contention-shaping.json"
       ],
       "default_primary_candidates": [
         "scheduler",
+        "work-budgeting",
+        "measurement-profiling",
+        "memory-arenas",
+        "contention-shaping",
         "data-oriented-design"
       ],
       "default_support_candidates": [

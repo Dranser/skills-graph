@@ -6,7 +6,11 @@
     "bootstrap",
     "contracts",
     "di",
-    "diagnostics"
+    "diagnostics",
+    "runtime-lifecycle",
+    "extension-points",
+    "composition-boundaries",
+    "service-lifetimes"
   ],
   "entry_file": "framework_entry.json",
   "manifest_file": "framework_manifest.json"

@@ -13,6 +13,34 @@ It combines:
 
 The format is compatible with Codex-style agents, cloud LLM workflows, and local agent runtimes that can read structured files and apply them as policy plus domain context.
 
+## What You Will Find Here
+
+This repository contains three practical layers:
+
+- `meta/`: routing and execution policy for the graph itself
+- `knowledge/`: domain skills with ownership rules, execution guidance, and references
+- `docs/`: public-facing metadata for naming and repository positioning
+
+In plain terms:
+- this is the decision layer that tells an agent which domain should own a task
+- this is the execution layer that tells the agent how to work once a domain is selected
+- this is the reusable knowledge layer that keeps domain guidance out of one-off prompts
+
+## Why Someone Would Use It
+
+Use Skills Graph when you want agent behavior to be:
+
+- reusable instead of task-by-task prompt rewriting
+- inspectable instead of hidden in a long system prompt
+- domain-aware instead of flat keyword matching
+- execution-oriented instead of "just context"
+
+If you are building coding or architecture agents, this repo gives you a structured place to store:
+- ownership rules
+- execution heuristics
+- dependency-aware skill attachments
+- reference-backed domain guidance
+
 ## Why It Exists
 
 Most "AI skills" are one of three things:

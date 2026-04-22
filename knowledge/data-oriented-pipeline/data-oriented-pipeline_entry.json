@@ -6,7 +6,11 @@
     "pipeline-architecture",
     "execution-model",
     "stage-boundaries",
-    "dataflow-state"
+    "dataflow-state",
+    "incremental-recompute",
+    "change-batching",
+    "structural-rerun-policy",
+    "stage-contracts"
   ],
   "signals": [
     "data-oriented pipeline",
@@ -15,20 +19,37 @@
     "data flow",
     "dataflow",
     "incremental pipeline",
+    "incremental recompute",
+    "change set",
     "dirty propagation",
     "partial recompute",
     "stage invalidation",
-    "execution model"
+    "execution model",
+    "bounded partial rerun",
+    "change batching",
+    "delta batch",
+    "structural rerun",
+    "full recompute policy",
+    "stage contract",
+    "product contract"
   ],
   "use_for": [
     "designing software around explicit data-oriented pipelines",
     "treating architecture and optimization as one pipeline-first system design path",
     "structuring stages, data flow, invalidation, and execution order for predictable runtime cost",
-    "avoiding whole-system recomputation through explicit stage boundaries and selective refresh"
+    "avoiding whole-system recomputation through explicit stage boundaries and selective refresh",
+    "building change-driven incremental rerun paths with explicit fallback to full recompute",
+    "coalescing bursts of local updates before incremental rerun",
+    "defining explicit fallback from local reruns to structural rebuild",
+    "defining stable input and output contracts between stages"
   ],
   "priority_order": [
     "pipeline-architecture",
     "execution-model",
+    "incremental-recompute",
+    "change-batching",
+    "structural-rerun-policy",
+    "stage-contracts",
     "stage-boundaries",
     "dataflow-state",
     "invalidation-propagation"

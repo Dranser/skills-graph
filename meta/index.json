@@ -17,7 +17,11 @@
         "stage-boundaries.json",
         "dataflow-state.json",
         "invalidation-propagation.json",
-        "execution-model.json"
+        "execution-model.json",
+        "incremental-recompute.json",
+        "change-batching.json",
+        "structural-rerun-policy.json",
+        "stage-contracts.json"
       ]
     },
     "framework": {
@@ -27,7 +31,11 @@
         "bootstrap.json",
         "contracts.json",
         "di.json",
-        "diagnostics.json"
+        "diagnostics.json",
+        "runtime-lifecycle.json",
+        "extension-points.json",
+        "composition-boundaries.json",
+        "service-lifetimes.json"
       ]
     },
     "gpu": {
@@ -63,7 +71,11 @@
         "cache-optimization.json",
         "data-oriented-design.json",
         "memory-management.json",
-        "scheduler.json"
+        "scheduler.json",
+        "work-budgeting.json",
+        "measurement-profiling.json",
+        "memory-arenas.json",
+        "contention-shaping.json"
       ]
     },
     "unity-ui": {

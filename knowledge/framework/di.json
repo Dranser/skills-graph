@@ -56,7 +56,10 @@
       "contracts",
       "bootstrap"
     ],
-    "optional": [],
+    "optional": [
+      "composition-boundaries",
+      "service-lifetimes"
+    ],
     "contextual": []
   },
   "conflicts": [],

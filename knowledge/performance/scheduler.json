@@ -41,8 +41,13 @@
       "memory-management",
       "cache-optimization"
     ],
-    "optional": [],
-    "contextual": []
+    "optional": [
+      "work-budgeting",
+      "contention-shaping"
+    ],
+    "contextual": [
+      "measurement-profiling"
+    ]
   },
   "conflicts": [
     "harmony-patching"

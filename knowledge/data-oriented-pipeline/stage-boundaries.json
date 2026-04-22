@@ -47,7 +47,8 @@
   "dependencies": {
     "hard": [],
     "optional": [
-      "dataflow-state"
+      "dataflow-state",
+      "stage-contracts"
     ],
     "contextual": [
       "pipeline-architecture"

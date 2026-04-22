@@ -48,7 +48,9 @@
     "hard": [
       "dataflow-state"
     ],
-    "optional": [],
+    "optional": [
+      "incremental-recompute"
+    ],
     "contextual": [
       "pipeline-architecture",
       "scheduler"
@@ -86,7 +88,8 @@
   ],
   "decision_rules": [
     "Use targeted invalidation when a local source change affects only a subset of stage outputs.",
-    "Use broad invalidation only when structural or global state truly changes."
+    "Use broad invalidation only when structural or global state truly changes.",
+    "Attach incremental-recompute when invalidation must drive a bounded partial-rerun path instead of stopping at dirtiness description."
   ],
   "architecture_guidance": {
     "preferred_patterns": [

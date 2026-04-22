@@ -1,0 +1,163 @@
+{
+  "id": "composition-boundaries",
+  "kind": "skill",
+  "title": "Composition Boundaries",
+  "domain": "framework",
+  "role": "cross_cutting",
+  "signals": {
+    "strong": [
+      "composition boundary",
+      "module composition",
+      "host module boundary",
+      "composition seam",
+      "system boundary"
+    ],
+    "weak": [
+      "module ownership",
+      "assembly boundary",
+      "integration seam",
+      "composition surface"
+    ]
+  },
+  "use_for": [
+    "defining where hosts, modules, and services compose",
+    "making integration seams explicit between runtime areas",
+    "separating composition ownership from feature implementation",
+    "structuring module-to-host integration boundaries",
+    "keeping composition reviewable across larger systems"
+  ],
+  "do_not_use_for": [
+    "simple local object construction",
+    "raw plugin API shape without composition concerns",
+    "UI layout",
+    "assembly parsing"
+  ],
+  "rules": [
+    "define composition seams before spreading registration logic",
+    "keep module-to-host integration explicit",
+    "treat composition ownership as a boundary concern, not a feature-local convenience",
+    "prefer one clear integration surface per module relationship",
+    "separate contract ownership from wiring ownership"
+  ],
+  "procedure": [
+    "Identify the runtime areas that must compose.",
+    "Define the seam where each area may depend on another.",
+    "Assign which side owns contracts, which side owns wiring, and which side owns lifecycle entry.",
+    "Specify how modules join the host without leaking internal wiring concerns.",
+    "Verify composition remains inspectable at the seam."
+  ],
+  "output": [
+    "composition seam map",
+    "module-to-host integration boundary",
+    "explicit ownership of contracts, wiring, and lifecycle entry"
+  ],
+  "dependencies": {
+    "hard": [
+      "contracts"
+    ],
+    "optional": [
+      "di",
+      "extension-points",
+      "service-lifetimes"
+    ],
+    "contextual": [
+      "bootstrap",
+      "runtime-lifecycle"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "cross_cutting",
+    "primary_when": [
+      "the request is specifically about module boundaries, host-module composition, or integration seams between runtime areas",
+      "the request is about who owns contracts versus who owns wiring across larger runtime boundaries"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about one local object graph, one feature implementation, or pure extension hook shape"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to define explicit seams where runtime areas compose",
+      "how to stop composition logic from dissolving into global registration sprawl",
+      "how to keep module integration inspectable across a larger host"
+    ],
+    "does_not_solve": [
+      "fine-grained feature logic inside one module",
+      "container mechanics by themselves",
+      "UI event flow"
+    ]
+  },
+  "core_principles": [
+    "Composition boundaries should name where systems meet, not just what types exist.",
+    "Contracts, wiring, and lifecycle entry do not always belong to the same side of a seam.",
+    "Large-system composition should stay explicit enough to review without tracing hidden registrations."
+  ],
+  "constraints": [
+    "A composition seam must remain visible in code and policy, not inferred from side effects.",
+    "Modules should not acquire host internals just because wiring is convenient.",
+    "Composition spread across many unrelated files should be pulled back to an explicit seam."
+  ],
+  "decision_rules": [
+    "Use composition-boundaries as the owner when the main design question is where integration between runtime areas should occur.",
+    "If the seam also exposes extensibility to third parties, attach extension-points after the composition seam is clear.",
+    "If the seam's main concern is container registration, attach DI only after boundary ownership is defined.",
+    "If a module can only integrate by reaching through host internals, redesign the seam."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit host-module composition seams",
+      "clear ownership split between contracts and wiring",
+      "module integration through named boundaries instead of ambient container access",
+      "composition root awareness at major runtime seams"
+    ],
+    "avoid_patterns": [
+      "global registration sprawl across unrelated modules",
+      "module code reaching into host setup internals",
+      "composition seams implied only by naming conventions",
+      "container access used as a substitute for real boundaries"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define a host-module composition seam",
+      "when": "Use when a larger runtime must integrate modules without dissolving into hidden wiring.",
+      "steps": [
+        "Name the host side, module side, and shared contract surface.",
+        "Define which side owns registration and lifecycle entry.",
+        "Limit integration to a small explicit seam.",
+        "Verify consumers do not need host setup internals to participate."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating module composition as a byproduct of container access.",
+    "Letting registration logic spread until no real seam remains.",
+    "Mixing contract ownership, wiring ownership, and feature behavior in one place."
+  ],
+  "review_checklist": [
+    "Is the composition seam explicit?",
+    "Is ownership split clearly between contracts, wiring, and lifecycle entry?",
+    "Can modules integrate without reaching through host internals?",
+    "Is composition still reviewable without tracing hidden registrations?"
+  ],
+  "references": [
+    {
+      "title": "Local Reference: Composition Boundaries",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/framework/references/composition-boundaries.md",
+      "interpretation": "Use this first for host-module seams, ownership splits, and explicit integration boundaries.",
+      "why": "Use as the primary local guide for larger-system composition structure."
+    },
+    {
+      "title": "Local Reference: Framework Contracts",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/framework/references/contracts.md",
+      "interpretation": "Use this to keep composition seams aligned with narrow contract ownership rather than container reach-through.",
+      "why": "Use to align seam design with the framework's contract discipline."
+    }
+  ]
+}

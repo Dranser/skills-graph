@@ -50,7 +50,8 @@
       "invalidation-propagation"
     ],
     "contextual": [
-      "memory-management"
+      "memory-management",
+      "incremental-recompute"
     ]
   },
   "conflicts": [],

@@ -57,7 +57,9 @@
       "di"
     ],
     "optional": [],
-    "contextual": []
+    "contextual": [
+      "runtime-lifecycle"
+    ]
   },
   "conflicts": [
     "loader-integration",

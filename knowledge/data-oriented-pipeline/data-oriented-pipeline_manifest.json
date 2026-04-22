@@ -7,7 +7,11 @@
     "stage-boundaries",
     "dataflow-state",
     "invalidation-propagation",
-    "execution-model"
+    "execution-model",
+    "incremental-recompute",
+    "change-batching",
+    "structural-rerun-policy",
+    "stage-contracts"
   ],
   "entry_file": "data-oriented-pipeline_entry.json",
   "manifest_file": "data-oriented-pipeline_manifest.json"

@@ -53,7 +53,8 @@
       "dataflow-state"
     ],
     "optional": [
-      "execution-model"
+      "execution-model",
+      "incremental-recompute"
     ],
     "contextual": [
       "invalidation-propagation",
