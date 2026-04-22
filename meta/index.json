@@ -43,8 +43,10 @@
       "entry": "knowledge/gpu/gpu_entry.json",
       "manifest": "knowledge/gpu/gpu_manifest.json",
       "skills": [
+        "gpu-pipeline-architecture.json",
         "gpu-compute.json",
-        "gpu-instancing.json"
+        "gpu-instancing.json",
+        "gpu-diagnostics.json"
       ]
     },
     "modding": {

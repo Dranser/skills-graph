@@ -1,0 +1,220 @@
+{
+  "id": "gpu-diagnostics",
+  "kind": "skill",
+  "title": "GPU Diagnostics",
+  "domain": "gpu",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "gpu diagnostics",
+      "async gpu readback",
+      "debug counters",
+      "gpu readback",
+      "dispatch counters",
+      "indirect args validation",
+      "missing compute kernel",
+      "graphics buffer warning"
+    ],
+    "weak": [
+      "gpu profiling",
+      "buffer readiness",
+      "shader binding warning",
+      "pipeline health",
+      "readback stall",
+      "d3d warning"
+    ]
+  },
+  "use_for": [
+    "GPU pipeline diagnostics",
+    "debug counter design",
+    "async readback policy",
+    "kernel, buffer, and material binding readiness checks",
+    "indirect args and dispatch validation",
+    "non-blocking GPU observability"
+  ],
+  "do_not_use_for": [
+    "core compute algorithm design without diagnostics concern",
+    "CPU-only logging systems",
+    "generic UI debugging",
+    "mod loader diagnostics"
+  ],
+  "rules": [
+    "diagnostics must not become a required hot-path synchronization point",
+    "prefer GPU counters with throttled async readback",
+    "validate kernels, buffers, and shader bindings before dispatch or draw",
+    "track readback in-flight state to avoid request pileups",
+    "make optional diagnostics degrade without breaking rendering",
+    "report missing required resources clearly and early"
+  ],
+  "procedure": [
+    "Define which GPU stages need counters or health signals.",
+    "Define counter buffer layout and ownership.",
+    "Write counters in kernels or stage handoff code.",
+    "Read counters asynchronously at a bounded interval.",
+    "Expose readiness for kernels, buffers, draw args, and shader bindings.",
+    "Classify failures as required pipeline errors or optional diagnostic loss."
+  ],
+  "output": [
+    "GPU diagnostics plan",
+    "debug counter contract",
+    "async readback policy",
+    "readiness and failure classification"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "gpu-pipeline-architecture",
+      "gpu-compute",
+      "gpu-instancing"
+    ],
+    "contextual": [
+      "measurement-profiling",
+      "diagnostics"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the request is specifically about GPU counters, readback, pipeline health, missing kernels, buffer warnings, or indirect args validation",
+      "the request is about diagnosing a GPU pipeline without stalling the frame"
+    ],
+    "must_not_own_when": [
+      "the request is mainly about compute algorithm design, indirect rendering design, or CPU-only diagnostics"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "making GPU pipeline state inspectable without blocking the CPU every frame",
+      "distinguishing required GPU resource failures from optional diagnostic loss",
+      "catching stale buffers, missing kernels, unbound shader buffers, invalid args, and readback misuse early"
+    ],
+    "does_not_solve": [
+      "full profiling methodology outside GPU pipeline surfaces",
+      "visual shader debugging by itself",
+      "performance tuning without measured counters or profiler data"
+    ]
+  },
+  "core_principles": [
+    "GPU diagnostics should explain pipeline health, not define the pipeline's correctness path.",
+    "Counters belong close to the stages that produce the facts.",
+    "Async readback should be throttled, tracked, and optional.",
+    "Required resource failures should be clear before dispatch or draw.",
+    "Safe dummy bindings or clean draw skips are better than repeated graphics API warnings.",
+    "Diagnostics should preserve stage boundaries and buffer ownership."
+  ],
+  "constraints": [
+    "Do not use blocking readback as a routine frame-loop diagnostic.",
+    "Do not enqueue unlimited async readback requests.",
+    "Do not require debug buffers for release rendering correctness.",
+    "Do not ignore missing compute kernels or material buffer bindings.",
+    "Do not mutate shared material state unpredictably while diagnosing bindings.",
+    "Do not hide indirect args failures behind zero-instance draws without a reason code."
+  ],
+  "decision_rules": [
+    "Use gpu-diagnostics as primary when the task is about counters, async readback, missing resources, GPU warnings, or pipeline health.",
+    "Attach gpu-pipeline-architecture when diagnostics must be tied to stage state and rerun policy.",
+    "Attach gpu-compute when diagnostics are written by kernels or validate dispatch inputs.",
+    "Attach gpu-instancing when diagnostics validate draw args, visible counts, shader buffers, or draw bounds.",
+    "Use async readback for debug counters and avoid readback for normal draw or dispatch count flow.",
+    "Treat missing required kernels and buffers as pipeline errors, but optional debug readback errors as diagnostic degradation."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "small structured debug counter buffer per pipeline unit",
+      "stage-local counter increments for spawned, valid, visible, rejected, or culled records",
+      "bounded async readback interval with in-flight tracking",
+      "kernel and buffer validation before dispatch",
+      "safe dummy buffers for required shader bindings before real data exists",
+      "readiness snapshots for stage, buffer, and draw state"
+    ],
+    "avoid_patterns": [
+      "synchronous GetData in runtime hot paths",
+      "diagnostic readback every frame for every chunk",
+      "graphics API warnings used as normal control flow",
+      "debug counters required for release draw correctness",
+      "unbounded log spam for repeated missing resource failures"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Add throttled GPU debug counters",
+      "when": "Use when a staged GPU pipeline needs visibility into stage throughput or rejection reasons.",
+      "steps": [
+        "Define a compact counter layout for the pipeline unit.",
+        "Allocate the counter buffer with the owning chunk, batch, or stage state.",
+        "Reset counters only when the measured stage reruns.",
+        "Increment counters in the relevant kernels.",
+        "Request AsyncGPUReadback at a bounded interval.",
+        "Track in-flight requests and drop new requests until the prior one completes."
+      ]
+    },
+    {
+      "name": "Validate indirect rendering readiness",
+      "when": "Use when DrawMeshInstancedIndirect produces missing draws, warnings, or suspicious zero counts.",
+      "steps": [
+        "Check instance buffer, visible index buffer, input count buffer, draw args buffer, mesh, material, and bounds.",
+        "Validate that append counters are reset before visibility kernels.",
+        "Validate that CopyCount feeds the same count buffer used by the args kernel.",
+        "Check draw args fields against mesh index count, visible count, start index, base vertex, and start instance.",
+        "Bind safe dummy buffers or skip draw when required buffers are unavailable.",
+        "Record whether the failure is data absence, binding absence, args invalidity, or bounds clipping."
+      ]
+    },
+    {
+      "name": "Classify GPU pipeline failures",
+      "when": "Use when a GPU feature must degrade cleanly instead of producing silent no-op behavior.",
+      "steps": [
+        "Classify missing compute shader, missing kernel, missing required buffer, invalid dispatch args, invalid draw args, and missing material binding separately.",
+        "Fail required stages before dispatch or draw.",
+        "Disable optional diagnostics when readback or debug counters fail.",
+        "Expose a readiness snapshot or reason code for dependent systems.",
+        "Avoid repeated logs after the same failure has been reported."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Using readback as the normal way to know how many instances to draw.",
+    "Starting a new AsyncGPUReadback every frame without checking in-flight state.",
+    "Treating zero visible instances as success without validating args and bounds.",
+    "Letting unbound buffers generate graphics warnings every render pass.",
+    "Resetting debug counters at the wrong stage and hiding useful data.",
+    "Logging every frame for the same missing kernel or buffer."
+  ],
+  "review_checklist": [
+    "Are diagnostics optional unless explicitly required for correctness?",
+    "Are readbacks asynchronous, throttled, and in-flight tracked?",
+    "Are required kernels and buffers validated before dispatch?",
+    "Are shader buffers bound safely before draw or skipped cleanly?",
+    "Can indirect args be inspected or reasoned about without CPU hot-path readback?",
+    "Are failure categories and degraded states explicit?",
+    "Does diagnostics preserve stage and buffer ownership boundaries?"
+  ],
+  "references": [
+    {
+      "title": "GPU Diagnostics",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/gpu/references/gpu-diagnostics.md",
+      "interpretation": "Use this first for counters, async readback, readiness, and failure policy.",
+      "why": "It defines how GPU observability stays non-blocking and explicit."
+    },
+    {
+      "title": "GPU Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/gpu/references/gpu-pipeline-architecture.md",
+      "interpretation": "Use when diagnostics must map onto stage contracts and dirty state.",
+      "why": "Diagnostics should follow the same stage ownership model as the pipeline."
+    },
+    {
+      "title": "Indirect Rendering",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/gpu/references/indirect-rendering.md",
+      "interpretation": "Use when diagnosing visible counts, draw args, buffer bindings, or indirect draw failures.",
+      "why": "Indirect rendering failures often come from count, args, binding, or bounds mismatches."
+    }
+  ]
+}

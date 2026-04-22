@@ -3,8 +3,10 @@
   "kind": "domain_manifest",
   "domain": "gpu",
   "files": [
+    "gpu-pipeline-architecture",
     "gpu-compute",
-    "gpu-instancing"
+    "gpu-instancing",
+    "gpu-diagnostics"
   ],
   "entry_file": "gpu_entry.json",
   "manifest_file": "gpu_manifest.json"

@@ -165,14 +165,20 @@
       "entry": "knowledge/gpu/gpu_entry.json",
       "manifest": "knowledge/gpu/gpu_manifest.json",
       "skills": [
+        "knowledge/gpu/gpu-pipeline-architecture.json",
         "knowledge/gpu/gpu-compute.json",
-        "knowledge/gpu/gpu-instancing.json"
+        "knowledge/gpu/gpu-instancing.json",
+        "knowledge/gpu/gpu-diagnostics.json"
       ],
       "default_primary_candidates": [
+        "gpu-pipeline-architecture",
         "gpu-compute",
-        "gpu-instancing"
+        "gpu-instancing",
+        "gpu-diagnostics"
       ],
-      "default_support_candidates": []
+      "default_support_candidates": [
+        "gpu-diagnostics"
+      ]
     },
     "modding": {
       "entry": "knowledge/modding/modding_entry.json",

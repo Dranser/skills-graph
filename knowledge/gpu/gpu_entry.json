@@ -3,22 +3,43 @@
   "kind": "domain_entry",
   "domain": "gpu",
   "entry_points": [
+    "gpu-pipeline-architecture",
     "gpu-compute",
-    "gpu-instancing"
+    "gpu-instancing",
+    "gpu-diagnostics"
   ],
   "signals": [
+    "gpu pipeline",
+    "gpu driven pipeline",
     "gpu compute",
     "gpu instancing",
     "compute shader",
-    "indirect draw"
+    "indirect draw",
+    "structured buffer",
+    "graphics buffer",
+    "append buffer",
+    "dispatch indirect",
+    "draw mesh instanced indirect",
+    "gpu dirty flags",
+    "gpu diagnostics",
+    "async gpu readback",
+    "debug counters",
+    "indirect args validation"
   ],
   "use_for": [
+    "gpu-driven pipeline architecture",
     "gpu-side execution",
     "compute workloads",
-    "instanced rendering"
+    "instanced rendering",
+    "buffer contract design",
+    "indirect dispatch and indirect draw design",
+    "GPU diagnostics and async readback policy",
+    "GPU pipeline readiness and failure classification"
   ],
   "priority_order": [
+    "gpu-pipeline-architecture",
     "gpu-compute",
-    "gpu-instancing"
+    "gpu-instancing",
+    "gpu-diagnostics"
   ]
 }

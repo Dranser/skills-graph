@@ -255,15 +255,54 @@
       }
     },
     "gpu": {
+      "gpu-pipeline-architecture": {
+        "hard": [
+          "gpu-compute"
+        ],
+        "optional": [
+          "gpu-instancing",
+          "gpu-diagnostics"
+        ],
+        "contextual": [
+          "pipeline-architecture",
+          "execution-model",
+          "memory-management",
+          "measurement-profiling"
+        ]
+      },
       "gpu-compute": {
         "hard": [],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "gpu-pipeline-architecture",
+          "gpu-diagnostics"
+        ],
+        "contextual": [
+          "memory-management",
+          "measurement-profiling"
+        ]
       },
       "gpu-instancing": {
         "hard": [],
-        "optional": [],
-        "contextual": []
+        "optional": [
+          "gpu-compute",
+          "gpu-pipeline-architecture",
+          "gpu-diagnostics"
+        ],
+        "contextual": [
+          "measurement-profiling"
+        ]
+      },
+      "gpu-diagnostics": {
+        "hard": [],
+        "optional": [
+          "gpu-pipeline-architecture",
+          "gpu-compute",
+          "gpu-instancing"
+        ],
+        "contextual": [
+          "measurement-profiling",
+          "diagnostics"
+        ]
       }
     },
     "modding": {
@@ -551,6 +590,9 @@
     ],
     "gpu-compute": [
       "imgui-basics"
+    ],
+    "gpu-pipeline-architecture": [
+      "imgui-core"
     ],
     "loader-integration": [
       "assembly-reading"
