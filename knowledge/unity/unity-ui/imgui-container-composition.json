@@ -70,7 +70,7 @@
   "conflicts": [],
   "ownership": {
     "can_be_primary": true,
-    "default_mode": "support",
+    "default_mode": "primary",
     "primary_when": [
       "the request is specifically about dashboards, workspaces, surfaces, or container-first IMGUI composition",
       "the request is about sectioned interfaces where window-shell semantics are secondary or absent"
@@ -78,6 +78,19 @@
     "must_not_own_when": [
       "the request is mainly about host-level window lifetime",
       "the request is specifically about reusable base window shells with header, sidebar, and content host"
+    ]
+  },
+  "architectural_mode": {
+    "preferred": [
+      "container-first",
+      "surface-first"
+    ],
+    "compatible": [
+      "container-first",
+      "surface-first"
+    ],
+    "avoid_as_default": [
+      "window-first"
     ]
   },
   "problem_space": {
@@ -107,6 +120,7 @@
   ],
   "decision_rules": [
     "Use this skill when the UI is perceived as one surface with coordinated sections rather than multiple windows.",
+    "Prefer this skill over imgui-windowing when diagnostics, dashboard, workspace, or surface signals are stronger than explicit multi-window lifetime signals.",
     "After choosing the container-first path, let imgui-layout-composition define slots, nested regions, and manual geometry rules.",
     "Let imgui-modular-windowing own reusable shell composition when the design truly centers on a base window contract.",
     "Let imgui-windowing own registry, focus, restore, and lifetime across multiple windows.",

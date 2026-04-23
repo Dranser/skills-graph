@@ -45,6 +45,17 @@
       "requests that should be routed elsewhere"
     ]
   },
+  "architectural_mode": {
+    "preferred": [
+      "container-first"
+    ],
+    "compatible": [
+      "surface-first"
+    ],
+    "avoid_as_default": [
+      "window-first"
+    ]
+  },
   "problem_space": {
     "solves": [
       "practical difficulty this skill resolves"

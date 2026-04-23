@@ -31,6 +31,7 @@
     "base window shell composition",
     "header or sidebar module composition",
     "content-host structure inside one window shell",
+    "diagnostics dashboards, workspaces, or surface-first UIs where one coordinated surface is the primary semantic unit",
     "generic application bootstrap",
     "pure style topics"
   ],
@@ -77,6 +78,18 @@
       "the request is mainly about generic IMGUI architecture or event mechanics"
     ]
   },
+  "architectural_mode": {
+    "preferred": [
+      "window-first"
+    ],
+    "compatible": [
+      "window-first"
+    ],
+    "avoid_as_default": [
+      "container-first",
+      "surface-first"
+    ]
+  },
   "problem_space": {
     "solves": [
       "how tool windows and panels are created, owned, and restored",
@@ -102,6 +115,7 @@
   "decision_rules": [
     "Use a registry when more than one tool window or popup participates in shared focus and placement.",
     "Let imgui-modular-windowing own reusable shell composition inside one window; use this skill for host-level lifetime and registration.",
+    "Do not choose this skill as the default route for dashboards, workspaces, or diagnostics surfaces unless explicit multi-window lifetime is a real requirement.",
     "Keep overlays lightweight and clearly subordinate to their host window.",
     "Avoid generalized docking abstractions if the tool only needs a few known panel arrangements."
   ],
@@ -114,6 +128,7 @@
     "avoid_patterns": [
       "window creation hidden inside feature draw calls",
       "mixing shell-module composition rules into host-registry concerns",
+      "treating every diagnostics screen as a window host when the UI is really one coordinated surface",
       "dock-like containers with hidden mutation rules",
       "window lifetime inferred solely from current event"
     ]
@@ -136,6 +151,7 @@
   ],
   "review_checklist": [
     "Is there a clear owner for each window and popup?",
+    "Is windowing being used because lifetime and registry concerns are real, not just because the screen has multiple regions?",
     "Are identity and restore rules explicit?",
     "Are host-level lifetime rules separated from single-window shell composition?",
     "Is dock-like behavior data-driven rather than hidden?",

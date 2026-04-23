@@ -78,6 +78,15 @@
       "the request is mainly about overarching IMGUI architecture or performance tuning"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to decompose large IMGUI surfaces or windows into maintainable parts",

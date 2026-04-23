@@ -60,6 +60,15 @@
       "the request is mainly about architecture, state, or event flow"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to prevent style duplication and inconsistent spacing",

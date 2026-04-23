@@ -69,6 +69,15 @@
       "the request is mainly about overall IMGUI architecture or input routing"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to own framework geometry directly instead of delegating it to GUILayout",

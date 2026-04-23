@@ -12,7 +12,12 @@
       "adaptive scale",
       "resolution adaptation",
       "reference resolution",
-      "ugui inspired"
+      "ugui inspired",
+      "720p",
+      "1080p",
+      "font scaling",
+      "readability",
+      "diagnostics overlay"
     ],
     "weak": [
       "widget sizing",
@@ -24,6 +29,7 @@
   "use_for": [
     "designing adaptation policy for IMGUI layout systems that borrow useful ideas from uGUI without using uGUI components",
     "defining anchor-like placement, alignment, and scaling rules over manually computed IMGUI geometry",
+    "preserving readability of diagnostics overlays, dashboards, and tool surfaces across resolution changes",
     "defining size constraints and adaptive scaling policies for windows and widgets across resolutions"
   ],
   "do_not_use_for": [
@@ -39,7 +45,8 @@
     "apply adaptation policy over retained IMGUI layout intent and explicit host geometry",
     "treat anchors, alignment, and scale policy as separate concerns",
     "do not let adaptation policy redefine the composition tree",
-    "allow smaller resolutions to reduce effective maximum component size rather than only applying uniform shrink"
+    "allow smaller resolutions to reduce effective maximum component size rather than only applying uniform shrink",
+    "treat typography scaling and readability thresholds as first-class adaptation outputs, not incidental styling details"
   ],
   "procedure": [
     "Start from an already defined layout structure.",
@@ -76,6 +83,15 @@
       "the request is mainly about overall IMGUI framework ownership or input routing"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to borrow the strongest layout ideas from uGUI while staying inside an IMGUI-based framework",
@@ -107,7 +123,8 @@
     "Let imgui-layout-composition own shell and panel structure; use this skill to adapt that structure across resolutions.",
     "Apply scaling after structural layout intent is resolved, not before structure exists.",
     "Constrain windows and widgets through min, preferred, and max size thinking where density matters.",
-    "Prefer one shared layout grammar for windows and widgets, with different policies rather than unrelated systems."
+    "Prefer one shared layout grammar for windows and widgets, with different policies rather than unrelated systems.",
+    "Use this skill early for diagnostics UI when readability at 720p, 1080p, and larger resolutions is part of the product constraint."
   ],
   "architecture_guidance": {
     "preferred_patterns": [
@@ -146,6 +163,7 @@
     "Is uGUI treated only as inspiration rather than dependency?",
     "Is adaptation policy clearly separated from composition structure?",
     "Are anchors, alignment, and scale policy separated clearly?",
+    "Are font scaling and readability thresholds explicit rather than implicit?",
     "Can lower resolutions reduce effective maximum component size?",
     "Can the same composition tree survive across resolutions with only policy changes?"
   ],

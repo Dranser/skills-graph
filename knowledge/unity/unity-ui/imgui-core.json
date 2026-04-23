@@ -23,6 +23,7 @@
   },
   "use_for": [
     "designing the architecture of a Unity IMGUI-based UI framework",
+    "choosing and freezing the correct architectural path before local UI composition grows",
     "defining IMGUI ownership boundaries and event-phase model",
     "deciding how retained state sits above immediate drawing",
     "structuring reusable UI composition for tools, panels, and windows",
@@ -37,6 +38,7 @@
   ],
   "rules": [
     "treat IMGUI as an immediate drawing API over retained application state",
+    "choose architectural mode explicitly before committing to framework primitives or shell abstractions",
     "keep event flow explicit across layout, input, and repaint phases",
     "make call order deterministic across passes",
     "separate framework orchestration from feature drawing code",
@@ -47,6 +49,7 @@
     "treat data binding and dirty propagation as first-class framework concerns rather than feature-local conveniences"
   ],
   "procedure": [
+    "Choose the architectural path first: container-first, surface-first, or window-first.",
     "Define the UI host boundary and who owns the IMGUI loop.",
     "Separate retained state from draw-time logic.",
     "Establish deterministic draw order and stable control identity rules.",
@@ -93,6 +96,19 @@
       "the request is primarily about generic framework bootstrap, raw performance systems, or non-IMGUI Unity UI technologies"
     ]
   },
+  "architectural_mode": {
+    "preferred": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to use IMGUI as a framework foundation without hiding its event model",
@@ -131,6 +147,9 @@
   ],
   "decision_rules": [
     "Use IMGUI as primary owner when the task is framework design for tools, inspectors, overlays, or debug UI.",
+    "Choose and freeze the architectural path before allowing layout grammar or shell abstractions to dominate the design.",
+    "Prefer imgui-container-composition for dashboards, workspaces, and sectioned diagnostics surfaces where windows are not the primary semantic unit.",
+    "Prefer imgui-modular-windowing for reusable base window shells; reserve imgui-windowing for host-level lifetime, registry, and focus across multiple windows.",
     "Attach framework/contracts when extension points between host and feature UI are needed.",
     "Attach imgui-performance when the task discusses repaint cost, allocations, or high-frequency panels.",
     "Reject retained-tree emulation if it obscures event sequencing or creates unpredictable per-frame cost.",
@@ -162,7 +181,8 @@
       "GUILayout as the primary composition mechanism for complex framework UI",
       "rebuilding all presentation resources on every pass",
       "binding systems that always push updates even when source data is unchanged",
-      "whole-window invalidation when a single component subtree could be updated"
+      "whole-window invalidation when a single component subtree could be updated",
+      "letting shell or registry primitives lock the project into a window-first path before the design mode is chosen"
     ]
   },
   "recipes": [
@@ -203,6 +223,7 @@
   ],
   "review_checklist": [
     "Is retained state explicit and owned outside draw methods?",
+    "Was the architectural path chosen explicitly before shell, container, or window primitives were committed?",
     "Is UI structure deterministic across layout and repaint?",
     "Are extension points contract-based rather than reflection-based?",
     "Is focus and event consumption visible in the design?",

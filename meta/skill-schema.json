@@ -70,6 +70,19 @@
             "string"
           ]
         }
+      },
+      "optional": {
+        "architectural_mode": {
+          "preferred": [
+            "string"
+          ],
+          "compatible": [
+            "string"
+          ],
+          "avoid_as_default": [
+            "string"
+          ]
+        }
       }
     },
     "execution_layer": {

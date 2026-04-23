@@ -31,6 +31,7 @@
     "removing overengineered layers and unused abstractions",
     "cleaning residual code after feature removal",
     "auditing hidden stale couplings before deletion",
+    "correcting a known wrong architectural foundation before further feature growth",
     "reducing maintenance cost while preserving contracts"
   ],
   "do_not_use_for": [
@@ -118,6 +119,7 @@
   ],
   "decision_rules": [
     "If the current behavior is unclear, characterize it before refactoring.",
+    "If the current foundation is known to be wrong, stop adding feature layers and repair the foundation first.",
     "If code looks unused, check call sites, configuration, serialization, reflection, editor scripts, tests, generated files, and external entry points.",
     "If an abstraction has one caller and no ownership or validation value, consider inlining or merging it.",
     "If an abstraction protects lifecycle, domain boundary, diagnostics, or testability, keep it unless its cost is proven harmful.",

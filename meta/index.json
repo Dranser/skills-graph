@@ -106,6 +106,9 @@
           "entry": "knowledge/unity/unity-ui/unity-ui_entry.json",
           "manifest": "knowledge/unity/unity-ui/unity-ui_manifest.json",
           "skills": [
+            "imgui-container-composition.json",
+            "imgui-adaptive-layout.json",
+            "imgui-modular-windowing.json",
             "imgui-core.json",
             "imgui-state-model.json",
             "imgui-layout-composition.json",

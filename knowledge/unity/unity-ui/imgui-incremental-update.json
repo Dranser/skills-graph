@@ -79,6 +79,15 @@
       "the request is mainly about overall host architecture, input routing, or basic layout composition"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to avoid recomputing more presentation than the state change requires",

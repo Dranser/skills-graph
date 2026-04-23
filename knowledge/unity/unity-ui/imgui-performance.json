@@ -22,6 +22,7 @@
     "keeping IMGUI framework code allocation-aware",
     "identifying repaint and layout hot paths",
     "designing caching policy for GUIContent, styles, and labels",
+    "treating diagnostics dashboards and large-screen surfaces as hot paths from the start",
     "planning resource reuse, binding invalidation cost, and subtree-level update efficiency"
   ],
   "do_not_use_for": [
@@ -35,7 +36,8 @@
     "keep layout structure stable to reduce hidden work",
     "cache only where ownership and invalidation remain explicit",
     "prefer prebuilt presentation resources over repeated regeneration",
-    "evaluate whether binding checks are cheaper than eager recomputation"
+    "evaluate whether binding checks are cheaper than eager recomputation",
+    "assume diagnostics surfaces will face large-screen scaling pressure and dense repaint-sensitive content"
   ],
   "procedure": [
     "Identify frequently repainted hosts and panels.",
@@ -72,6 +74,15 @@
       "the request is mainly about framework ownership or window composition"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "where IMGUI frameworks usually pay avoidable allocation and repaint cost",
@@ -102,7 +113,8 @@
     "Prefer stable host-level caches over many widget-local caches.",
     "Instrument repaint and allocation behavior before inventing larger abstractions.",
     "Use one-time resource generation for expensive derived presentation artifacts that change rarely.",
-    "Use subtree invalidation when the affected region is smaller than the cost of whole-host recomputation."
+    "Use subtree invalidation when the affected region is smaller than the cost of whole-host recomputation.",
+    "Attach imgui-adaptive-layout early when readability and density must survive resolution growth without exploding repaint cost."
   ],
   "architecture_guidance": {
     "preferred_patterns": [
@@ -142,6 +154,7 @@
   "review_checklist": [
     "Are hot paths identified concretely?",
     "Are repeated allocations removed or justified?",
+    "Has the design assumed large-screen readability and scaling pressure early enough for diagnostics-style UI?",
     "Is cache ownership explicit?",
     "Does optimization preserve readable event flow?",
     "Are expensive resources generated once and reused?",

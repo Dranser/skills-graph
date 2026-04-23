@@ -547,17 +547,18 @@
           "imgui-core": {
             "hard": [
               "imgui-state-model",
-              "imgui-layout-composition",
+              "imgui-container-composition",
               "imgui-manual-layout",
               "imgui-incremental-update"
             ],
             "optional": [
               "imgui-input-routing",
-              "imgui-windowing",
+              "imgui-modular-windowing",
               "imgui-styling"
             ],
             "contextual": [
               "imgui-performance",
+              "imgui-adaptive-layout",
               "imgui-debugging",
               "csharp-shared:data-oriented-pipeline:pipeline-architecture",
               "csharp-shared:data-oriented-pipeline:execution-model",
@@ -575,17 +576,32 @@
               "csharp-shared:performance:memory-management"
             ]
           },
+          "imgui-container-composition": {
+            "hard": [
+              "imgui-layout-composition",
+              "imgui-state-model"
+            ],
+            "optional": [
+              "imgui-adaptive-layout"
+            ],
+            "contextual": [
+              "imgui-performance",
+              "imgui-modular-windowing",
+              "imgui-windowing"
+            ]
+          },
           "imgui-layout-composition": {
             "hard": [
               "imgui-state-model",
               "imgui-manual-layout"
             ],
             "optional": [
-              "imgui-windowing",
+              "imgui-modular-windowing",
               "imgui-styling"
             ],
             "contextual": [
-              "imgui-performance"
+              "imgui-performance",
+              "imgui-container-composition"
             ]
           },
           "imgui-manual-layout": {
@@ -631,14 +647,39 @@
               "imgui-input-routing"
             ],
             "contextual": [
+              "imgui-modular-windowing",
               "imgui-styling",
               "imgui-debugging"
+            ]
+          },
+          "imgui-modular-windowing": {
+            "hard": [
+              "imgui-layout-composition",
+              "imgui-state-model"
+            ],
+            "optional": [
+              "imgui-adaptive-layout"
+            ],
+            "contextual": [
+              "imgui-windowing"
             ]
           },
           "imgui-styling": {
             "hard": [],
             "optional": [],
             "contextual": []
+          },
+          "imgui-adaptive-layout": {
+            "hard": [
+              "imgui-layout-composition",
+              "imgui-state-model"
+            ],
+            "optional": [
+              "imgui-modular-windowing"
+            ],
+            "contextual": [
+              "imgui-performance"
+            ]
           },
           "imgui-performance": {
             "hard": [
@@ -648,7 +689,9 @@
               "csharp-shared:performance:cache-optimization"
             ],
             "contextual": [
-              "imgui-core"
+              "imgui-core",
+              "imgui-adaptive-layout",
+              "imgui-container-composition"
             ]
           },
           "imgui-debugging": {

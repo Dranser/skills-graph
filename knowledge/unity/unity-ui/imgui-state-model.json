@@ -70,6 +70,15 @@
       "the request is mainly about overall framework architecture or visual styling"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "where IMGUI-related state should live",

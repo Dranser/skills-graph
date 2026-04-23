@@ -79,6 +79,17 @@
       "the request is mainly about generic IMGUI event phases or input routing"
     ]
   },
+  "architectural_mode": {
+    "preferred": [
+      "window-first"
+    ],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to define a reusable base window shell in a custom IMGUI framework",

@@ -8,8 +8,10 @@
     "allow_default_stack_when_stack_is_implicit": true,
     "select_primary_from_entry_and_skills": true,
     "ignore_dependencies_during_primary_selection": true,
+    "select_architectural_mode_when_multiple_design_paths_exist": true,
     "freeze_stack_after_selection": true,
     "freeze_primary_after_selection": true,
+    "freeze_architectural_mode_after_selection": true,
     "allow_support_attachment_after_primary_selection": true,
     "allow_cross_domain_skills": true,
     "allow_cross_cutting_skills": true,
@@ -58,6 +60,7 @@
     "tie_break_order": [
       "higher_strong_signal_count",
       "higher_ownership_match_count",
+      "architectural_mode_selected",
       "higher_primary_role_priority",
       "higher_total_score",
       "stable_index_order"
@@ -98,6 +101,7 @@
     "include_hard_dependencies": true,
     "include_optional_dependencies_when_relevant": true,
     "include_contextual_dependencies_when_triggered": true,
+    "attach_same_architectural_mode_support_first": true,
     "require_declared_relevance_for_cross_domain": true,
     "prefer_attached_cross_cutting_unless_cross_cutting_has_stronger_ownership_match": true,
     "allow_shared_stack_attachments_into_specialized_stack": true,
@@ -326,7 +330,102 @@
         "unity-ui": {
           "entry": "knowledge/unity/unity-ui/unity-ui_entry.json",
           "manifest": "knowledge/unity/unity-ui/unity-ui_manifest.json",
+          "architectural_modes": {
+            "container-first": {
+              "preferred_primary_candidates": [
+                "imgui-container-composition",
+                "imgui-core"
+              ],
+              "preferred_support_candidates": [
+                "imgui-layout-composition",
+                "imgui-manual-layout",
+                "imgui-adaptive-layout",
+                "imgui-performance"
+              ],
+              "negative_primary_candidates": [
+                "imgui-windowing"
+              ],
+              "signals": {
+                "strong": [
+                  "dashboard",
+                  "workspace",
+                  "surface ui",
+                  "container ui",
+                  "container-based ui",
+                  "sectioned ui",
+                  "metrics panel",
+                  "log view",
+                  "timeline view"
+                ],
+                "weak": [
+                  "surface",
+                  "container composition",
+                  "panel grid",
+                  "region layout"
+                ]
+              }
+            },
+            "surface-first": {
+              "preferred_primary_candidates": [
+                "imgui-container-composition",
+                "imgui-core"
+              ],
+              "preferred_support_candidates": [
+                "imgui-layout-composition",
+                "imgui-manual-layout",
+                "imgui-adaptive-layout",
+                "imgui-performance"
+              ],
+              "negative_primary_candidates": [
+                "imgui-windowing"
+              ],
+              "signals": {
+                "strong": [
+                  "surface-first",
+                  "ui surface",
+                  "single surface",
+                  "coordinated surface",
+                  "diagnostics surface"
+                ],
+                "weak": [
+                  "canvas-like ui",
+                  "shared surface",
+                  "one surface"
+                ]
+              }
+            },
+            "window-first": {
+              "preferred_primary_candidates": [
+                "imgui-modular-windowing",
+                "imgui-windowing",
+                "imgui-core"
+              ],
+              "preferred_support_candidates": [
+                "imgui-layout-composition",
+                "imgui-input-routing",
+                "imgui-styling"
+              ],
+              "signals": {
+                "strong": [
+                  "windowing",
+                  "tool window",
+                  "popup",
+                  "overlay",
+                  "window registry",
+                  "floating panel"
+                ],
+                "weak": [
+                  "dock-like ui",
+                  "window shell",
+                  "multi-window"
+                ]
+              }
+            }
+          },
           "skills": [
+            "knowledge/unity/unity-ui/imgui-container-composition.json",
+            "knowledge/unity/unity-ui/imgui-adaptive-layout.json",
+            "knowledge/unity/unity-ui/imgui-modular-windowing.json",
             "knowledge/unity/unity-ui/imgui-core.json",
             "knowledge/unity/unity-ui/imgui-state-model.json",
             "knowledge/unity/unity-ui/imgui-layout-composition.json",
@@ -339,19 +438,23 @@
             "knowledge/unity/unity-ui/imgui-debugging.json"
           ],
           "default_primary_candidates": [
+            "imgui-container-composition",
             "imgui-core",
-            "imgui-windowing",
+            "imgui-modular-windowing",
             "imgui-incremental-update"
           ],
           "default_support_candidates": [
+            "imgui-adaptive-layout",
             "imgui-state-model",
             "imgui-layout-composition",
             "imgui-manual-layout",
             "imgui-incremental-update",
             "imgui-input-routing",
+            "imgui-modular-windowing",
             "imgui-styling",
             "imgui-performance",
-            "imgui-debugging"
+            "imgui-debugging",
+            "imgui-windowing"
           ]
         }
       }
@@ -360,6 +463,7 @@
   "output_contract": {
     "selected_stack": "string",
     "primary_domain": "string",
+    "architectural_mode": "string",
     "primary_file": "string",
     "attached_skills": [
       "string"

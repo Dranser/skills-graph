@@ -75,6 +75,15 @@
       "the request is mainly about layout composition or visual structure"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "who handles which IMGUI events and when",

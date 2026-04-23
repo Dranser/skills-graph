@@ -22,8 +22,10 @@
     "constraints": {
       "must_follow_selected_stack": true,
       "must_follow_primary_domain": true,
+      "must_follow_architectural_mode_when_present": true,
       "cannot_change_selected_stack": true,
       "cannot_change_primary_domain": true,
+      "cannot_change_architectural_mode_after_selection": true,
       "cannot_use_dependencies_for_stack_selection": true,
       "cannot_use_dependencies_for_routing": true,
       "must_respect_execution_plan": true
@@ -50,6 +52,7 @@
     "input": {
       "selected_stack": "string",
       "primary_domain": "string",
+      "architectural_mode": "string",
       "primary_file": "string",
       "same_domain_skills": [
         "string"
@@ -67,10 +70,12 @@
     "rules": {
       "selected_stack_first": true,
       "primary_first": true,
+      "architectural_mode_after_primary_when_available": true,
       "skills_after_primary": true,
       "cross_cutting_last": true,
       "preserve_stack_coherence": true,
-      "preserve_domain_coherence": true
+      "preserve_domain_coherence": true,
+      "preserve_architectural_mode_coherence": true
     }
   },
   "stack_usage_policy": {
@@ -221,6 +226,7 @@
   "output_requirements": {
     "must_reflect_selected_stack": true,
     "must_reflect_primary_domain": true,
+    "must_reflect_architectural_mode_when_present": true,
     "must_integrate_skills_coherently": true,
     "must_not_fragment_response": true
   }

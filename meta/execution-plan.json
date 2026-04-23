@@ -6,6 +6,7 @@
       "required": [
         "selected_stack",
         "primary_domain",
+        "architectural_mode",
         "primary_file",
         "matched_signals",
         "confidence"
@@ -32,7 +33,11 @@
     "must_apply_global_engineering_policy": true,
     "must_consume_routing_and_execution_layers_from_skill_json": true,
     "prefer_local_references_before_external_docs": true,
-    "respect_reference_priority_when_loading_supporting_material": true
+    "respect_reference_priority_when_loading_supporting_material": true,
+    "must_run_framework_checkpoint_before_feature_growth_when_framework_signals_are_present": true,
+    "must_run_srp_checkpoint_before_scaling_feature_composition": true,
+    "must_switch_to_refactoring_mode_when_wrong_foundation_is_detected": true,
+    "must_freeze_architectural_mode_when_selected_by_routing_or_primary_skill": true
   },
   "selection_order": [
     "primary_file",
@@ -83,6 +88,74 @@
     "support_skills_after_owner": true,
     "cross_cutting_last": true
   },
+  "execution_checkpoints": {
+    "framework_checkpoint": {
+      "when": [
+        "the primary domain is framework-oriented",
+        "the selected primary or attached skills describe reusable hosts, shells, contracts, modules, panels, or extension points",
+        "the task is a multi-step architecture or UI-framework build rather than a narrow local fix"
+      ],
+      "must_confirm": [
+        "architectural_mode is explicit when multiple design paths exist",
+        "foundation primitives are identified before feature-specific shells grow",
+        "contracts are defined before implementation coupling spreads",
+        "extension points and composition units are named before registration logic spreads",
+        "the design is still framework-first rather than one concrete feature shell posing as framework"
+      ],
+      "required_artifacts": [
+        "architectural_mode",
+        "foundation_primitives",
+        "contracts_or_boundaries",
+        "composition_units",
+        "extension_point_strategy"
+      ]
+    },
+    "srp_checkpoint": {
+      "when": [
+        "the task adds more than one major UI region, module, service, or composition seam",
+        "the same type or subsystem starts to own host logic, feature behavior, state mutation, and rendering or registration at once",
+        "the task is growing from prototype shell into reusable system"
+      ],
+      "must_confirm": [
+        "host orchestration is separate from feature behavior",
+        "contract ownership is separate from wiring ownership",
+        "derived state is not duplicated as mutable state without need",
+        "styling, spacing, input routing, and feature rendering are not silently collapsing into one owner",
+        "registration and lifecycle concerns remain outside feature drawing code"
+      ],
+      "required_artifacts": [
+        "owner_map",
+        "composition_seams",
+        "state_ownership",
+        "registration_ownership"
+      ]
+    }
+  },
+  "mode_switch_policy": {
+    "default_mode": "feature-build",
+    "available_modes": [
+      "feature-build",
+      "refactoring"
+    ],
+    "switch_to_refactoring_when": [
+      "the chosen architectural path is explicitly contradicted by the evolving implementation",
+      "the implementation has become window-first, shell-first, or otherwise foundation-biased against the selected design mode",
+      "framework primitives, contracts, or composition seams are still missing while feature growth continues",
+      "SRP or composition boundaries are repeatedly violated and local fixes do not remove the underlying coupling",
+      "new feature growth would compound a known wrong foundation rather than resolve it"
+    ],
+    "refactoring_mode_actions": [
+      "pause further feature growth on top of the unstable foundation",
+      "attach refactoring when the primary owner is not already code-maintenance",
+      "restate the preserved behavior contract before structural change",
+      "repair the architectural path, ownership seams, and foundation primitives before resuming feature-build mode"
+    ],
+    "resume_feature_build_when": [
+      "architectural mode is explicit again",
+      "foundation primitives and ownership seams are restored to the intended design",
+      "the next increment can grow without compounding the wrong foundation"
+    ]
+  },
   "solution_constraints": {
     "forbid_third_party_dependencies": true,
     "forbid_native_unity_framework_foundation": true,
@@ -95,6 +168,7 @@
   "output_contract": {
     "selected_stack": "string",
     "primary_domain": "string",
+    "architectural_mode": "string",
     "primary_file": "string",
     "same_domain_skills": [
       "string"
@@ -103,6 +177,10 @@
       "string"
     ],
     "cross_cutting_skills": [
+      "string"
+    ],
+    "execution_mode": "string",
+    "checkpoints_passed": [
       "string"
     ],
     "execution_order": [
@@ -128,11 +206,13 @@
     "input": {
       "selected_stack": "unity",
       "primary_domain": "modding",
+      "architectural_mode": "n/a",
       "primary_file": "knowledge/unity/modding/loader-integration.json"
     },
     "output": {
       "selected_stack": "unity",
       "primary_domain": "modding",
+      "architectural_mode": "n/a",
       "primary_file": "knowledge/unity/modding/loader-integration.json",
       "same_domain_skills": [
         "knowledge/unity/modding/plugin-lifecycle.json"

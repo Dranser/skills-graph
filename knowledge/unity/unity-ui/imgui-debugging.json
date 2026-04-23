@@ -66,6 +66,15 @@
       "the request is mainly about the initial architecture of the framework"
     ]
   },
+  "architectural_mode": {
+    "preferred": [],
+    "compatible": [
+      "container-first",
+      "surface-first",
+      "window-first"
+    ],
+    "avoid_as_default": []
+  },
   "problem_space": {
     "solves": [
       "how to debug invisible IMGUI ownership and event-flow failures",
