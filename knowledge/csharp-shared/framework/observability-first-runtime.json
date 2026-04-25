@@ -1,0 +1,172 @@
+{
+  "id": "observability-first-runtime",
+  "kind": "skill",
+  "title": "Observability First Runtime",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "observability first",
+      "runtime observability",
+      "health snapshot",
+      "debug endpoint",
+      "runtime health"
+    ],
+    "weak": [
+      "diagnostic snapshot",
+      "inspect runtime",
+      "module health",
+      "trace runtime",
+      "debug view"
+    ]
+  },
+  "use_for": [
+    "designing runtime systems whose health, readiness, degraded state, and phase behavior are inspectable from the start",
+    "making modules, pipelines, integrations, and command boundaries report state consistently",
+    "planning diagnostic snapshots and debug endpoints before feature implementation",
+    "ensuring failure analysis does not depend on fragile optional features"
+  ],
+  "do_not_use_for": [
+    "logging-only setup with no runtime health model",
+    "UI layout for debug panels",
+    "performance profiling without readiness or failure visibility concerns"
+  ],
+  "rules": [
+    "define observable runtime state before feature surfaces depend on it",
+    "make readiness, degraded state, and last failure explicit",
+    "diagnostics must initialize before fragile integrations",
+    "debug endpoints should read snapshots rather than internal mutable state",
+    "observability must not become required for domain correctness"
+  ],
+  "procedure": [
+    "List runtime owners that need visibility: host, modules, integrations, pipelines, command queues, configuration, and UI surfaces.",
+    "Define health states, readiness gates, degraded reasons, counters, timings, and last-error fields.",
+    "Define diagnostic snapshots that can be read safely by logs, UI, tests, or support tooling.",
+    "Define when snapshots update and who owns each diagnostic record.",
+    "Ensure diagnostics remain available during partial startup, degraded integrations, and shutdown.",
+    "Verify feature logic does not depend on debug UI or logging sinks for correctness."
+  ],
+  "output": [
+    "runtime observability model",
+    "health and readiness snapshot contracts",
+    "diagnostic ownership map",
+    "debug endpoint policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "diagnostics",
+      "runtime-lifecycle"
+    ],
+    "optional": [
+      "module-runtime-design",
+      "contracts"
+    ],
+    "contextual": [
+      "domain-pipeline-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about making a runtime inspectable, diagnosable, or health-aware"
+    ],
+    "must_not_own_when": [
+      "the task only needs simple log messages",
+      "the task is only about visual debug layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to design runtime visibility before failures happen",
+      "how to expose health and readiness without leaking internals",
+      "how to keep diagnostics alive during partial failure"
+    ],
+    "does_not_solve": [
+      "full telemetry storage",
+      "UI rendering details",
+      "domain algorithm correctness by itself"
+    ]
+  },
+  "core_principles": [
+    "A runtime that cannot explain its state is not ready for a rewrite.",
+    "Readiness and degraded state are normal runtime states, not exceptional afterthoughts.",
+    "Diagnostics should observe runtime ownership, not create hidden ownership.",
+    "Debug UI and logs are consumers of observability, not its source of truth."
+  ],
+  "constraints": [
+    "Do not make diagnostics depend on optional integrations being healthy.",
+    "Do not expose mutable internal collections as debug state.",
+    "Do not hide degraded state behind boolean readiness.",
+    "Do not bind reusable observability guidance to a named project or local path."
+  ],
+  "decision_rules": [
+    "If a subsystem can fail independently, give it a health state and last failure record.",
+    "If a feature is gated by external readiness, expose the gate and degraded reason.",
+    "If UI needs debug data, publish a diagnostic snapshot.",
+    "If a pipeline owns frame work, expose phase timing and last execution status.",
+    "If observability adds allocation pressure to hot paths, batch or sample diagnostics deliberately."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "health snapshots",
+      "readiness gates with reason codes",
+      "diagnostic endpoints over immutable snapshots",
+      "phase timing records",
+      "last-failure records per owner"
+    ],
+    "avoid_patterns": [
+      "debug UI reading mutable internals",
+      "logs as the only health model",
+      "single global healthy flag",
+      "diagnostics initialized after optional features",
+      "throwing away degraded reasons"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Add observability to a runtime owner",
+      "when": "Use when a module, integration, pipeline, or service needs inspectable readiness and failure state.",
+      "steps": [
+        "Name the owner and its lifecycle state.",
+        "Define readiness, degraded reason, last failure, and counters or timings.",
+        "Publish an immutable diagnostic snapshot.",
+        "Make logs and UI consume the snapshot.",
+        "Verify failure paths can still update diagnostics."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Adding logs without a state model.",
+    "Conflating not initialized, disabled, degraded, and failed states.",
+    "Making observability too expensive for repeated runtime paths.",
+    "Letting debug surfaces mutate the system they inspect."
+  ],
+  "review_checklist": [
+    "Are health, readiness, and degraded reasons explicit?",
+    "Can diagnostics survive partial startup failure?",
+    "Do debug endpoints expose snapshots rather than internals?",
+    "Are hot-path diagnostics bounded?",
+    "Is observability independent of project-specific names?"
+  ],
+  "references": [
+    {
+      "title": "Diagnostics",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/diagnostics.md",
+      "interpretation": "Use for early diagnostics, compact trace output, and failure visibility.",
+      "why": "Observability-first runtime design builds on diagnostics but adds state and readiness contracts."
+    },
+    {
+      "title": "Runtime Lifecycle",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/runtime-lifecycle.md",
+      "interpretation": "Use to align health snapshots with runtime phases.",
+      "why": "Runtime state must be observable across startup, steady-state, suspend, and shutdown."
+    }
+  ]
+}

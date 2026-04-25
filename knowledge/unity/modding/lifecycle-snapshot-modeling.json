@@ -1,0 +1,171 @@
+{
+  "id": "lifecycle-snapshot-modeling",
+  "kind": "skill",
+  "title": "Lifecycle Snapshot Modeling",
+  "stack": "unity",
+  "domain": "modding",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "lifecycle snapshot",
+      "game state snapshot",
+      "session snapshot",
+      "entity availability snapshot",
+      "host lifecycle state"
+    ],
+    "weak": [
+      "current scene",
+      "loading state",
+      "active vehicle",
+      "menu state",
+      "runtime context"
+    ]
+  },
+  "use_for": [
+    "modeling host lifecycle and entity availability as stable snapshots for modules and domain logic",
+    "converting raw hooks, probes, and host objects into read-only lifecycle state",
+    "handling loading, scene changes, session changes, entity replacement, and teardown without stale references",
+    "making lifecycle readiness observable and testable"
+  ],
+  "do_not_use_for": [
+    "raw hook target discovery",
+    "domain mechanics calculations",
+    "UI layout"
+  ],
+  "rules": [
+    "feature modules should consume lifecycle snapshots rather than raw host callbacks",
+    "snapshots should identify availability, readiness, identity, and invalidation state",
+    "live host references must not outlive the lifecycle state that produced them",
+    "snapshot updates should be owned by integration modules or probes",
+    "snapshot consumers should treat unavailable and stale states explicitly"
+  ],
+  "procedure": [
+    "List host lifecycle contexts that matter to features: loader, menu, loading, session, scene, entity, local player, remote players, UI surface, or shutdown as relevant.",
+    "Define snapshot fields for availability, identity, phase, readiness, degraded reason, and timestamps or sequence numbers where useful.",
+    "Define which hooks and probes update each snapshot.",
+    "Define invalidation rules for scene changes, entity replacement, loading transitions, and shutdown.",
+    "Expose snapshots through stable contracts to modules, UI, diagnostics, and tests.",
+    "Verify consumers cannot keep stale live references after invalidation."
+  ],
+  "output": [
+    "lifecycle snapshot model",
+    "snapshot ownership map",
+    "invalidation policy",
+    "consumer readiness rules"
+  ],
+  "dependencies": {
+    "hard": [
+      "plugin-lifecycle",
+      "game-boundary-design"
+    ],
+    "optional": [
+      "runtime-degradation-policy",
+      "observability-first-runtime"
+    ],
+    "contextual": [
+      "harmony-patching"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about representing host lifecycle and object availability as snapshots"
+    ],
+    "must_not_own_when": [
+      "the task is only about patch implementation or domain math"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to provide stable lifecycle context to feature modules",
+      "how to prevent stale host object references",
+      "how to make host state readiness explicit"
+    ],
+    "does_not_solve": [
+      "exact host state discovery",
+      "domain algorithm design",
+      "visual presentation"
+    ]
+  },
+  "core_principles": [
+    "Lifecycle snapshots are contracts between fragile host integration and stable feature code.",
+    "Unavailable state should be represented, not hidden.",
+    "Object identity and validity must be explicit when the host can replace objects.",
+    "Snapshot consumers should not know raw hook timing."
+  ],
+  "constraints": [
+    "Do not expose raw mutable host objects as long-lived domain state.",
+    "Do not let consumers infer readiness from null alone.",
+    "Do not update snapshots from multiple owners without a clear merge policy.",
+    "Do not bind snapshot names to one specific game or project."
+  ],
+  "decision_rules": [
+    "If a feature depends on host phase, provide a phase snapshot.",
+    "If a feature depends on an entity, provide identity and availability state.",
+    "If a host object can become stale, provide invalidation sequence or event.",
+    "If readiness is partial, include degraded or missing-dependency reasons.",
+    "If consumers need live access, gate it behind a facade or short-lived mutation scope."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "read-only lifecycle snapshots",
+      "identity and sequence fields",
+      "availability and readiness flags with reasons",
+      "single owner per snapshot",
+      "explicit invalidation events"
+    ],
+    "avoid_patterns": [
+      "feature modules reading raw hook state",
+      "long-lived host object references",
+      "null-only readiness",
+      "snapshot updates scattered across features",
+      "project-specific lifecycle vocabulary in reusable guidance"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Create a lifecycle snapshot",
+      "when": "Use when feature code needs stable access to host lifecycle or entity availability.",
+      "steps": [
+        "Name the lifecycle context in generic terms.",
+        "Define availability, identity, phase, readiness, and invalidation fields.",
+        "Choose one owner that updates the snapshot from hooks or probes.",
+        "Expose it as read-only state to modules.",
+        "Clear or invalidate it during lifecycle transitions and shutdown."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Letting feature modules cache live host references.",
+    "Forgetting teardown and replacement transitions.",
+    "Using one global context object with unrelated lifecycle responsibilities.",
+    "Publishing snapshots with no owner or invalidation rule."
+  ],
+  "review_checklist": [
+    "Are lifecycle contexts modeled as snapshots?",
+    "Are availability, identity, readiness, and invalidation explicit?",
+    "Is each snapshot owned by one integration layer?",
+    "Can consumers handle unavailable and stale state?",
+    "Is wording generic rather than project-specific?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/modding/references/runtime-integration.md",
+      "interpretation": "Use for lifecycle integration and snapshot ownership.",
+      "why": "Lifecycle snapshots stabilize fragile host state for modules."
+    },
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use for readiness and degraded-state fields in snapshots.",
+      "why": "Snapshot consumers need observable readiness."
+    }
+  ]
+}

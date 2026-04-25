@@ -1,0 +1,158 @@
+{
+  "id": "domain-model-extraction",
+  "kind": "skill",
+  "title": "Domain Model Extraction",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "extract domain model",
+      "domain intent",
+      "product intent extraction",
+      "domain concepts from legacy",
+      "model the domain"
+    ],
+    "weak": [
+      "requirements from code",
+      "capability map",
+      "business rules",
+      "domain behavior",
+      "old behavior"
+    ]
+  },
+  "use_for": [
+    "extracting domain concepts, rules, inputs, outputs, and invariants from an existing implementation",
+    "turning old behavior into a neutral domain model before a rewrite",
+    "separating product intent from old architecture and infrastructure",
+    "building a capability map for new design work"
+  ],
+  "do_not_use_for": [
+    "copying implementation structure",
+    "preserving behavior mechanically",
+    "low-level infrastructure design without domain content"
+  ],
+  "rules": [
+    "name domain concepts without using project-specific identifiers",
+    "separate domain rules from UI, persistence, lifecycle, and external API mechanics",
+    "record uncertainty explicitly instead of inventing missing requirements",
+    "classify evidence by confidence and source",
+    "prefer capability language over old file or class names"
+  ],
+  "procedure": [
+    "List user-visible or domain-visible capabilities.",
+    "For each capability, identify inputs, state, decisions, outputs, side effects, and failure modes.",
+    "Separate domain rules from infrastructure mechanisms.",
+    "Mark rules as confirmed, inferred, obsolete, conflicting, or unknown.",
+    "Define the smallest neutral model that explains the desired behavior.",
+    "Feed the model into architecture, pipeline, UI, and validation planning."
+  ],
+  "output": [
+    "domain capability map",
+    "domain concept glossary",
+    "rule and invariant list",
+    "uncertainty log",
+    "validation targets"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "legacy-archive-strategy",
+      "greenfield-rewrite-planning",
+      "mechanics-infrastructure-separation"
+    ],
+    "contextual": [
+      "contracts"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about deriving a clean domain model from old code or documents"
+    ],
+    "must_not_own_when": [
+      "the task is primarily runtime lifecycle or build-system work"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to preserve domain knowledge without preserving old architecture",
+      "how to make requirements explicit before a rewrite",
+      "how to distinguish domain rules from implementation accidents"
+    ],
+    "does_not_solve": [
+      "new runtime architecture by itself",
+      "complete testing strategy",
+      "external API binding"
+    ]
+  },
+  "core_principles": [
+    "Domain intent is more important than legacy shape during a rewrite.",
+    "Uncertainty is a first-class output.",
+    "A useful domain model explains decisions, state, and side effects in neutral language."
+  ],
+  "constraints": [
+    "Do not include project names, local paths, or concrete class names in reusable guidance.",
+    "Do not treat UI labels or config keys as domain concepts without confirmation.",
+    "Do not erase conflicting evidence; record it for design resolution."
+  ],
+  "decision_rules": [
+    "If behavior affects user-visible or domain-visible outcomes, capture it as domain evidence.",
+    "If behavior only compensates for infrastructure limitations, classify it as implementation evidence.",
+    "If two old paths conflict, mark the rule unresolved until validated.",
+    "If a rule cannot be explained without old class names, rename it in capability language."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "capability maps",
+      "neutral domain glossary",
+      "input-decision-output modeling",
+      "confidence labels",
+      "uncertainty log"
+    ],
+    "avoid_patterns": [
+      "old folder structure as domain model",
+      "copying class names into new architecture",
+      "treating infrastructure workarounds as domain rules",
+      "inventing requirements to fill gaps"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Extract domain intent from old code",
+      "when": "Use when old implementation is being archived but its product meaning must be preserved.",
+      "steps": [
+        "List capabilities in neutral language.",
+        "Map old evidence to inputs, rules, state, outputs, and side effects.",
+        "Separate domain rules from infrastructure mechanisms.",
+        "Label confidence and unresolved questions.",
+        "Use the resulting model as input for new architecture."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Mistaking old abstractions for domain concepts.",
+    "Losing edge cases because they are hidden inside infrastructure code.",
+    "Treating uncertain behavior as confirmed.",
+    "Leaking named-project vocabulary into reusable guidance."
+  ],
+  "review_checklist": [
+    "Are capabilities named without project-specific terms?",
+    "Are domain rules separated from infrastructure mechanisms?",
+    "Is uncertainty recorded?",
+    "Are side effects and failure modes captured?",
+    "Can the model guide new design without copying old code?"
+  ],
+  "references": [
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use to express extracted domain rules as explicit contracts.",
+      "why": "Domain extraction needs stable rules and expectations before new architecture is designed."
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "id": "mod-runtime-architecture",
+  "kind": "skill",
+  "title": "Mod Runtime Architecture",
+  "stack": "unity",
+  "domain": "modding",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "mod runtime architecture",
+      "game mod architecture",
+      "plugin runtime design",
+      "mod foundation",
+      "runtime for mod"
+    ],
+    "weak": [
+      "mod modules",
+      "game lifecycle",
+      "hooks probes facades",
+      "mod infrastructure",
+      "hosted Unity mod"
+    ]
+  },
+  "use_for": [
+    "designing a reusable runtime foundation for a Unity-hosted game mod",
+    "separating loader entry, hooks, probes, facades, modules, UI, diagnostics, and domain mechanics",
+    "building deterministic runtime ownership around unstable game state",
+    "planning a greenfield mod rewrite around explicit infrastructure boundaries"
+  ],
+  "do_not_use_for": [
+    "single-file loader setup",
+    "pure gameplay calculation without Unity or mod runtime constraints",
+    "ordinary Unity application architecture outside modding constraints"
+  ],
+  "rules": [
+    "keep loader entry thin and move runtime ownership into explicit hosts and modules",
+    "convert raw game callbacks into internal lifecycle events or snapshots",
+    "place fragile integration behind hooks, probes, adapters, or facades",
+    "make readiness, degraded state, and failure reasons observable",
+    "keep domain mechanics independent from Unity objects and raw game APIs where practical"
+  ],
+  "procedure": [
+    "Define the loader entry boundary and the runtime host it starts.",
+    "Define core infrastructure: logging, diagnostics, configuration, main-thread dispatch, events, modules, and shutdown.",
+    "Define game integration roles: hooks for notification, probes for discovery, facades for stable access, mutation scopes for writes.",
+    "Define lifecycle snapshots for menu, loading, session, vehicle/entity availability, and teardown as needed.",
+    "Define feature modules and their dependencies on lifecycle readiness.",
+    "Define UI and diagnostics surfaces as observers of published state.",
+    "Verify that missing hooks or invalid game state degrade features instead of corrupting runtime state."
+  ],
+  "output": [
+    "mod runtime architecture map",
+    "integration boundary model",
+    "lifecycle snapshot model",
+    "module readiness policy",
+    "diagnostics and degradation policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "plugin-lifecycle",
+      "runtime-lifecycle",
+      "diagnostics"
+    ],
+    "optional": [
+      "harmony-patching",
+      "loader-integration",
+      "game-boundary-design",
+      "module-runtime-design"
+    ],
+    "contextual": [
+      "mechanics-infrastructure-separation",
+      "data-oriented-runtime-adaptation"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about designing a Unity game mod's runtime foundation"
+    ],
+    "must_not_own_when": [
+      "the task is only about one Harmony patch",
+      "the task is only about IMGUI layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to structure a mod runtime around unstable host lifecycle and private integrations",
+      "how to keep feature modules away from raw hooks and probes",
+      "how to make degraded state visible and recoverable"
+    ],
+    "does_not_solve": [
+      "exact hook target discovery",
+      "domain mechanics theory",
+      "asset authoring"
+    ]
+  },
+  "core_principles": [
+    "A mod runtime must treat the host game as unstable external infrastructure.",
+    "Hooks notify; probes discover; facades stabilize; modules decide; diagnostics explain.",
+    "Feature modules should consume stable lifecycle state rather than raw game callbacks.",
+    "Domain mechanics should be portable across runtime surfaces when practical."
+  ],
+  "constraints": [
+    "Do not bind reusable guidance to a named game or mod.",
+    "Do not let feature modules depend directly on Harmony patch methods.",
+    "Do not keep live Unity object references across lifecycle resets without invalidation.",
+    "Do not require optional integrations to be present for core diagnostics to run."
+  ],
+  "decision_rules": [
+    "If a host event is fragile, wrap it as an internal lifecycle event with diagnostics.",
+    "If a host object may disappear, expose a snapshot or facade that handles invalidation.",
+    "If a feature mutates game state, require readiness and a mutation boundary.",
+    "If a module cannot start, mark it degraded or faulted with a reason.",
+    "If domain logic needs game data, provide sampled inputs rather than raw objects."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "thin loader entry",
+      "runtime host",
+      "module registry",
+      "hook/probe/facade separation",
+      "lifecycle snapshots",
+      "main-thread dispatcher",
+      "diagnostics-first startup"
+    ],
+    "avoid_patterns": [
+      "feature logic in patch callbacks",
+      "raw game objects as global state",
+      "startup order hidden in static constructors",
+      "crashing on optional integration absence",
+      "UI as domain source of truth"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a mod runtime foundation",
+      "when": "Use when a mod is being rebuilt or expanded beyond one isolated feature.",
+      "steps": [
+        "Keep the loader entry responsible only for attaching and detaching the runtime.",
+        "Initialize diagnostics before fragile integrations.",
+        "Register modules with deterministic lifecycle and readiness.",
+        "Convert host callbacks into internal events and snapshots.",
+        "Route feature work through modules, domain services, pipelines, and mutation boundaries."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Building the runtime around the first hook that happened to work.",
+    "Letting game-specific names leak into reusable architecture skills.",
+    "Making diagnostics depend on the systems they need to diagnose.",
+    "Treating scene or entity references as permanent."
+  ],
+  "review_checklist": [
+    "Is the loader entry thin?",
+    "Are hooks, probes, facades, modules, and mechanics separated?",
+    "Are lifecycle resets and stale references handled?",
+    "Are degraded states observable?",
+    "Is the guidance free of named-project coupling?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Integration",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/modding/references/runtime-integration.md",
+      "interpretation": "Use for mod runtime phases, modules, hooks, probes, facades, and diagnostics.",
+      "why": "Unity-hosted mods need explicit runtime integration policy."
+    },
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use for degraded state, readiness, and failure reporting.",
+      "why": "Fragile integrations must be observable."
+    }
+  ]
+}

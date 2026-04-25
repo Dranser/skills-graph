@@ -1,0 +1,159 @@
+{
+  "id": "architecture-pattern-extraction",
+  "kind": "skill",
+  "title": "Architecture Pattern Extraction",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "extract architecture",
+      "reuse architecture pattern",
+      "use as sandbox",
+      "generalize design",
+      "portable architecture"
+    ],
+    "weak": [
+      "copy the approach",
+      "learn from another project",
+      "stabilize pattern",
+      "architectural philosophy"
+    ]
+  },
+  "use_for": [
+    "turning an existing implementation into reusable architectural guidance",
+    "separating stable design principles from project-specific code",
+    "identifying which patterns are portable, experimental, or context-bound",
+    "preventing named-project coupling in reusable skills"
+  ],
+  "do_not_use_for": [
+    "copying concrete classes into another project",
+    "documenting one-off implementation details as universal rules",
+    "choosing dependencies solely because a reference implementation used them"
+  ],
+  "rules": [
+    "extract roles, responsibilities, invariants, and failure policies instead of names and paths",
+    "classify each observed pattern as stable, experimental, context-bound, or obsolete",
+    "generalize around technology stack and architectural shape, not project identity",
+    "preserve tradeoffs and constraints together with the pattern",
+    "reject patterns that only work because of one repository's incidental structure"
+  ],
+  "procedure": [
+    "Identify the architectural problem the source pattern solves.",
+    "Name the roles involved using generic terms.",
+    "Extract invariants, lifecycle rules, data ownership, error handling, and validation expectations.",
+    "Mark project-specific details that must not enter reusable guidance.",
+    "Classify the pattern's maturity and portability.",
+    "Rewrite the pattern as stack-level guidance with abstract examples only."
+  ],
+  "output": [
+    "portable pattern description",
+    "maturity classification",
+    "non-portable detail list",
+    "stack-level design rules"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "greenfield-rewrite-planning",
+      "composition-boundaries",
+      "runtime-lifecycle"
+    ],
+    "contextual": [
+      "diagnostics"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is to generalize knowledge from one implementation into reusable guidance",
+      "the task must avoid binding skills to a specific project"
+    ],
+    "must_not_own_when": [
+      "the task is to implement a concrete feature directly",
+      "the task intentionally targets only one named project"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to reuse hard-won architecture experience without project coupling",
+      "how to distinguish philosophy from incidental implementation",
+      "how to write skills that remain valid across multiple projects in the same stack"
+    ],
+    "does_not_solve": [
+      "complete framework design",
+      "domain modeling by itself",
+      "runtime performance tuning by itself"
+    ]
+  },
+  "core_principles": [
+    "A reusable skill should depend on stack constraints and architectural roles, not project names.",
+    "Concrete implementations are evidence; extracted invariants are guidance.",
+    "An experimental pattern must remain labeled experimental until validated in more than one context.",
+    "Portability requires naming what cannot be generalized."
+  ],
+  "constraints": [
+    "Do not include local paths, repository names, product names, or concrete class names in reusable skill content.",
+    "Do not treat a single implementation as proof that a pattern is universally correct.",
+    "Do not omit known weaknesses of the source pattern."
+  ],
+  "decision_rules": [
+    "If a rule only makes sense with a named project structure, downgrade it to a non-portable observation.",
+    "If a pattern solves lifecycle, ownership, or diagnostics across contexts, promote it to stack-level guidance.",
+    "If a pattern depends on unstable reflection, loader behavior, or game state, carry its degradation policy with it.",
+    "If two source implementations disagree, extract the decision criteria instead of choosing by preference."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "role-based names",
+      "maturity labels",
+      "stack-level constraints",
+      "explicit non-portable exclusions",
+      "tradeoff-preserving summaries"
+    ],
+    "avoid_patterns": [
+      "project-specific rules disguised as architecture",
+      "copying folder names into skill names",
+      "omitting failure modes from extracted patterns",
+      "treating sandbox code as stable without review"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Extract a portable pattern",
+      "when": "Use when a working implementation contains a reusable architectural idea.",
+      "steps": [
+        "Name the generic problem and the generic roles.",
+        "List the invariants that make the pattern work.",
+        "List the implementation details that must not be copied.",
+        "Classify maturity and context limits.",
+        "Write the reusable rule without project names, paths, or concrete class names."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Confusing familiarity with portability.",
+    "Keeping project-specific vocabulary in a supposedly generic skill.",
+    "Extracting the happy path but not the failure policy.",
+    "Promoting experimental sandbox decisions into hard rules too early."
+  ],
+  "review_checklist": [
+    "Does the extracted pattern avoid all project names and local paths?",
+    "Are roles and responsibilities generic?",
+    "Is maturity labeled honestly?",
+    "Are non-portable details excluded?",
+    "Are failure and degradation policies preserved?"
+  ],
+  "references": [
+    {
+      "title": "Composition Boundaries",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/composition-boundaries.md",
+      "interpretation": "Use to generalize ownership and composition rules from concrete implementations.",
+      "why": "Portable architecture patterns depend on stable boundaries rather than project-specific names."
+    }
+  ]
+}

@@ -13,6 +13,57 @@
     "depgraph_role": "dependency_expansion_only",
     "ignore_missing_source_path_metadata": true
   },
+  "activation_gate": {
+    "purpose": "Decide whether the task needs full Skills Graph routing or direct repository work first.",
+    "default_mode": "smallest_useful_mode",
+    "direct_modes": {
+      "context_gathering": {
+        "use_when": [
+          "the user asks to gather, inspect, summarize, or inventory project context",
+          "the user asks about files, folders, dependencies, build layout, repository shape, or existing graph connectivity",
+          "the task is read-only and does not require choosing a design owner"
+        ],
+        "rules": [
+          "do not select a primary skill",
+          "do not run full routing",
+          "inspect directly and summarize evidence",
+          "escalate to routing only if the user asks for design, execution, or domain-guided recommendations"
+        ]
+      },
+      "narrow_direct_work": {
+        "use_when": [
+          "the user asks a narrow question about known files",
+          "the user requests a small mechanical edit in a known location",
+          "the user asks to run validation, tests, formatting, search, or status checks"
+        ],
+        "rules": [
+          "work directly from the known files or commands",
+          "load additional policy only if it materially affects the change",
+          "avoid routing overhead for obvious local tasks"
+        ]
+      }
+    },
+    "full_routing_mode": {
+      "use_when": [
+        "the user asks for architecture design or redesign",
+        "the user asks for implementation work where stack, domain, or ownership is not obvious",
+        "the user asks to choose or attach skills",
+        "the task involves refactoring, rewrite, migration, diagnostics, runtime, UI, performance, pipeline, or modding execution guidance",
+        "the user explicitly asks to apply Skills Graph to a task"
+      ],
+      "rules": [
+        "read the required meta documents in order",
+        "select stack before primary domain",
+        "freeze selected stack and primary domain after routing",
+        "load only selected skills and directly relevant dependencies"
+      ]
+    },
+    "ambiguity_policy": [
+      "prefer direct inspection before routing when the request is only context gathering",
+      "state the inferred intent briefly when switching from direct inspection to full routing",
+      "do not treat open editor tabs or repository presence as a request to activate routing"
+    ]
+  },
   "agent": {
     "id": "primary-agent",
     "execution_model": {

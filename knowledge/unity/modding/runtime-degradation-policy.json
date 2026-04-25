@@ -1,0 +1,171 @@
+{
+  "id": "runtime-degradation-policy",
+  "kind": "skill",
+  "title": "Runtime Degradation Policy",
+  "stack": "unity",
+  "domain": "modding",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "degraded runtime",
+      "degradation policy",
+      "missing integration",
+      "fragile integration failure",
+      "feature unavailable"
+    ],
+    "weak": [
+      "readiness failure",
+      "optional integration",
+      "disable feature",
+      "fallback behavior",
+      "partial failure"
+    ]
+  },
+  "use_for": [
+    "defining how a Unity-hosted mod behaves when hooks, probes, external APIs, resources, or lifecycle state are unavailable",
+    "separating disabled, degraded, faulted, and not-ready states",
+    "preventing optional integration failures from crashing unrelated runtime features",
+    "making fallback and recovery behavior explicit"
+  ],
+  "do_not_use_for": [
+    "ordinary exception handling with no runtime state policy",
+    "domain calculations where all inputs are guaranteed",
+    "UI styling for error messages"
+  ],
+  "rules": [
+    "distinguish not-ready, degraded, disabled, faulted, and unsupported states",
+    "each degraded state must have a reason code or diagnostic explanation",
+    "optional integrations should degrade dependent features, not the entire runtime",
+    "recovery must happen through explicit lifecycle or readiness transitions",
+    "fallback behavior must be safe and visible"
+  ],
+  "procedure": [
+    "List fragile dependencies: hooks, reflected members, host objects, resources, networking, UI surfaces, and thread access.",
+    "Classify each dependency as required, optional, recoverable, or fatal.",
+    "Define dependent feature states for missing, stale, invalid, or failed dependencies.",
+    "Define fallback behavior, user/debug visibility, and recovery trigger.",
+    "Define diagnostics for reason, first failure, last failure, and current state.",
+    "Verify unrelated modules remain usable when an optional dependency is degraded."
+  ],
+  "output": [
+    "degradation state model",
+    "dependency criticality map",
+    "fallback and recovery policy",
+    "degradation diagnostics"
+  ],
+  "dependencies": {
+    "hard": [
+      "plugin-lifecycle",
+      "diagnostics"
+    ],
+    "optional": [
+      "game-boundary-design",
+      "observability-first-runtime"
+    ],
+    "contextual": [
+      "harmony-patching"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about degraded behavior, missing integrations, feature unavailability, or runtime recovery"
+    ],
+    "must_not_own_when": [
+      "the task is only about selecting hook targets or implementing domain math"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to keep a mod runtime usable under partial failure",
+      "how to make unavailable integrations explain themselves",
+      "how to avoid crashes from optional or version-sensitive dependencies"
+    ],
+    "does_not_solve": [
+      "reverse engineering missing integrations",
+      "domain model design",
+      "visual error presentation"
+    ]
+  },
+  "core_principles": [
+    "Degraded operation is a designed runtime mode.",
+    "A missing optional integration should produce state and reason, not surprise behavior.",
+    "Recovery should be deliberate and lifecycle-driven.",
+    "Fallbacks must be safe before they are convenient."
+  ],
+  "constraints": [
+    "Do not collapse all unavailability into false or null.",
+    "Do not crash core diagnostics because an optional feature failed.",
+    "Do not retry fragile integrations without a clear trigger or budget.",
+    "Do not hide degraded behavior from diagnostics."
+  ],
+  "decision_rules": [
+    "If a dependency is required for runtime safety, fail fast after diagnostics are available.",
+    "If a dependency is optional, mark dependent features degraded and continue.",
+    "If a dependency may become available later, define the lifecycle event that rechecks it.",
+    "If fallback behavior changes user-visible output, publish the reason.",
+    "If a failure repeats, rate-limit diagnostics without losing the latest state."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "state plus reason code",
+      "required versus optional dependency classification",
+      "feature-level degradation",
+      "explicit recovery triggers",
+      "diagnostic snapshots for unavailable features"
+    ],
+    "avoid_patterns": [
+      "null as the only unavailable state",
+      "global runtime failure for optional feature absence",
+      "silent fallback",
+      "unbounded retry loops",
+      "feature code probing fragile dependencies directly"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Define degradation for a fragile integration",
+      "when": "Use when a feature depends on host state, hooks, resources, or external APIs that may be unavailable.",
+      "steps": [
+        "Classify the dependency as required or optional.",
+        "Define not-ready, degraded, faulted, and recovery states.",
+        "Gate feature behavior on readiness.",
+        "Publish reason codes and diagnostics.",
+        "Recover only through an explicit lifecycle or readiness trigger."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating degraded mode as an exception path only.",
+    "Using null checks instead of state.",
+    "Letting optional feature failures disable core runtime.",
+    "Retrying fragile probes every frame without diagnostics policy."
+  ],
+  "review_checklist": [
+    "Are unavailable states distinct and named?",
+    "Are required and optional dependencies separated?",
+    "Are fallback and recovery rules explicit?",
+    "Are degraded reasons visible?",
+    "Can unrelated runtime features continue safely?"
+  ],
+  "references": [
+    {
+      "title": "Diagnostics And Readiness",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/modding/references/diagnostics-and-readiness.md",
+      "interpretation": "Use for readiness, degraded state, and failure visibility in mod runtimes.",
+      "why": "Degradation policy depends on diagnostic readiness state."
+    },
+    {
+      "title": "Reflection Probe Degradation",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/reflection-probe-degradation.md",
+      "interpretation": "Use when private or fragile host state can disappear or change.",
+      "why": "Many hosted mod degradation cases come from fragile probes."
+    }
+  ]
+}

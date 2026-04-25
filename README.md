@@ -136,6 +136,10 @@ Recommended compatibility statement:
 
 ## Getting Started
 
+First decide whether the task needs Skills Graph routing.
+
+Use direct inspection without full routing for read-only context gathering, repository inventory, narrow known-file questions, small mechanical edits, and validation/status checks. Use full routing when the task needs architecture ownership, implementation shaping, refactoring, rewrite, migration, diagnostics, runtime, UI, performance, pipeline, or modding guidance.
+
 If you want an agent to use this repository correctly, the minimum read order is:
 
 1. `meta/agents.json`

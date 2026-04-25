@@ -1,0 +1,172 @@
+{
+  "id": "telemetry-replay-validation",
+  "kind": "skill",
+  "title": "Telemetry Replay Validation",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "telemetry replay",
+      "replay validation",
+      "snapshot validation",
+      "golden telemetry",
+      "recorded frames"
+    ],
+    "weak": [
+      "frame tape",
+      "runtime replay",
+      "behavior snapshot",
+      "golden master",
+      "deterministic validation"
+    ]
+  },
+  "use_for": [
+    "validating rewritten runtime behavior against recorded inputs and expected outputs",
+    "capturing representative frame or event data for deterministic tests",
+    "building replayable evidence for domain pipelines and integration boundaries",
+    "checking that a new architecture preserves selected product intent"
+  ],
+  "do_not_use_for": [
+    "full integration testing inside a live host",
+    "performance benchmarking as the primary goal",
+    "UI visual regression by itself"
+  ],
+  "rules": [
+    "record inputs at stable boundaries, not arbitrary internal state",
+    "validate published state and commands, not implementation-private intermediates",
+    "keep replay data minimal, representative, and versioned",
+    "separate deterministic domain validation from live host smoke checks",
+    "treat replay mismatch as design evidence, not automatically a bug"
+  ],
+  "procedure": [
+    "Choose the behavior slice and the boundary where inputs can be recorded.",
+    "Define the replay input format and expected published outputs or commands.",
+    "Record representative normal, edge, degraded, and failure cases where possible.",
+    "Run the new implementation against replay data without requiring the full host runtime.",
+    "Compare stable outputs and classify mismatches as preserved intent, intentional redesign, or investigation required.",
+    "Update replay data only with an explicit reason."
+  ],
+  "output": [
+    "replay boundary definition",
+    "recorded input set",
+    "expected output contract",
+    "mismatch classification",
+    "validation report"
+  ],
+  "dependencies": {
+    "hard": [
+      "domain-model-extraction",
+      "contracts"
+    ],
+    "optional": [
+      "domain-pipeline-design",
+      "observability-first-runtime"
+    ],
+    "contextual": [
+      "test-harness-for-hosted-runtime"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about validating rewritten behavior from recorded runtime data"
+    ],
+    "must_not_own_when": [
+      "the task is primarily about live host integration or UI layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to validate a rewrite without keeping the old runtime active",
+      "how to preserve selected behavior using recorded evidence",
+      "how to make domain pipelines testable from snapshots"
+    ],
+    "does_not_solve": [
+      "all live integration failures",
+      "visual UI testing",
+      "throughput profiling"
+    ]
+  },
+  "core_principles": [
+    "Replay should capture boundary facts, not implementation accidents.",
+    "Expected outputs should reflect product intent, not old private state.",
+    "Mismatches are triage points during a rewrite.",
+    "Replay data should be small enough to understand and stable enough to trust."
+  ],
+  "constraints": [
+    "Do not record live host objects as replay data.",
+    "Do not compare private transient buffers unless the buffer is the contract under test.",
+    "Do not update golden data just to make tests pass.",
+    "Do not include project-specific paths in reusable replay guidance."
+  ],
+  "decision_rules": [
+    "If behavior depends on live external state, record a snapshot at the adapter boundary.",
+    "If output mutates external state, validate the command or mutation request before application.",
+    "If a mismatch reflects intended redesign, update the expected contract with rationale.",
+    "If replay cannot reproduce the issue, add observability or capture closer to the boundary.",
+    "If replay data grows too large, split it by capability and scenario."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "boundary snapshot inputs",
+      "published output comparison",
+      "command output validation",
+      "scenario labels",
+      "versioned replay data"
+    ],
+    "avoid_patterns": [
+      "recording arbitrary object graphs",
+      "comparing unstable timestamps or object identities",
+      "golden data with no scenario explanation",
+      "live host dependency in deterministic replay",
+      "replay outputs based on old implementation internals"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Create replay validation for a domain pipeline",
+      "when": "Use when a pipeline should be validated from recorded runtime inputs.",
+      "steps": [
+        "Record stable input snapshots at the pipeline boundary.",
+        "Define expected published state or commands.",
+        "Run the new pipeline from the recorded inputs.",
+        "Compare only contract-level outputs.",
+        "Classify mismatches and update expectations only with rationale."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Making replay data too broad to review.",
+    "Capturing private state that the rewrite intentionally removes.",
+    "Treating intentional redesign as regression without classification.",
+    "Requiring a live host for replay tests."
+  ],
+  "review_checklist": [
+    "Are inputs captured at stable boundaries?",
+    "Are outputs contract-level?",
+    "Is replay data versioned or scenario-labeled?",
+    "Are mismatches classified?",
+    "Can replay run without the full host runtime?"
+  ],
+  "references": [
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use to define stable replay input and output contracts.",
+      "why": "Replay validation needs explicit contracts rather than old internals."
+    },
+    {
+      "title": "Dataflow State",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/dataflow-state.md",
+      "interpretation": "Use to decide which state is input, transient, published, or command output.",
+      "why": "Replay should validate the right data boundary."
+    }
+  ]
+}

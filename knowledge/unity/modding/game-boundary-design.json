@@ -1,0 +1,172 @@
+{
+  "id": "game-boundary-design",
+  "kind": "skill",
+  "title": "Game Boundary Design",
+  "stack": "unity",
+  "domain": "modding",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "game boundary",
+      "hooks probes facades",
+      "external game API boundary",
+      "game integration layer",
+      "isolate game API"
+    ],
+    "weak": [
+      "reflection probe",
+      "game adapter",
+      "mutation scope",
+      "lifecycle snapshot",
+      "host object"
+    ]
+  },
+  "use_for": [
+    "isolating Unity game APIs, private state, hooks, reflection, and host mutations from domain logic",
+    "designing hook, probe, facade, adapter, and mutation-scope roles",
+    "making game integration readiness and failure visible",
+    "preventing stale host references from leaking into mechanics"
+  ],
+  "do_not_use_for": [
+    "choosing exact Harmony method targets",
+    "pure domain modeling with no external game dependency",
+    "UI layout"
+  ],
+  "rules": [
+    "hooks should capture events, not run feature policy",
+    "probes should discover or sample host state, not own domain decisions",
+    "facades should expose stable contracts over fragile host APIs",
+    "mutation scopes should make external writes explicit and gated",
+    "all fragile integrations need readiness and degradation diagnostics"
+  ],
+  "procedure": [
+    "List required host interactions: notifications, reads, writes, UI insertion, assets, networking, or timing.",
+    "Classify each interaction as hook, probe, facade, adapter, mutation, or surface.",
+    "Define stable snapshots or contracts exposed to modules and domain logic.",
+    "Define invalidation rules for scene, entity, session, or lifecycle changes.",
+    "Define readiness checks and degraded behavior for missing or changed host members.",
+    "Verify domain logic cannot reach raw host objects unless explicitly allowed."
+  ],
+  "output": [
+    "game boundary map",
+    "hook/probe/facade role assignment",
+    "host mutation policy",
+    "readiness and degradation diagnostics"
+  ],
+  "dependencies": {
+    "hard": [
+      "harmony-patching",
+      "plugin-lifecycle"
+    ],
+    "optional": [
+      "diagnostics",
+      "mechanics-infrastructure-separation"
+    ],
+    "contextual": [
+      "contracts"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is mainly about isolating or designing access to game APIs and host state"
+    ],
+    "must_not_own_when": [
+      "the task is only about internal domain pipeline stages",
+      "the task is only about generic module lifecycle"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to stop raw game integration from contaminating domain architecture",
+      "how to make fragile host interactions observable and degradable",
+      "how to define stable access contracts for modules"
+    ],
+    "does_not_solve": [
+      "reverse engineering every host member",
+      "the internal mechanics of a feature",
+      "full UI composition"
+    ]
+  },
+  "core_principles": [
+    "The host game is an external system, even when its objects are in process.",
+    "Stable snapshots and facades are safer than passing live host objects inward.",
+    "Mutation should be rarer and more explicit than reading.",
+    "Fragility must be represented as runtime state, not surprise exceptions."
+  ],
+  "constraints": [
+    "Do not let domain mechanics subscribe directly to hooks.",
+    "Do not expose reflection results as permanent domain state.",
+    "Do not mutate host state before lifecycle readiness is true.",
+    "Do not ignore missing host members; report degraded integration."
+  ],
+  "decision_rules": [
+    "If an interaction is event-like, model it as a hook that publishes an internal event.",
+    "If an interaction reads unstable host state, model it as a probe that produces a snapshot.",
+    "If multiple modules need stable access, model it as a facade.",
+    "If an interaction writes host state, model it as a mutation scope or command applier.",
+    "If a host object can be invalidated, never store it without an invalidation path."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "hook handlers that publish internal events",
+      "reflection probes with availability status",
+      "facades returning snapshots or safe handles",
+      "mutation scopes with lifecycle checks",
+      "diagnostics for integration health"
+    ],
+    "avoid_patterns": [
+      "feature decisions inside patch prefixes/postfixes",
+      "domain services storing raw game objects",
+      "silent reflection failures",
+      "UI code mutating host objects directly",
+      "global access to private host state"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a host integration boundary",
+      "when": "Use when a feature needs to read or mutate external game state.",
+      "steps": [
+        "Classify each host interaction as notification, read, write, or surface.",
+        "Wrap notifications as internal events.",
+        "Wrap reads as probes or facades returning snapshots.",
+        "Wrap writes as gated mutation scopes or command appliers.",
+        "Expose readiness and failure diagnostics for each fragile interaction."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating a patch callback as a stable domain API.",
+    "Passing live host objects through the whole application.",
+    "Hiding reflection failure behind default values.",
+    "Making mutation boundaries impossible to audit."
+  ],
+  "review_checklist": [
+    "Are hooks, probes, facades, and mutations clearly separated?",
+    "Can missing host integration be diagnosed?",
+    "Are stale references invalidated?",
+    "Can domain logic run from snapshots or contracts?",
+    "Are external writes gated and auditable?"
+  ],
+  "references": [
+    {
+      "title": "Harmony Patching",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/harmony-patching.md",
+      "interpretation": "Use when hooks participate in the game boundary.",
+      "why": "Patch callbacks should be converted into stable internal events."
+    },
+    {
+      "title": "Reflection Probe Degradation",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/modding/references/reflection-probe-degradation.md",
+      "interpretation": "Use when host state is discovered through fragile or private APIs.",
+      "why": "Game boundary design must include degraded behavior for fragile probes."
+    }
+  ]
+}

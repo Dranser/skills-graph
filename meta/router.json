@@ -158,13 +158,28 @@
           "manifest": "knowledge/csharp-shared/code-maintenance/code-maintenance_manifest.json",
           "skills": [
             "knowledge/csharp-shared/code-maintenance/bug-investigation.json",
-            "knowledge/csharp-shared/code-maintenance/refactoring.json"
+            "knowledge/csharp-shared/code-maintenance/refactoring.json",
+            "knowledge/csharp-shared/code-maintenance/legacy-archive-strategy.json",
+            "knowledge/csharp-shared/code-maintenance/domain-model-extraction.json",
+            "knowledge/csharp-shared/code-maintenance/architecture-pattern-extraction.json",
+            "knowledge/csharp-shared/code-maintenance/greenfield-rewrite-planning.json",
+            "knowledge/csharp-shared/code-maintenance/telemetry-replay-validation.json",
+            "knowledge/csharp-shared/code-maintenance/test-harness-for-hosted-runtime.json",
+            "knowledge/csharp-shared/code-maintenance/vehicle-mechanics-domain-modeling.json"
           ],
           "default_primary_candidates": [
             "bug-investigation",
-            "refactoring"
+            "refactoring",
+            "greenfield-rewrite-planning",
+            "domain-model-extraction",
+            "telemetry-replay-validation",
+            "test-harness-for-hosted-runtime",
+            "vehicle-mechanics-domain-modeling"
           ],
-          "default_support_candidates": []
+          "default_support_candidates": [
+            "legacy-archive-strategy",
+            "architecture-pattern-extraction"
+          ]
         },
         "data-oriented-pipeline": {
           "entry": "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-pipeline_entry.json",
@@ -178,7 +193,10 @@
             "knowledge/csharp-shared/data-oriented-pipeline/incremental-recompute.json",
             "knowledge/csharp-shared/data-oriented-pipeline/change-batching.json",
             "knowledge/csharp-shared/data-oriented-pipeline/structural-rerun-policy.json",
-            "knowledge/csharp-shared/data-oriented-pipeline/stage-contracts.json"
+            "knowledge/csharp-shared/data-oriented-pipeline/stage-contracts.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/data-oriented-runtime-adaptation.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/domain-pipeline-design.json",
+            "knowledge/csharp-shared/data-oriented-pipeline/domain-command-mutation-model.json"
           ],
           "default_primary_candidates": [
             "pipeline-architecture",
@@ -186,7 +204,10 @@
             "incremental-recompute",
             "change-batching",
             "structural-rerun-policy",
-            "stage-contracts"
+            "stage-contracts",
+            "data-oriented-runtime-adaptation",
+            "domain-pipeline-design",
+            "domain-command-mutation-model"
           ],
           "default_support_candidates": [
             "stage-boundaries",
@@ -205,7 +226,12 @@
             "knowledge/csharp-shared/framework/runtime-lifecycle.json",
             "knowledge/csharp-shared/framework/extension-points.json",
             "knowledge/csharp-shared/framework/composition-boundaries.json",
-            "knowledge/csharp-shared/framework/service-lifetimes.json"
+            "knowledge/csharp-shared/framework/service-lifetimes.json",
+            "knowledge/csharp-shared/framework/mechanics-infrastructure-separation.json",
+            "knowledge/csharp-shared/framework/module-runtime-design.json",
+            "knowledge/csharp-shared/framework/build-boundary-hygiene.json",
+            "knowledge/csharp-shared/framework/observability-first-runtime.json",
+            "knowledge/csharp-shared/framework/config-resource-migration.json"
           ],
           "default_primary_candidates": [
             "bootstrap",
@@ -215,7 +241,12 @@
             "runtime-lifecycle",
             "extension-points",
             "composition-boundaries",
-            "service-lifetimes"
+            "service-lifetimes",
+            "mechanics-infrastructure-separation",
+            "module-runtime-design",
+            "build-boundary-hygiene",
+            "observability-first-runtime",
+            "config-resource-migration"
           ],
           "default_support_candidates": []
         },
@@ -317,11 +348,19 @@
           "skills": [
             "knowledge/unity/modding/harmony-patching.json",
             "knowledge/unity/modding/loader-integration.json",
-            "knowledge/unity/modding/plugin-lifecycle.json"
+            "knowledge/unity/modding/plugin-lifecycle.json",
+            "knowledge/unity/modding/mod-runtime-architecture.json",
+            "knowledge/unity/modding/game-boundary-design.json",
+            "knowledge/unity/modding/runtime-degradation-policy.json",
+            "knowledge/unity/modding/lifecycle-snapshot-modeling.json"
           ],
           "default_primary_candidates": [
             "harmony-patching",
-            "loader-integration"
+            "loader-integration",
+            "mod-runtime-architecture",
+            "game-boundary-design",
+            "runtime-degradation-policy",
+            "lifecycle-snapshot-modeling"
           ],
           "default_support_candidates": [
             "plugin-lifecycle"
@@ -435,13 +474,15 @@
             "knowledge/unity/unity-ui/imgui-windowing.json",
             "knowledge/unity/unity-ui/imgui-styling.json",
             "knowledge/unity/unity-ui/imgui-performance.json",
-            "knowledge/unity/unity-ui/imgui-debugging.json"
+            "knowledge/unity/unity-ui/imgui-debugging.json",
+            "knowledge/unity/unity-ui/ui-surface-architecture.json"
           ],
           "default_primary_candidates": [
             "imgui-container-composition",
             "imgui-core",
             "imgui-modular-windowing",
-            "imgui-incremental-update"
+            "imgui-incremental-update",
+            "ui-surface-architecture"
           ],
           "default_support_candidates": [
             "imgui-adaptive-layout",

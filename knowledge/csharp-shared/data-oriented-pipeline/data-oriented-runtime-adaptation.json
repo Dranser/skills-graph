@@ -1,0 +1,175 @@
+{
+  "id": "data-oriented-runtime-adaptation",
+  "kind": "skill",
+  "title": "Data Oriented Runtime Adaptation",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "adapt data oriented pipeline",
+      "data oriented runtime",
+      "runtime pipeline adaptation",
+      "data-oriented pipeline style",
+      "data oriented pipeline for hosted runtime"
+    ],
+    "weak": [
+      "phases",
+      "scheduler",
+      "storage",
+      "pipeline runtime",
+      "hosted pipeline"
+    ]
+  },
+  "use_for": [
+    "adapting data-oriented runtime concepts to a constrained host environment",
+    "choosing which pipeline, storage, scheduler, phase, and diagnostics ideas to keep or simplify",
+    "avoiding over-importing a general runtime into a smaller hosted system",
+    "designing deterministic update phases around data ownership"
+  ],
+  "do_not_use_for": [
+    "generic object-oriented module design without data pipeline needs",
+    "copying an existing runtime wholesale",
+    "GPU-specific pipelines"
+  ],
+  "rules": [
+    "adapt concepts by runtime constraint, not by source implementation shape",
+    "keep phase, ownership, and diagnostics ideas before importing scheduler complexity",
+    "prefer simple serial execution until measured workload justifies parallelism",
+    "make data ownership and write boundaries explicit before optimizing storage",
+    "separate host lifecycle from pipeline phase execution"
+  ],
+  "procedure": [
+    "Define host constraints: thread access, frame timing, lifecycle instability, allocation budget, and external mutation rules.",
+    "Choose required runtime concepts: phases, modules, storage, scheduler, command queue, diagnostics, or replay.",
+    "Map domain data to stable snapshots, transient state, published state, and command outputs.",
+    "Define phase order and write ownership for each data set.",
+    "Select the simplest execution model that satisfies determinism and workload needs.",
+    "Add diagnostics for phase timing, dropped work, invalid state, and ownership violations."
+  ],
+  "output": [
+    "adapted runtime concept set",
+    "phase and ownership map",
+    "execution model decision",
+    "pipeline diagnostics requirements"
+  ],
+  "dependencies": {
+    "hard": [
+      "pipeline-architecture",
+      "stage-boundaries"
+    ],
+    "optional": [
+      "execution-model",
+      "dataflow-state",
+      "measurement-profiling"
+    ],
+    "contextual": [
+      "runtime-lifecycle",
+      "module-runtime-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about adapting data-oriented runtime ideas to a hosted application or mod"
+    ],
+    "must_not_own_when": [
+      "the task only needs ordinary service composition",
+      "the task is purely about UI layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to use data-oriented pipeline ideas without importing unnecessary runtime complexity",
+      "how to choose phase, storage, scheduler, and diagnostics boundaries for a constrained host",
+      "how to keep deterministic data updates under lifecycle constraints"
+    ],
+    "does_not_solve": [
+      "full ECS implementation",
+      "host API binding details",
+      "domain model extraction by itself"
+    ]
+  },
+  "core_principles": [
+    "A data-oriented runtime is a set of ownership and execution rules before it is a scheduler.",
+    "Hosted environments often need stricter external mutation boundaries than standalone runtimes.",
+    "Parallelism is an optimization layer; deterministic phase design comes first.",
+    "Published state should be stable enough for UI, diagnostics, and replay consumers."
+  ],
+  "constraints": [
+    "Do not copy a general runtime wholesale when a smaller phase model is enough.",
+    "Do not introduce worker execution for host APIs that require main-thread access.",
+    "Do not optimize storage layout before data ownership is understood.",
+    "Do not merge transient calculation state with published state without a reason."
+  ],
+  "decision_rules": [
+    "If data changes every frame and drives multiple consumers, model it as pipeline state.",
+    "If host objects are unstable, snapshot them before pipeline execution.",
+    "If output mutates external state, publish commands and apply them at the host boundary.",
+    "If a phase has no independent workload, keep it serial and simple.",
+    "If parallel execution is considered, define write ownership and diagnostics first."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit runtime phases",
+      "snapshot input state",
+      "transient working state",
+      "published read-only state",
+      "command queues for external mutation",
+      "phase timing diagnostics"
+    ],
+    "avoid_patterns": [
+      "host API calls inside worker tasks",
+      "implicit writes across phases",
+      "overbuilt scheduler before workload evidence",
+      "UI reading transient pipeline internals",
+      "copying runtime class names as architecture"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Adapt a pipeline to a hosted runtime",
+      "when": "Use when data-oriented concepts are useful but the host imposes lifecycle and threading limits.",
+      "steps": [
+        "List host limits and main-thread-only operations.",
+        "Define phase order around snapshot, compute, publish, and apply.",
+        "Assign data ownership and write permissions per phase.",
+        "Choose serial execution first unless measured workload requires more.",
+        "Expose phase timing and ownership diagnostics."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Importing scheduler complexity before the domain needs it.",
+    "Letting pipeline stages access live host objects directly.",
+    "Conflating transient compute data with public state.",
+    "Treating data-oriented design as a naming style rather than ownership discipline."
+  ],
+  "review_checklist": [
+    "Are host constraints explicit?",
+    "Are phase boundaries and write ownership clear?",
+    "Is execution complexity justified?",
+    "Are host mutations isolated?",
+    "Are diagnostics sufficient to inspect phase behavior?"
+  ],
+  "references": [
+    {
+      "title": "Pipeline Architecture",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/pipeline-architecture.md",
+      "interpretation": "Use for phase and pipeline ownership before adapting runtime complexity.",
+      "why": "Adaptation should preserve pipeline invariants without copying implementation shape."
+    },
+    {
+      "title": "Execution Model",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/execution-model.md",
+      "interpretation": "Use when deciding between serial, scheduled, or parallel execution.",
+      "why": "Execution complexity must follow workload and ownership needs."
+    }
+  ]
+}

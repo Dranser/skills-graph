@@ -1,0 +1,172 @@
+{
+  "id": "vehicle-mechanics-domain-modeling",
+  "kind": "skill",
+  "title": "Vehicle Mechanics Domain Modeling",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "vehicle mechanics",
+      "car mechanics",
+      "vehicle tuning",
+      "physics mechanics",
+      "drivetrain suspension tire brake engine"
+    ],
+    "weak": [
+      "telemetry",
+      "setup tuning",
+      "physics domain",
+      "mechanical model",
+      "simulation domain"
+    ]
+  },
+  "use_for": [
+    "extracting and redesigning vehicle-related mechanics in a neutral domain model",
+    "separating physical concepts, tuning parameters, telemetry, commands, and UI presentation",
+    "modeling mechanics such as suspension, tires, brakes, powertrain, setup presets, and telemetry-driven tuning",
+    "keeping vehicle mechanics independent from a named game, mod, or host implementation"
+  ],
+  "do_not_use_for": [
+    "general runtime architecture with no vehicle or simulation mechanics",
+    "exact physics engine implementation",
+    "game-specific API binding"
+  ],
+  "rules": [
+    "model mechanics in domain language before binding to host APIs or UI controls",
+    "separate measured telemetry, authored configuration, derived analysis, and mutation commands",
+    "make units, ranges, normalization, and sign conventions explicit",
+    "treat presets and tuning profiles as domain inputs, not UI state",
+    "record uncertainty when old behavior does not reveal a physical or product rationale"
+  ],
+  "procedure": [
+    "List mechanics by domain area: chassis, suspension, tires, brakes, powertrain, aero, setup, telemetry, or driver assistance as relevant.",
+    "For each area, define inputs, parameters, state, derived metrics, decisions, commands, and validation cases.",
+    "Separate physical concepts from host-specific object names and UI labels.",
+    "Define units, valid ranges, default values, and conversion boundaries.",
+    "Classify behavior as physical rule, tuning policy, compatibility behavior, UI convenience, or unknown.",
+    "Feed the model into domain pipelines, command mutation, replay validation, and UI surfaces."
+  ],
+  "output": [
+    "vehicle mechanics capability map",
+    "mechanics parameter and telemetry model",
+    "unit and range policy",
+    "tuning profile model",
+    "mechanics validation scenarios"
+  ],
+  "dependencies": {
+    "hard": [
+      "domain-model-extraction",
+      "mechanics-infrastructure-separation"
+    ],
+    "optional": [
+      "domain-pipeline-design",
+      "domain-command-mutation-model",
+      "telemetry-replay-validation"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about vehicle or simulation mechanics domain modeling"
+    ],
+    "must_not_own_when": [
+      "the task is primarily host runtime lifecycle, UI layout, or non-vehicle domain logic"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to describe vehicle mechanics without copying old implementation structure",
+      "how to keep telemetry, analysis, tuning, and mutation separated",
+      "how to avoid binding mechanics to one game or project"
+    ],
+    "does_not_solve": [
+      "accurate physics engine design by itself",
+      "host API access",
+      "visual UI composition"
+    ]
+  },
+  "core_principles": [
+    "Vehicle mechanics should be modeled as measured inputs, domain state, derived analysis, and controlled outputs.",
+    "Units and ranges are part of the domain contract.",
+    "A tuning profile is domain data, not a UI artifact.",
+    "Host-specific names should be translated at boundaries."
+  ],
+  "constraints": [
+    "Do not include named games, mods, local paths, or project-specific class names.",
+    "Do not treat UI slider ranges as authoritative physics ranges without validation.",
+    "Do not mix telemetry capture with tuning decisions in one owner.",
+    "Do not hide unit conversions inside unrelated domain logic."
+  ],
+  "decision_rules": [
+    "If data comes from runtime measurement, model it as telemetry input.",
+    "If data configures behavior, model it as authored or user configuration.",
+    "If data is computed from telemetry, model it as derived analysis.",
+    "If behavior changes external simulation state, model it as a command.",
+    "If a value has unclear units or sign, block architectural promotion until the convention is explicit."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "mechanics capability map",
+      "explicit unit and range policy",
+      "telemetry snapshots",
+      "derived analysis state",
+      "tuning profiles as domain data",
+      "command-based simulation mutation"
+    ],
+    "avoid_patterns": [
+      "UI labels as domain concepts",
+      "host object names as mechanics model",
+      "mixed telemetry and mutation services",
+      "implicit unit conversions",
+      "copying old physics workarounds without rationale"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Model a vehicle mechanics subsystem",
+      "when": "Use when a rewrite needs a clean domain model for one vehicle-related capability.",
+      "steps": [
+        "Name the mechanic in neutral domain language.",
+        "List telemetry inputs, configuration inputs, derived metrics, and command outputs.",
+        "Define units, ranges, and conversion boundaries.",
+        "Separate physical rules from tuning policies.",
+        "Create replay or scenario validation cases for representative behavior."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Preserving old variable names as domain truth.",
+    "Letting UI controls define the mechanics model.",
+    "Skipping unit and sign convention documentation.",
+    "Mixing compatibility hacks with physical rules."
+  ],
+  "review_checklist": [
+    "Are mechanics described without project-specific terms?",
+    "Are telemetry, configuration, analysis, and commands separated?",
+    "Are units and ranges explicit?",
+    "Are tuning profiles treated as domain data?",
+    "Are unknown physical rationales recorded?"
+  ],
+  "references": [
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use for mechanics parameter, telemetry, and command contracts.",
+      "why": "Vehicle mechanics need explicit domain contracts."
+    },
+    {
+      "title": "Stage Boundaries",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/stage-boundaries.md",
+      "interpretation": "Use to separate telemetry, analysis, decisions, and mutation stages.",
+      "why": "Simulation mechanics often fit pipeline stage boundaries."
+    }
+  ]
+}

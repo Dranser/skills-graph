@@ -1,0 +1,170 @@
+{
+  "id": "config-resource-migration",
+  "kind": "skill",
+  "title": "Config Resource Migration",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "config migration",
+      "resource migration",
+      "settings migration",
+      "schema version",
+      "embedded resources"
+    ],
+    "weak": [
+      "json config",
+      "localization resources",
+      "preset migration",
+      "resource validation",
+      "backward compatibility"
+    ]
+  },
+  "use_for": [
+    "moving configuration and resource data into a new architecture without losing user or domain intent",
+    "designing schema versioning, validation, defaults, and compatibility rules",
+    "separating runtime configuration, authored resources, generated data, and user overrides",
+    "preventing old resource layout from dictating new runtime architecture"
+  ],
+  "do_not_use_for": [
+    "general persistence systems unrelated to rewrite or resource boundaries",
+    "UI layout for settings screens",
+    "binary asset authoring"
+  ],
+  "rules": [
+    "treat data format as a contract with version and validation policy",
+    "separate authored defaults, user overrides, runtime state, and generated data",
+    "migrate intent, not old key names, unless compatibility requires them",
+    "validate resources before activation where practical",
+    "make missing or invalid data produce diagnostics and safe fallback behavior"
+  ],
+  "procedure": [
+    "Inventory configuration and resource categories by owner and lifecycle.",
+    "Classify each data item as authored default, user override, runtime state, generated output, localization, or compatibility data.",
+    "Define schema versions, required fields, defaults, validation rules, and migration rules.",
+    "Define load order and precedence between defaults, overrides, and runtime changes.",
+    "Define diagnostics for missing, invalid, obsolete, or migrated data.",
+    "Verify the new runtime does not depend on old resource folder shape unless explicitly retained as compatibility."
+  ],
+  "output": [
+    "configuration/resource inventory",
+    "schema and version policy",
+    "load precedence model",
+    "validation and fallback policy",
+    "migration notes"
+  ],
+  "dependencies": {
+    "hard": [
+      "contracts",
+      "diagnostics"
+    ],
+    "optional": [
+      "build-boundary-hygiene",
+      "domain-model-extraction"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about configuration, resources, schemas, presets, localization, or data migration"
+    ],
+    "must_not_own_when": [
+      "the task is primarily about runtime module lifecycle or domain algorithms"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to preserve useful data while changing architecture",
+      "how to prevent resources from becoming hidden runtime code",
+      "how to validate and migrate configuration safely"
+    ],
+    "does_not_solve": [
+      "domain calculations",
+      "asset pipeline implementation details",
+      "UI settings screen design"
+    ]
+  },
+  "core_principles": [
+    "Configuration is an input contract, not a bag of convenient globals.",
+    "Resources should be validated before they become runtime state.",
+    "User overrides and authored defaults must have explicit precedence.",
+    "Old key names are compatibility concerns, not architecture guidance."
+  ],
+  "constraints": [
+    "Do not let runtime state be persisted accidentally as configuration.",
+    "Do not silently ignore invalid resources.",
+    "Do not force new architecture to match legacy data layout without a compatibility reason.",
+    "Do not include project-specific resource paths in reusable guidance."
+  ],
+  "decision_rules": [
+    "If data is edited by users, preserve or migrate it with explicit compatibility rules.",
+    "If data is authored by developers, version and validate it before activation.",
+    "If data is generated, keep generation ownership and source inputs clear.",
+    "If a missing resource disables a feature, report degraded state and fallback behavior.",
+    "If old data shape is bad, migrate values into a new schema rather than copying the shape."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "versioned schemas",
+      "validated resource loading",
+      "defaults plus overrides precedence",
+      "migration adapters at load boundary",
+      "diagnostics for invalid or obsolete data"
+    ],
+    "avoid_patterns": [
+      "runtime state stored as config",
+      "resource paths hardcoded throughout domain logic",
+      "silent fallback on parse failure",
+      "legacy key names used as new domain model",
+      "unversioned breaking data changes"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Migrate a configuration surface",
+      "when": "Use when a rewrite changes how settings or resources are modeled.",
+      "steps": [
+        "Classify old data by owner and purpose.",
+        "Define the new schema and compatibility needs.",
+        "Create validation and default rules.",
+        "Translate old values at the load boundary when needed.",
+        "Report migration, fallback, and invalid-data diagnostics."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Treating config keys as domain language.",
+    "Persisting transient runtime state.",
+    "Losing user overrides during a rewrite.",
+    "Letting bad resource data fail deep inside feature logic."
+  ],
+  "review_checklist": [
+    "Are defaults, overrides, generated data, and runtime state separated?",
+    "Are schemas versioned or otherwise compatibility-aware?",
+    "Are resources validated before activation?",
+    "Are invalid and migrated data visible in diagnostics?",
+    "Is guidance free of concrete project paths?"
+  ],
+  "references": [
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use to define config and resource schemas as contracts.",
+      "why": "Configuration and resources are external inputs to the runtime."
+    },
+    {
+      "title": "Diagnostics",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/diagnostics.md",
+      "interpretation": "Use for invalid data, migration, and fallback reporting.",
+      "why": "Data migration failures must be visible before runtime behavior becomes confusing."
+    }
+  ]
+}

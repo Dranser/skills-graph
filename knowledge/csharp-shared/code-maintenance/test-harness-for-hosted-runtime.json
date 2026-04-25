@@ -1,0 +1,172 @@
+{
+  "id": "test-harness-for-hosted-runtime",
+  "kind": "skill",
+  "title": "Test Harness For Hosted Runtime",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "test harness",
+      "hosted runtime tests",
+      "test without host",
+      "fake adapters",
+      "runtime harness"
+    ],
+    "weak": [
+      "unit test runtime",
+      "integration seam tests",
+      "stub host API",
+      "smoke test",
+      "offline validation"
+    ]
+  },
+  "use_for": [
+    "testing domain logic, modules, and pipelines without a full host runtime",
+    "designing fake adapters, clocks, dispatchers, configuration, and diagnostics for tests",
+    "separating deterministic tests from live-host smoke checks",
+    "supporting greenfield rewrites with fast validation loops"
+  ],
+  "do_not_use_for": [
+    "testing exact host rendering or input behavior",
+    "replacing live smoke tests entirely",
+    "benchmarking production performance"
+  ],
+  "rules": [
+    "test domain mechanics and pipeline behavior through stable contracts",
+    "fake host adapters at boundaries rather than mocking internals",
+    "provide deterministic time, configuration, dispatch, and diagnostics where needed",
+    "keep live-host smoke tests small and separate from offline tests",
+    "test degraded and failure states explicitly"
+  ],
+  "procedure": [
+    "Identify which runtime surfaces can be tested offline and which require live host smoke checks.",
+    "Define fake or stub implementations for host APIs, clocks, dispatchers, configuration, and diagnostics.",
+    "Expose module and pipeline entry points through contracts suitable for test harness use.",
+    "Build scenarios around inputs, lifecycle events, commands, and published outputs.",
+    "Add degraded integration and failure cases.",
+    "Keep harness utilities small enough that they do not become a second runtime."
+  ],
+  "output": [
+    "test harness boundary map",
+    "fake adapter list",
+    "offline scenario plan",
+    "live smoke test boundary",
+    "failure and degraded test cases"
+  ],
+  "dependencies": {
+    "hard": [
+      "contracts"
+    ],
+    "optional": [
+      "telemetry-replay-validation",
+      "mechanics-infrastructure-separation",
+      "observability-first-runtime"
+    ],
+    "contextual": [
+      "domain-pipeline-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about testing a hosted runtime without the full host environment"
+    ],
+    "must_not_own_when": [
+      "the task is primarily about live host hook discovery or UI layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to validate a hosted runtime in fast offline loops",
+      "how to avoid requiring a game or host process for every domain test",
+      "how to test degraded and failure behavior at boundaries"
+    ],
+    "does_not_solve": [
+      "full end-to-end host validation",
+      "visual correctness",
+      "production scheduler performance"
+    ]
+  },
+  "core_principles": [
+    "Offline tests should exercise contracts, not private implementation layout.",
+    "Host fakes belong at adapters and boundary contracts.",
+    "Live smoke tests prove integration; offline harnesses prove design behavior.",
+    "A harness should reduce runtime assumptions, not duplicate the whole runtime."
+  ],
+  "constraints": [
+    "Do not fake internals when a boundary fake is possible.",
+    "Do not make tests rely on real time, random ordering, or live host objects unless intentionally testing them.",
+    "Do not let harness-only APIs leak into production design.",
+    "Do not bind reusable test guidance to a named project or path."
+  ],
+  "decision_rules": [
+    "If code can run from snapshots and commands, test it offline.",
+    "If code requires host object identity or rendering, cover it with smoke tests.",
+    "If a module depends on lifecycle, provide test lifecycle events.",
+    "If a feature degrades when integration is missing, add a missing-integration test.",
+    "If the harness becomes complex, simplify production boundaries first."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "boundary fakes",
+      "deterministic clock and dispatcher",
+      "contract-level assertions",
+      "scenario builders",
+      "separate live smoke tests"
+    ],
+    "avoid_patterns": [
+      "mocking private methods",
+      "testing through raw host callbacks",
+      "harness-only production branches",
+      "large fake runtime duplicating production",
+      "flaky tests based on real timing"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Build an offline runtime harness",
+      "when": "Use when a hosted runtime needs fast tests without launching the host.",
+      "steps": [
+        "Identify host boundaries and replace them with fakes.",
+        "Provide deterministic clock, dispatch, config, and diagnostics.",
+        "Drive modules with explicit lifecycle events.",
+        "Assert published state and commands.",
+        "Keep a separate smoke path for live host integration."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Testing private implementation instead of contracts.",
+    "Letting the harness hide bad production boundaries.",
+    "Skipping live smoke tests for fragile integrations.",
+    "Allowing real-time behavior to make tests flaky."
+  ],
+  "review_checklist": [
+    "Are host dependencies faked at boundaries?",
+    "Are time and dispatch deterministic?",
+    "Do tests assert contracts and published outputs?",
+    "Are degraded cases covered?",
+    "Is live smoke coverage separated from offline tests?"
+  ],
+  "references": [
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use for testable boundaries and assertions.",
+      "why": "Hosted runtime tests should target contracts."
+    },
+    {
+      "title": "Runtime Lifecycle",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/runtime-lifecycle.md",
+      "interpretation": "Use to drive lifecycle phases in test harnesses.",
+      "why": "Modules and runtime owners need deterministic lifecycle tests."
+    }
+  ]
+}

@@ -1,0 +1,171 @@
+{
+  "id": "module-runtime-design",
+  "kind": "skill",
+  "title": "Module Runtime Design",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "module runtime",
+      "module architecture",
+      "module lifecycle",
+      "module registry",
+      "feature modules"
+    ],
+    "weak": [
+      "module priority",
+      "start stop modules",
+      "module state",
+      "module dependencies",
+      "module failure"
+    ]
+  },
+  "use_for": [
+    "designing runtime-owned feature modules with deterministic lifecycle",
+    "defining module registration, ordering, dependency, and failure behavior",
+    "separating modules from the host entry point and raw callbacks",
+    "making module state observable"
+  ],
+  "do_not_use_for": [
+    "domain calculations inside one module",
+    "raw external API reverse engineering",
+    "UI layout composition by itself"
+  ],
+  "rules": [
+    "modules should have explicit states and lifecycle transitions",
+    "registration order must be deterministic and reviewable",
+    "module dependencies must be declared or composed explicitly",
+    "module failures must be captured without corrupting unrelated modules",
+    "modules should depend on stable contracts rather than raw host callbacks"
+  ],
+  "procedure": [
+    "Define what qualifies as a module and what remains a plain service or domain component.",
+    "Define module lifecycle states such as registered, created, initialized, active, suspended, stopped, and faulted.",
+    "Define ordering, priority, dependency, and optional-module rules.",
+    "Define update, fixed update, UI, and shutdown participation explicitly.",
+    "Define diagnostics for module state, readiness, and failure reasons.",
+    "Verify shutdown order and partial-failure behavior."
+  ],
+  "output": [
+    "module lifecycle contract",
+    "module ordering policy",
+    "module dependency policy",
+    "module diagnostics model"
+  ],
+  "dependencies": {
+    "hard": [
+      "runtime-lifecycle",
+      "contracts"
+    ],
+    "optional": [
+      "diagnostics",
+      "service-lifetimes"
+    ],
+    "contextual": [
+      "mechanics-infrastructure-separation"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about runtime modules, feature activation, module ordering, or module failure handling"
+    ],
+    "must_not_own_when": [
+      "the task is only about low-level domain logic or UI layout"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to coordinate many runtime features without hidden startup behavior",
+      "how to make modules independently observable and fault-tolerant",
+      "how to keep module ownership separate from host entry points"
+    ],
+    "does_not_solve": [
+      "the internal design of every feature",
+      "external API binding by itself",
+      "build system hygiene"
+    ]
+  },
+  "core_principles": [
+    "A module is a lifecycle participant, not just a folder.",
+    "Module order should be a policy, not an accident of discovery.",
+    "Failure must produce a state and reason that diagnostics can report.",
+    "Optional integrations should degrade modules, not destabilize the runtime."
+  ],
+  "constraints": [
+    "Do not rely on static constructor order for module lifecycle.",
+    "Do not let modules subscribe directly to fragile host callbacks when a stable internal event exists.",
+    "Do not let one module own another module's state unless this is explicit composition.",
+    "Do not hide module readiness behind null checks."
+  ],
+  "decision_rules": [
+    "If a component needs start, stop, update, or diagnostics, consider making it a module.",
+    "If a component only performs a calculation, keep it below module level.",
+    "If a module needs a fragile integration, declare it as a readiness dependency.",
+    "If module order matters, encode it in priority or dependency rules.",
+    "If shutdown can fail, capture errors and continue best-effort teardown."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "module registry with deterministic ordering",
+      "explicit module state machine",
+      "diagnostics-first failure reporting",
+      "stable contracts between modules",
+      "separate domain services below modules"
+    ],
+    "avoid_patterns": [
+      "modules created by incidental reflection order",
+      "module state inferred from object existence",
+      "feature code hidden in the host entry point",
+      "cross-module global mutable state",
+      "unreported partial initialization"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a feature module",
+      "when": "Use when a capability needs runtime lifecycle ownership.",
+      "steps": [
+        "Name the module responsibility and the lifecycle phases it participates in.",
+        "List required contracts and optional integrations.",
+        "Define readiness and fault states.",
+        "Keep domain mechanics in services or pipeline stages below the module.",
+        "Expose diagnostics for state, dependencies, and last failure."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Creating a module for every class.",
+    "Putting domain calculations directly into lifecycle methods.",
+    "Letting module priority numbers become undocumented architecture.",
+    "Ignoring degraded operation for optional dependencies."
+  ],
+  "review_checklist": [
+    "Is module lifecycle explicit?",
+    "Is order deterministic and documented?",
+    "Are dependencies declared?",
+    "Are failures observable?",
+    "Are domain mechanics kept below the module boundary?"
+  ],
+  "references": [
+    {
+      "title": "Runtime Lifecycle",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/runtime-lifecycle.md",
+      "interpretation": "Use for module phase ownership, startup, suspend, and shutdown behavior.",
+      "why": "Modules are runtime lifecycle participants."
+    },
+    {
+      "title": "Diagnostics",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/diagnostics.md",
+      "interpretation": "Use for module state and failure visibility.",
+      "why": "Module failures must be observable."
+    }
+  ]
+}

@@ -10,7 +10,12 @@
     "runtime-lifecycle",
     "extension-points",
     "composition-boundaries",
-    "service-lifetimes"
+    "service-lifetimes",
+    "mechanics-infrastructure-separation",
+    "module-runtime-design",
+    "build-boundary-hygiene",
+    "observability-first-runtime",
+    "config-resource-migration"
   ],
   "entry_file": "framework_entry.json",
   "manifest_file": "framework_manifest.json"

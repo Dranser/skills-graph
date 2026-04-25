@@ -79,6 +79,91 @@
               "csharp-shared:data-oriented-pipeline:stage-contracts",
               "csharp-shared:data-oriented-pipeline:dataflow-state"
             ]
+          },
+          "legacy-archive-strategy": {
+            "hard": [],
+            "optional": [
+              "greenfield-rewrite-planning",
+              "csharp-shared:framework:contracts"
+            ],
+            "contextual": [
+              "csharp-shared:framework:build-boundary-hygiene"
+            ]
+          },
+          "domain-model-extraction": {
+            "hard": [],
+            "optional": [
+              "legacy-archive-strategy",
+              "greenfield-rewrite-planning",
+              "csharp-shared:framework:mechanics-infrastructure-separation"
+            ],
+            "contextual": [
+              "csharp-shared:framework:contracts"
+            ]
+          },
+          "architecture-pattern-extraction": {
+            "hard": [],
+            "optional": [
+              "greenfield-rewrite-planning",
+              "csharp-shared:framework:composition-boundaries",
+              "csharp-shared:framework:runtime-lifecycle"
+            ],
+            "contextual": [
+              "csharp-shared:framework:diagnostics"
+            ]
+          },
+          "greenfield-rewrite-planning": {
+            "hard": [
+              "legacy-archive-strategy",
+              "csharp-shared:framework:contracts"
+            ],
+            "optional": [
+              "architecture-pattern-extraction",
+              "csharp-shared:framework:runtime-lifecycle",
+              "csharp-shared:framework:diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:framework:composition-boundaries",
+              "domain-model-extraction"
+            ]
+          },
+          "telemetry-replay-validation": {
+            "hard": [
+              "domain-model-extraction",
+              "csharp-shared:framework:contracts"
+            ],
+            "optional": [
+              "csharp-shared:data-oriented-pipeline:domain-pipeline-design",
+              "csharp-shared:framework:observability-first-runtime"
+            ],
+            "contextual": [
+              "test-harness-for-hosted-runtime"
+            ]
+          },
+          "test-harness-for-hosted-runtime": {
+            "hard": [
+              "csharp-shared:framework:contracts"
+            ],
+            "optional": [
+              "telemetry-replay-validation",
+              "csharp-shared:framework:mechanics-infrastructure-separation",
+              "csharp-shared:framework:observability-first-runtime"
+            ],
+            "contextual": [
+              "csharp-shared:data-oriented-pipeline:domain-pipeline-design"
+            ]
+          },
+          "vehicle-mechanics-domain-modeling": {
+            "hard": [
+              "domain-model-extraction",
+              "csharp-shared:framework:mechanics-infrastructure-separation"
+            ],
+            "optional": [
+              "csharp-shared:data-oriented-pipeline:domain-pipeline-design",
+              "csharp-shared:data-oriented-pipeline:domain-command-mutation-model",
+              "telemetry-replay-validation"
+            ],
+            "contextual": []
           }
         },
         "data-oriented-pipeline": {
@@ -198,6 +283,47 @@
               "pipeline-architecture",
               "incremental-recompute"
             ]
+          },
+          "data-oriented-runtime-adaptation": {
+            "hard": [
+              "pipeline-architecture",
+              "stage-boundaries"
+            ],
+            "optional": [
+              "execution-model",
+              "dataflow-state",
+              "csharp-shared:performance:measurement-profiling"
+            ],
+            "contextual": [
+              "csharp-shared:framework:runtime-lifecycle",
+              "csharp-shared:framework:module-runtime-design"
+            ]
+          },
+          "domain-pipeline-design": {
+            "hard": [
+              "stage-boundaries",
+              "stage-contracts",
+              "dataflow-state"
+            ],
+            "optional": [
+              "incremental-recompute",
+              "change-batching",
+              "csharp-shared:performance:measurement-profiling"
+            ],
+            "contextual": [
+              "csharp-shared:framework:mechanics-infrastructure-separation"
+            ]
+          },
+          "domain-command-mutation-model": {
+            "hard": [
+              "stage-contracts",
+              "domain-pipeline-design"
+            ],
+            "optional": [
+              "change-batching",
+              "csharp-shared:framework:observability-first-runtime"
+            ],
+            "contextual": []
           }
         },
         "framework": {
@@ -286,6 +412,66 @@
             "contextual": [
               "bootstrap"
             ]
+          },
+          "mechanics-infrastructure-separation": {
+            "hard": [
+              "contracts"
+            ],
+            "optional": [
+              "composition-boundaries",
+              "runtime-lifecycle",
+              "diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:code-maintenance:domain-model-extraction"
+            ]
+          },
+          "module-runtime-design": {
+            "hard": [
+              "runtime-lifecycle",
+              "contracts"
+            ],
+            "optional": [
+              "diagnostics",
+              "service-lifetimes"
+            ],
+            "contextual": [
+              "mechanics-infrastructure-separation"
+            ]
+          },
+          "build-boundary-hygiene": {
+            "hard": [],
+            "optional": [
+              "csharp-shared:code-maintenance:legacy-archive-strategy",
+              "diagnostics"
+            ],
+            "contextual": [
+              "bootstrap"
+            ]
+          },
+          "observability-first-runtime": {
+            "hard": [
+              "diagnostics",
+              "runtime-lifecycle"
+            ],
+            "optional": [
+              "module-runtime-design",
+              "contracts"
+            ],
+            "contextual": [
+              "csharp-shared:data-oriented-pipeline:domain-pipeline-design"
+            ]
+          },
+          "config-resource-migration": {
+            "hard": [
+              "contracts",
+              "diagnostics"
+            ],
+            "optional": [
+              "build-boundary-hygiene",
+              "csharp-shared:code-maintenance:domain-model-extraction"
+            ],
+            "contextual": []
           }
         },
         "neural": {
@@ -541,6 +727,62 @@
               "loader-integration"
             ],
             "contextual": []
+          },
+          "mod-runtime-architecture": {
+            "hard": [
+              "plugin-lifecycle",
+              "csharp-shared:framework:runtime-lifecycle",
+              "csharp-shared:framework:diagnostics"
+            ],
+            "optional": [
+              "harmony-patching",
+              "loader-integration",
+              "game-boundary-design",
+              "csharp-shared:framework:module-runtime-design"
+            ],
+            "contextual": [
+              "csharp-shared:framework:mechanics-infrastructure-separation",
+              "csharp-shared:data-oriented-pipeline:data-oriented-runtime-adaptation"
+            ]
+          },
+          "game-boundary-design": {
+            "hard": [
+              "harmony-patching",
+              "plugin-lifecycle"
+            ],
+            "optional": [
+              "csharp-shared:framework:diagnostics",
+              "csharp-shared:framework:mechanics-infrastructure-separation"
+            ],
+            "contextual": [
+              "csharp-shared:framework:contracts"
+            ]
+          },
+          "runtime-degradation-policy": {
+            "hard": [
+              "plugin-lifecycle",
+              "csharp-shared:framework:diagnostics"
+            ],
+            "optional": [
+              "game-boundary-design",
+              "csharp-shared:framework:observability-first-runtime"
+            ],
+            "contextual": [
+              "harmony-patching"
+            ]
+          },
+          "lifecycle-snapshot-modeling": {
+            "hard": [
+              "plugin-lifecycle",
+              "game-boundary-design"
+            ],
+            "optional": [
+              "runtime-degradation-policy",
+              "csharp-shared:framework:observability-first-runtime"
+            ],
+            "contextual": [
+              "harmony-patching"
+            ]
           }
         },
         "unity-ui": {
@@ -702,6 +944,21 @@
             "contextual": [
               "imgui-input-routing",
               "imgui-windowing"
+            ]
+          },
+          "ui-surface-architecture": {
+            "hard": [
+              "imgui-state-model",
+              "imgui-modular-windowing"
+            ],
+            "optional": [
+              "imgui-input-routing",
+              "imgui-performance",
+              "csharp-shared:framework:diagnostics"
+            ],
+            "contextual": [
+              "csharp-shared:framework:mechanics-infrastructure-separation",
+              "unity:modding:game-boundary-design"
             ]
           }
         }

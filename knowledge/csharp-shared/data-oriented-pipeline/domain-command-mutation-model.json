@@ -1,0 +1,170 @@
+{
+  "id": "domain-command-mutation-model",
+  "kind": "skill",
+  "title": "Domain Command Mutation Model",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "command mutation model",
+      "domain commands",
+      "mutation boundary",
+      "apply commands",
+      "external mutation"
+    ],
+    "weak": [
+      "command queue",
+      "side effects",
+      "applier",
+      "mutation scope",
+      "write boundary"
+    ]
+  },
+  "use_for": [
+    "modeling domain decisions as commands before mutating external or persistent state",
+    "separating analysis from side effects in pipeline stages",
+    "making mutation order, gating, batching, and diagnostics explicit",
+    "validating side effects in offline tests before applying them to a host"
+  ],
+  "do_not_use_for": [
+    "pure read-only analysis",
+    "UI event handling without domain mutation",
+    "low-level host API binding details"
+  ],
+  "rules": [
+    "domain stages should emit commands rather than mutating external systems directly",
+    "commands must name target, intent, preconditions, and source where relevant",
+    "command application must be gated by lifecycle readiness and validation",
+    "mutation order and conflict policy must be explicit",
+    "command outputs should be observable and testable before application"
+  ],
+  "procedure": [
+    "List all domain decisions that cause side effects.",
+    "Define command types with target identity, intent, payload, preconditions, and reason.",
+    "Define command production stage, queue or buffer ownership, batching, and ordering.",
+    "Define command validation, conflict handling, and readiness gates.",
+    "Define appliers that translate commands into external or persistent mutations.",
+    "Expose diagnostics for produced, skipped, failed, and applied commands."
+  ],
+  "output": [
+    "domain command contract",
+    "mutation boundary model",
+    "command ordering and conflict policy",
+    "command diagnostics model"
+  ],
+  "dependencies": {
+    "hard": [
+      "stage-contracts",
+      "domain-pipeline-design"
+    ],
+    "optional": [
+      "change-batching",
+      "observability-first-runtime"
+    ],
+    "contextual": []
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about side-effect modeling, mutation boundaries, command queues, or appliers"
+    ],
+    "must_not_own_when": [
+      "the task is read-only analysis or pure state derivation"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to make side effects explicit in a domain pipeline",
+      "how to validate mutations before touching external systems",
+      "how to keep command production separate from command application"
+    ],
+    "does_not_solve": [
+      "exact external API calls",
+      "domain analysis algorithms",
+      "UI rendering"
+    ]
+  },
+  "core_principles": [
+    "A command is a domain decision packaged for controlled mutation.",
+    "Producing a command and applying a command are different responsibilities.",
+    "External mutation should happen at the edge of the pipeline.",
+    "Skipped and rejected commands are diagnostic facts."
+  ],
+  "constraints": [
+    "Do not mutate external systems from analysis stages.",
+    "Do not apply commands without readiness and precondition checks.",
+    "Do not hide command conflicts in last-write-wins behavior unless explicitly chosen.",
+    "Do not include host-specific object references in reusable command contracts."
+  ],
+  "decision_rules": [
+    "If a stage wants to change something outside its owned state, emit a command.",
+    "If two commands target the same state, define merge, priority, reject, or ordering policy.",
+    "If a command cannot be applied because readiness is false, report skipped or degraded status.",
+    "If command payload contains external objects, replace them with stable handles or values where practical.",
+    "If commands are frequent, batch them only after preserving ordering semantics."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "command records",
+      "validation stage",
+      "mutation appliers",
+      "readiness gates",
+      "command diagnostics",
+      "stable target handles"
+    ],
+    "avoid_patterns": [
+      "side effects inside analysis",
+      "implicit mutation through shared global state",
+      "unreported skipped commands",
+      "host object references inside domain commands",
+      "conflict resolution by accident"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Introduce command-based mutation",
+      "when": "Use when domain logic currently mutates external state directly.",
+      "steps": [
+        "Replace direct mutation with command emission.",
+        "Define command target, payload, reason, and preconditions.",
+        "Validate and order commands before application.",
+        "Apply commands through a boundary applier.",
+        "Report produced, applied, skipped, and failed commands."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Creating commands that are just hidden service calls.",
+    "Skipping readiness checks because commands feel internal.",
+    "Letting command queues become global mutable state.",
+    "Forgetting diagnostics for rejected commands."
+  ],
+  "review_checklist": [
+    "Are side effects represented as commands?",
+    "Are production and application separated?",
+    "Are readiness and preconditions checked?",
+    "Is command ordering or conflict policy explicit?",
+    "Can commands be tested before application?"
+  ],
+  "references": [
+    {
+      "title": "Stage Contracts",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/stage-contracts.md",
+      "interpretation": "Use to define command-producing and command-applying stage contracts.",
+      "why": "Commands are pipeline stage outputs with side-effect semantics."
+    },
+    {
+      "title": "Change Batching",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/change-batching.md",
+      "interpretation": "Use when command application should be batched or coalesced.",
+      "why": "Mutation batching must preserve command semantics."
+    }
+  ]
+}

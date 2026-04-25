@@ -10,7 +10,12 @@
     "runtime-lifecycle",
     "extension-points",
     "composition-boundaries",
-    "service-lifetimes"
+    "service-lifetimes",
+    "mechanics-infrastructure-separation",
+    "module-runtime-design",
+    "build-boundary-hygiene",
+    "observability-first-runtime",
+    "config-resource-migration"
   ],
   "signals": [
     "bootstrap",
@@ -30,7 +35,14 @@
     "composition boundary",
     "module composition",
     "service lifetime",
-    "scoped service"
+    "scoped service",
+    "mechanics infrastructure separation",
+    "module runtime",
+    "build boundary",
+    "observability first",
+    "runtime health",
+    "config migration",
+    "resource migration"
   ],
   "use_for": [
     "framework setup",
@@ -43,12 +55,22 @@
     "host phase design and deterministic shutdown sequencing",
     "explicit extension surface and plugin contract design",
     "host-module seam and composition boundary design",
-    "service lifetime and scope policy"
+    "service lifetime and scope policy",
+    "separating domain mechanics from infrastructure and host lifecycle concerns",
+    "designing deterministic module runtime ownership and failure reporting",
+    "keeping archive, generated, test, tool, resource, and runtime build surfaces explicit",
+    "making runtime health, readiness, degraded state, and debug snapshots inspectable",
+    "migrating configuration and resources with schemas, validation, defaults, and compatibility policy"
   ],
   "priority_order": [
     "bootstrap",
     "runtime-lifecycle",
+    "observability-first-runtime",
+    "module-runtime-design",
+    "mechanics-infrastructure-separation",
     "composition-boundaries",
+    "config-resource-migration",
+    "build-boundary-hygiene",
     "service-lifetimes",
     "extension-points",
     "contracts",

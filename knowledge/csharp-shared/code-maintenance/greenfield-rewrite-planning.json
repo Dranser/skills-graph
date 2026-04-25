@@ -1,0 +1,180 @@
+{
+  "id": "greenfield-rewrite-planning",
+  "kind": "skill",
+  "title": "Greenfield Rewrite Planning",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "rewrite from scratch",
+      "redesign from scratch",
+      "greenfield rewrite",
+      "rebuild architecture",
+      "start over"
+    ],
+    "weak": [
+      "major cleanup",
+      "new foundation",
+      "old code is wrong",
+      "architecture reset",
+      "reproject"
+    ]
+  },
+  "use_for": [
+    "planning a new implementation that preserves product intent but intentionally changes architecture",
+    "separating requirement extraction from implementation copying",
+    "turning an existing codebase into a source of domain knowledge and anti-patterns",
+    "defining rewrite phases before code is moved or rebuilt"
+  ],
+  "do_not_use_for": [
+    "behavior-preserving refactors",
+    "small cleanup patches",
+    "bug fixes where the existing architecture remains authoritative",
+    "rewrites without a validation or requirement extraction plan"
+  ],
+  "rules": [
+    "treat the old implementation as evidence, not as the target architecture",
+    "preserve product intent explicitly before replacing structure",
+    "separate domain requirements, runtime architecture, infrastructure boundaries, and migration mechanics",
+    "define what the new system must prove before implementation begins",
+    "avoid copying old shapes unless they survive a design review"
+  ],
+  "procedure": [
+    "State why a new design is required and which old constraints are no longer accepted.",
+    "Inventory the old system by product capability, domain concept, integration point, state owner, and failure mode.",
+    "Classify old behavior as preserve intent, redesign, delete, investigate, or do not copy.",
+    "Choose the new architectural frame: runtime host, modules, boundaries, pipelines, diagnostics, and build separation.",
+    "Define implementation slices around domain outcomes rather than old folders.",
+    "Define validation artifacts for each slice: tests, probes, snapshots, logs, diagnostics, or manual smoke paths.",
+    "Record unresolved legacy questions without blocking unrelated new design work."
+  ],
+  "output": [
+    "rewrite intent map",
+    "legacy behavior classification",
+    "new architecture outline",
+    "implementation slice plan",
+    "validation plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "legacy-archive-strategy",
+      "contracts"
+    ],
+    "optional": [
+      "architecture-pattern-extraction",
+      "runtime-lifecycle",
+      "diagnostics"
+    ],
+    "contextual": [
+      "composition-boundaries",
+      "domain-model-extraction"
+    ]
+  },
+  "conflicts": [
+    "refactoring"
+  ],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task intentionally replaces the old architecture rather than preserving it",
+      "the user wants to rebuild a project around a new foundation while retaining selected product intent"
+    ],
+    "must_not_own_when": [
+      "the request requires behavior-preserving structural cleanup",
+      "the old architecture is still the accepted design authority"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to begin a rewrite without blindly copying the old system",
+      "how to keep product intent while rejecting old architectural form",
+      "how to define slices, validation, and decision records for a new foundation"
+    ],
+    "does_not_solve": [
+      "mechanical code moves by itself",
+      "line-level cleanup",
+      "unknown runtime bugs without investigation"
+    ]
+  },
+  "core_principles": [
+    "A rewrite is not a large refactor; behavior may be intentionally redesigned.",
+    "Legacy code can be a requirement source and a warning source at the same time.",
+    "The new architecture must be judged against explicit domain needs, not old folder names.",
+    "Validation must be planned before the old implementation stops compiling."
+  ],
+  "constraints": [
+    "Do not encode project names, local paths, product identities, or one-off class names into the plan.",
+    "Do not treat the old implementation as canonical architecture.",
+    "Do not delete old code when it still carries unresolved requirements; archive it outside the build instead.",
+    "Do not start broad implementation before capability boundaries and validation slices are named."
+  ],
+  "decision_rules": [
+    "If old code shows a useful behavior with poor structure, preserve the intent and redesign the shape.",
+    "If old code only exists to compensate for a bad foundation, mark it as do not copy until proven otherwise.",
+    "If a capability cannot be validated, split it smaller or add observability before implementing it.",
+    "If a dependency is infrastructure-specific, isolate it before modeling domain mechanics.",
+    "If the rewrite plan starts mirroring old folders, reframe around domain capabilities and runtime ownership."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "capability-first implementation slices",
+      "legacy archive separated from compilation",
+      "domain model before infrastructure binding",
+      "explicit runtime host and module ownership",
+      "diagnostics and validation built into early slices"
+    ],
+    "avoid_patterns": [
+      "renaming a legacy architecture and calling it new",
+      "copying static global state into a new foundation",
+      "using old folders as the rewrite roadmap",
+      "postponing diagnostics until after feature parity",
+      "deleting legacy evidence before requirements are extracted"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Create a rewrite map",
+      "when": "Use before implementation starts for a system whose old architecture is intentionally being replaced.",
+      "steps": [
+        "List product capabilities in user-facing or domain-facing language.",
+        "Map each capability to old evidence, domain concepts, integrations, state, and side effects.",
+        "Classify old evidence as preserve intent, redesign, delete, investigate, or do not copy.",
+        "Define the new runtime and boundary model that will own the capability.",
+        "Define the minimum validation required before the slice is considered reconstructed."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Calling a rewrite a refactor and accidentally preserving the wrong architecture.",
+    "Losing edge cases because legacy code was moved or ignored without classification.",
+    "Designing infrastructure first and forcing domain mechanics to fit it.",
+    "Rebuilding hidden global state under cleaner names."
+  ],
+  "review_checklist": [
+    "Is the task clearly a rewrite rather than a behavior-preserving refactor?",
+    "Is legacy code archived and classified instead of deleted?",
+    "Are domain capabilities separated from infrastructure mechanisms?",
+    "Are implementation slices independent enough to validate?",
+    "Are project-specific names and paths absent from reusable guidance?"
+  ],
+  "references": [
+    {
+      "title": "Refactoring",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/code-maintenance/references/refactoring.md",
+      "interpretation": "Use only to distinguish behavior-preserving refactoring from intentional rewrite planning.",
+      "why": "It prevents confusing a rewrite with an ordinary refactor."
+    },
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use when rewrite slices need explicit preserved or redesigned contracts.",
+      "why": "Rewrites still need visible contracts and validation boundaries."
+    }
+  ]
+}

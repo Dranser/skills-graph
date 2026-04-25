@@ -4,7 +4,14 @@
   "domain": "code-maintenance",
   "files": [
     "bug-investigation",
-    "refactoring"
+    "refactoring",
+    "legacy-archive-strategy",
+    "domain-model-extraction",
+    "architecture-pattern-extraction",
+    "greenfield-rewrite-planning",
+    "telemetry-replay-validation",
+    "test-harness-for-hosted-runtime",
+    "vehicle-mechanics-domain-modeling"
   ],
   "entry_file": "code-maintenance_entry.json",
   "manifest_file": "code-maintenance_manifest.json"

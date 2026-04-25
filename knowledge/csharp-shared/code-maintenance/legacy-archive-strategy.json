@@ -1,0 +1,159 @@
+{
+  "id": "legacy-archive-strategy",
+  "kind": "skill",
+  "title": "Legacy Archive Strategy",
+  "stack": "csharp-shared",
+  "domain": "code-maintenance",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "legacy archive",
+      "move old code to legacy",
+      "exclude legacy from build",
+      "old code as reference",
+      "archive old implementation"
+    ],
+    "weak": [
+      "do not delete old code",
+      "keep old code around",
+      "legacy folder",
+      "reference old behavior"
+    ]
+  },
+  "use_for": [
+    "preserving old implementation evidence during a rewrite",
+    "excluding archived code from compilation and runtime discovery",
+    "using old code as a requirement and anti-pattern source",
+    "preventing new code from depending on archived implementation"
+  ],
+  "do_not_use_for": [
+    "shipping legacy code as part of runtime",
+    "fixing archived code directly",
+    "long-term support of two active implementations",
+    "behavior-preserving refactors where old code remains live"
+  ],
+  "rules": [
+    "archive old code instead of deleting it when requirements are still being extracted",
+    "exclude the archive from compile, packaging, runtime discovery, tests, and generated outputs unless explicitly inspected",
+    "never let new runtime code reference archived code",
+    "annotate archived evidence by intent and risk rather than fixing it in place",
+    "treat archive organization as documentation, not as architecture"
+  ],
+  "procedure": [
+    "Choose a clear archive boundary and verify the build system excludes it.",
+    "Move old implementation evidence into the archive without changing behavior inside the archived files.",
+    "Add classification notes outside or near archived groups when useful: preserve intent, redesign, delete behavior, investigate, or do not copy.",
+    "Search for compile includes, package includes, test discovery, generated code, reflection scans, and runtime registration that could still see the archive.",
+    "Define a rule that new code may cite archived intent in notes but may not import, reference, or instantiate archived implementation.",
+    "Periodically retire archived groups only after their product intent has been resolved."
+  ],
+  "output": [
+    "archive boundary",
+    "build exclusion check",
+    "legacy classification notes",
+    "no-reference rule for new runtime code"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "greenfield-rewrite-planning",
+      "contracts"
+    ],
+    "contextual": [
+      "build-boundary-hygiene"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about preserving old code outside the build during a rewrite",
+      "the task is about using old code as reference without keeping it active"
+    ],
+    "must_not_own_when": [
+      "the task is primarily about designing the new runtime architecture",
+      "the old implementation must remain active and supported"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to avoid losing old product knowledge during a rewrite",
+      "how to keep archived implementation from contaminating the new runtime",
+      "how to turn old code into explicit requirements and anti-patterns"
+    ],
+    "does_not_solve": [
+      "new architecture design by itself",
+      "full migration compatibility",
+      "fixing archived implementation"
+    ]
+  },
+  "core_principles": [
+    "Archived code answers what existed and what may need redesign; it is not a runtime dependency.",
+    "Build exclusion is part of the archive contract, not a convenience.",
+    "Legacy intent may be preserved while legacy structure is rejected.",
+    "The archive should reduce uncertainty, not become a second product."
+  ],
+  "constraints": [
+    "Do not use project-specific archive paths in reusable guidance.",
+    "Do not compile archived implementation by default.",
+    "Do not patch archived code to satisfy new architecture.",
+    "Do not allow new code to depend on archive symbols, resources, or registration."
+  ],
+  "decision_rules": [
+    "If old code is not yet understood, archive it and mark it investigate rather than deleting it.",
+    "If old code demonstrates a bad solution to a real requirement, mark preserve intent and do not copy.",
+    "If archived code is accidentally compiled, fix the build boundary before continuing the rewrite.",
+    "If new code needs something from the archive, extract the requirement and implement it cleanly in the new model."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "archive excluded at build-system level",
+      "classification notes for unresolved legacy evidence",
+      "one-way dependency from design notes to archive evidence",
+      "periodic archive retirement after requirement resolution"
+    ],
+    "avoid_patterns": [
+      "legacy code included through wildcard compile rules",
+      "new runtime wrappers around archived implementation",
+      "fixing archived code instead of rebuilding the capability",
+      "using archive folder structure as the new architecture"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Archive old code for a rewrite",
+      "when": "Use when old implementation should remain available as evidence but must not participate in the new build.",
+      "steps": [
+        "Move old implementation into a clearly named archive boundary.",
+        "Update compile, package, test, and generation rules to exclude the archive.",
+        "Run a build or dry-run file list to prove the archive is invisible.",
+        "Classify archived groups by intent and risk.",
+        "Implement new code from extracted requirements, not archive references."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Assuming a folder move excludes code from wildcard compilation.",
+    "Letting tests or generators discover archived code.",
+    "Copying old architecture because it is still easy to browse.",
+    "Treating archive cleanup as more important than requirement extraction."
+  ],
+  "review_checklist": [
+    "Is the archive excluded from compile and package outputs?",
+    "Are new runtime references to archive code impossible or forbidden?",
+    "Are archived capabilities classified by product intent?",
+    "Are anti-patterns documented as do not copy rather than silently remembered?",
+    "Can archived groups be retired when their intent has been resolved?"
+  ],
+  "references": [
+    {
+      "title": "Stale Coupling Audit",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/code-maintenance/references/stale-coupling-audit.md",
+      "interpretation": "Use to find hidden links that may keep archived code active.",
+      "why": "Archive boundaries fail when stale coupling remains in build, runtime, config, or generated paths."
+    }
+  ]
+}

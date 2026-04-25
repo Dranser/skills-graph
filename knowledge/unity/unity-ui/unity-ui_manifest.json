@@ -15,7 +15,8 @@
     "imgui-windowing",
     "imgui-styling",
     "imgui-performance",
-    "imgui-debugging"
+    "imgui-debugging",
+    "ui-surface-architecture"
   ],
   "entry_file": "unity-ui_entry.json",
   "manifest_file": "unity-ui_manifest.json"

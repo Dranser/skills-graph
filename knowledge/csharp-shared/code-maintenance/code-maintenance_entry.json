@@ -5,7 +5,14 @@
   "domain": "code-maintenance",
   "entry_points": [
     "bug-investigation",
-    "refactoring"
+    "refactoring",
+    "greenfield-rewrite-planning",
+    "legacy-archive-strategy",
+    "domain-model-extraction",
+    "architecture-pattern-extraction",
+    "telemetry-replay-validation",
+    "test-harness-for-hosted-runtime",
+    "vehicle-mechanics-domain-modeling"
   ],
   "signals": [
     "bug",
@@ -23,6 +30,15 @@
     "residual code",
     "hidden coupling",
     "legacy code",
+    "legacy archive",
+    "greenfield rewrite",
+    "rewrite from scratch",
+    "architecture reset",
+    "domain model extraction",
+    "architecture pattern extraction",
+    "telemetry replay",
+    "test harness",
+    "vehicle mechanics",
     "remove feature",
     "code maintenance"
   ],
@@ -32,7 +48,12 @@
     "planning and executing scoped refactors",
     "removing residual code after feature deletion",
     "reducing overengineering without breaking behavior",
-    "auditing hidden stale dependencies and coupling"
+    "auditing hidden stale dependencies and coupling",
+    "planning greenfield rewrites that preserve product intent while replacing architecture",
+    "archiving legacy code outside the build as requirement and anti-pattern evidence",
+    "extracting domain models and portable architecture patterns from existing code",
+    "validating rewritten behavior with replay snapshots and offline hosted-runtime harnesses",
+    "modeling vehicle or simulation mechanics without binding to a specific project"
   ],
   "do_not_use_for": [
     "new feature design without maintenance or correctness pressure",
@@ -43,7 +64,14 @@
   ],
   "priority_order": [
     "bug-investigation",
-    "refactoring"
+    "greenfield-rewrite-planning",
+    "refactoring",
+    "domain-model-extraction",
+    "legacy-archive-strategy",
+    "telemetry-replay-validation",
+    "test-harness-for-hosted-runtime",
+    "vehicle-mechanics-domain-modeling",
+    "architecture-pattern-extraction"
   ],
   "ownership": {
     "can_be_primary": true,

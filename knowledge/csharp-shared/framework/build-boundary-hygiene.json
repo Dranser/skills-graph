@@ -1,0 +1,158 @@
+{
+  "id": "build-boundary-hygiene",
+  "kind": "skill",
+  "title": "Build Boundary Hygiene",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "support",
+  "signals": {
+    "strong": [
+      "exclude from build",
+      "build boundary",
+      "compile includes",
+      "legacy not compiling",
+      "project file hygiene"
+    ],
+    "weak": [
+      "packaging boundary",
+      "test discovery",
+      "generated files",
+      "wildcard compile",
+      "build outputs"
+    ]
+  },
+  "use_for": [
+    "ensuring source archives, generated files, build outputs, and tests are included or excluded deliberately",
+    "preventing legacy or scratch code from entering compilation or packaging",
+    "reviewing project files and wildcard rules during a rewrite",
+    "keeping runtime, tests, tools, resources, and archives separated"
+  ],
+  "do_not_use_for": [
+    "feature-level domain design",
+    "runtime lifecycle design",
+    "package manager upgrades as the primary task"
+  ],
+  "rules": [
+    "compile, package, test, and generated-file boundaries must be explicit",
+    "archive and build-output directories must not be included by broad wildcards",
+    "test code should not ship unless the project intentionally embeds tests",
+    "generated files should have a known owner and regeneration path",
+    "build exclusions should be verified, not assumed"
+  ],
+  "procedure": [
+    "Identify source, archive, tests, tools, resources, generated files, and build outputs.",
+    "Inspect project include and exclude rules for wildcard leaks.",
+    "Verify archive and output directories are absent from compile and package inputs.",
+    "Verify tests are discovered only by test projects or intended test runners.",
+    "Record any intentional exceptions with their owner and reason.",
+    "Run a build, dry-run, or file listing check to prove the boundary."
+  ],
+  "output": [
+    "build boundary map",
+    "compile/package/test exclusion list",
+    "intentional exception list",
+    "verification result"
+  ],
+  "dependencies": {
+    "hard": [],
+    "optional": [
+      "legacy-archive-strategy",
+      "diagnostics"
+    ],
+    "contextual": [
+      "bootstrap"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "support",
+    "primary_when": [
+      "the task is primarily about what enters compilation, packaging, tests, or generated outputs"
+    ],
+    "must_not_own_when": [
+      "the task is primarily about domain modeling or runtime module design"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to keep archived and generated code out of unintended build surfaces",
+      "how to make project-file boundaries reviewable during rewrites",
+      "how to avoid shipping or compiling stale code by accident"
+    ],
+    "does_not_solve": [
+      "feature architecture",
+      "runtime diagnostics behavior",
+      "test case design"
+    ]
+  },
+  "core_principles": [
+    "Build boundaries are architecture boundaries.",
+    "Wildcard defaults are useful only when exclusions are reviewed.",
+    "A rewrite archive is not safe until the build proves it is excluded.",
+    "Packaging and test discovery can leak code even when compilation does not."
+  ],
+  "constraints": [
+    "Do not assume folder moves change build behavior.",
+    "Do not encode local absolute paths in reusable guidance.",
+    "Do not let build outputs or scratch files participate in source compilation.",
+    "Do not hide build exceptions without an owner and reason."
+  ],
+  "decision_rules": [
+    "If a directory contains legacy or scratch code, exclude it explicitly.",
+    "If a directory contains generated code, document whether it is source input or output.",
+    "If tests live near runtime code, verify runtime packages cannot include them.",
+    "If compile item rules are broad, search for negative patterns and generated-output leaks."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "explicit include/exclude rules",
+      "separate runtime, test, tool, generated, archive, and output boundaries",
+      "verification by build input listing or actual build",
+      "documented intentional exceptions"
+    ],
+    "avoid_patterns": [
+      "trusting visual folder structure",
+      "broad wildcards without exclusions",
+      "compiled build outputs",
+      "archived code still visible to tests or packaging",
+      "absolute local paths in reusable build rules"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Exclude an archive from build surfaces",
+      "when": "Use when old code is kept for reference during a rewrite.",
+      "steps": [
+        "Add explicit compile, package, test, and generation exclusions for the archive boundary.",
+        "Check wildcard include rules for leaks.",
+        "Run a build or source item listing to verify exclusion.",
+        "Search for runtime references to archived symbols.",
+        "Record the archive boundary rule in rewrite notes."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Excluding compile but not packaging.",
+    "Excluding runtime but not tests or generators.",
+    "Leaving temporary files under source wildcards.",
+    "Using absolute machine paths as reusable policy."
+  ],
+  "review_checklist": [
+    "Are archive, output, generated, test, and tool boundaries explicit?",
+    "Were wildcard rules checked?",
+    "Was exclusion verified?",
+    "Are intentional exceptions documented?",
+    "Is reusable guidance free of local paths and project names?"
+  ],
+  "references": [
+    {
+      "title": "Bootstrap",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/bootstrap.md",
+      "interpretation": "Use when build boundaries affect runtime entry and startup composition.",
+      "why": "Build inputs determine what the runtime can accidentally discover or execute."
+    }
+  ]
+}

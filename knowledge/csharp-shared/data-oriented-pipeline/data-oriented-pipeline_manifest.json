@@ -11,7 +11,10 @@
     "incremental-recompute",
     "change-batching",
     "structural-rerun-policy",
-    "stage-contracts"
+    "stage-contracts",
+    "data-oriented-runtime-adaptation",
+    "domain-pipeline-design",
+    "domain-command-mutation-model"
   ],
   "entry_file": "data-oriented-pipeline_entry.json",
   "manifest_file": "data-oriented-pipeline_manifest.json"

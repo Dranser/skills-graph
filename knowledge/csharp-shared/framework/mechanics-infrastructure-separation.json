@@ -1,0 +1,174 @@
+{
+  "id": "mechanics-infrastructure-separation",
+  "kind": "skill",
+  "title": "Mechanics Infrastructure Separation",
+  "stack": "csharp-shared",
+  "domain": "framework",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "separate mechanics from infrastructure",
+      "domain logic versus infrastructure",
+      "game mechanics boundary",
+      "keep mechanics pure",
+      "infrastructure isolation"
+    ],
+    "weak": [
+      "business logic",
+      "runtime plumbing",
+      "adapter boundary",
+      "facade boundary",
+      "domain core"
+    ]
+  },
+  "use_for": [
+    "separating domain mechanics from lifecycle, threading, hooks, UI, logging, persistence, and external APIs",
+    "designing a domain core that can run behind adapters",
+    "preventing infrastructure concerns from becoming domain rules",
+    "creating testable mechanics without a full host runtime"
+  ],
+  "do_not_use_for": [
+    "pure infrastructure design with no domain mechanics",
+    "UI layout work",
+    "low-level performance tuning without ownership questions"
+  ],
+  "rules": [
+    "domain mechanics should consume explicit inputs and produce explicit outputs",
+    "infrastructure should own lifecycle, external API access, threading, logging, and persistence",
+    "adapters may translate external state; they must not hide domain decisions",
+    "domain code should not depend on host callbacks, UI controls, reflection probes, or loader details",
+    "mutation of external state should pass through a named boundary"
+  ],
+  "procedure": [
+    "List the domain mechanics and the external forces they depend on.",
+    "Classify each dependency as input data, command output, lifecycle signal, configuration, diagnostic, or infrastructure service.",
+    "Define pure domain models and state transitions where practical.",
+    "Place external API calls behind adapters, probes, facades, or command appliers.",
+    "Define ownership of mutation, scheduling, diagnostics, and persistence outside the mechanics.",
+    "Verify that the mechanics can be exercised without the full host runtime."
+  ],
+  "output": [
+    "domain/infrastructure boundary map",
+    "mechanics input-output contracts",
+    "adapter and mutation boundary list",
+    "testability constraints"
+  ],
+  "dependencies": {
+    "hard": [
+      "contracts"
+    ],
+    "optional": [
+      "composition-boundaries",
+      "runtime-lifecycle",
+      "diagnostics"
+    ],
+    "contextual": [
+      "domain-model-extraction"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is mainly about separating domain mechanics from runtime plumbing",
+      "the task is designing a new domain core for a host-managed system"
+    ],
+    "must_not_own_when": [
+      "the task is only about host startup or UI layout",
+      "the task does not involve domain behavior"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to keep gameplay or domain mechanics independent from infrastructure",
+      "how to avoid lifecycle and adapter leakage into the domain model",
+      "how to design testable core logic for hosted runtimes"
+    ],
+    "does_not_solve": [
+      "specific external API binding details",
+      "visual layout",
+      "scheduler implementation"
+    ]
+  },
+  "core_principles": [
+    "Mechanics decide what should happen; infrastructure decides when and how host systems are touched.",
+    "External state should be sampled into stable inputs before mechanics consume it.",
+    "External mutation should be represented as commands or scoped operations before it reaches adapters.",
+    "Diagnostics observe boundaries; they should not become the boundary."
+  ],
+  "constraints": [
+    "Do not let domain mechanics call host APIs directly unless the host API is the domain itself.",
+    "Do not hide lifecycle readiness checks inside mechanics calculations.",
+    "Do not make UI state the source of truth for domain state.",
+    "Do not make logging or diagnostics required for mechanics correctness."
+  ],
+  "decision_rules": [
+    "If code reads host state, place it in a probe or adapter unless it is already a stable domain snapshot.",
+    "If code mutates host state, route it through a command applier or mutation scope.",
+    "If code requires lifecycle readiness, gate it at module/runtime level before invoking mechanics.",
+    "If a mechanic cannot be tested without the host runtime, identify which input or mutation boundary is missing.",
+    "If an infrastructure concern appears in a domain type, either move it outward or rename the type as infrastructure."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "snapshot inputs",
+      "command outputs",
+      "facades over external APIs",
+      "probes for fragile state discovery",
+      "mutation scopes for host writes",
+      "pure mechanics services where practical"
+    ],
+    "avoid_patterns": [
+      "domain logic inside loader callbacks",
+      "UI controls mutating external state directly",
+      "reflection probes returning live objects to mechanics",
+      "global mutable singletons as domain state",
+      "adapters that contain hidden domain policy"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Extract mechanics from infrastructure",
+      "when": "Use when domain behavior is currently mixed with host APIs, lifecycle, UI, or logging.",
+      "steps": [
+        "Identify the calculation or decision that is the mechanic.",
+        "Replace direct external reads with explicit input snapshots.",
+        "Replace direct external writes with command outputs or mutation scopes.",
+        "Move lifecycle readiness and diagnostics to the caller boundary.",
+        "Add a small test or replay path for the mechanic without the host runtime."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Calling an adapter a domain service while it still owns external API calls.",
+    "Letting convenience access to host state define the domain model.",
+    "Moving code into a new namespace without changing ownership.",
+    "Using UI DTOs as domain entities."
+  ],
+  "review_checklist": [
+    "Can mechanics run from explicit inputs?",
+    "Are external mutations routed through named boundaries?",
+    "Are lifecycle and readiness checks outside the mechanics?",
+    "Can the domain core be tested without the host runtime?",
+    "Are adapters free of hidden domain policy?"
+  ],
+  "references": [
+    {
+      "title": "Composition Boundaries",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/framework/references/composition-boundaries.md",
+      "interpretation": "Use to separate domain mechanics from infrastructure ownership.",
+      "why": "Mechanics and infrastructure need explicit composition boundaries."
+    },
+    {
+      "title": "Contracts",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/framework/references/contracts.md",
+      "interpretation": "Use for mechanics input, output, and mutation contracts.",
+      "why": "Domain logic should depend on explicit contracts rather than host details."
+    }
+  ]
+}

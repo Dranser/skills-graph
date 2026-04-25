@@ -12,7 +12,11 @@
     "imgui-state-model",
     "imgui-manual-layout",
     "imgui-incremental-update",
-    "imgui-input-routing"
+    "imgui-input-routing",
+    "imgui-styling",
+    "imgui-performance",
+    "imgui-debugging",
+    "ui-surface-architecture"
   ],
   "signals": [
     "unity ui",
@@ -67,7 +71,12 @@
     "input actions",
     "legacy input disabled",
     "focus",
-    "control id"
+    "control id",
+    "ui surface architecture",
+    "mod ui surface",
+    "debug surface",
+    "context panel architecture",
+    "UI over domain state"
   ],
   "use_for": [
     "designing IMGUI-based container-first and surface-first interfaces such as dashboards, workspaces, and multi-section surfaces",
@@ -82,12 +91,14 @@
     "establishing styling, debugging, and performance rules for IMGUI",
     "using Unity Input System as the primary signal source for IMGUI framework commands",
     "building framework-level layout with manual Rect computation instead of GUILayout orchestration",
-    "building optimized retained update pipelines with reusable resources, data binding, and subtree-level invalidation"
+    "building optimized retained update pipelines with reusable resources, data binding, and subtree-level invalidation",
+    "designing UI surfaces as observers and command emitters over published domain, runtime, and diagnostic state"
   ],
   "priority_order": [
     "imgui-container-composition",
     "imgui-adaptive-layout",
     "imgui-modular-windowing",
+    "ui-surface-architecture",
     "imgui-core",
     "imgui-incremental-update",
     "imgui-input-routing",

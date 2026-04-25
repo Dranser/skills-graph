@@ -14,6 +14,29 @@ Use the JSON documents under `meta/` as the primary local policy and knowledge s
 - If a task spans both host-project code and Skills Graph content, keep these rules local to the Skills Graph subtree unless explicitly promoted to project-wide policy.
 - If the user explicitly disables Skills Graph routing for a task, skip the JSON routing flow and work directly.
 
+## Activation Gate
+
+Before using the JSON routing flow, classify the user's intent. Skills Graph is an execution and design-routing system, not a mandatory prelude to every repository interaction.
+
+Use direct repository work, without full Skills Graph routing, when the user asks to:
+
+- gather or summarize project context;
+- inspect files, folders, dependencies, build layout, or repository shape;
+- answer a narrow question about known files;
+- make a small mechanical edit in a known location;
+- run validation, formatting, tests, search, or status checks;
+- inventory existing skills, manifests, routes, or graph connectivity.
+
+Use the full Skills Graph routing flow when the user asks to:
+
+- design or redesign architecture;
+- perform implementation work where domain ownership is not obvious;
+- choose stack, domain, primary owner, or attached skills;
+- plan or execute refactoring, rewrite, migration, diagnostics, runtime, UI, performance, or pipeline work;
+- apply Skills Graph to a downstream project as an active task-shaping system.
+
+If intent is ambiguous, prefer the smallest useful mode first: inspect directly, state the inferred intent, and only escalate to full routing when the task needs execution shaping.
+
 ## Stack Isolation Policy
 
 - Do not mix materially different technology stacks inside the same skill set, domain folder, or routing surface.
@@ -25,6 +48,8 @@ Use the JSON documents under `meta/` as the primary local policy and knowledge s
 - If the target stack is ambiguous, prefer the repository's declared default stack and state that assumption.
 
 ## Required Read Order
+
+When the Activation Gate selects full Skills Graph routing, read:
 
 1. `meta/agents.json`
 2. `meta/index.json`
@@ -50,6 +75,7 @@ Then read only the minimum necessary files under `knowledge/` selected by the ro
 - If `meta/` is missing, incomplete, or clearly irrelevant to the requested task, do not invent missing routing state.
 - Fall back to direct repository inspection and load only the minimum relevant files.
 - If the user requests a narrow edit in a known file, inspect that file first and load additional policy only if it changes the implementation.
+- If the user asks only to collect context, produce an evidence-based summary from direct inspection and do not select a primary skill unless they ask for task execution or design guidance.
 
 ## Routing Rules
 

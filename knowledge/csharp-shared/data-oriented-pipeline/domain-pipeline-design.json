@@ -1,0 +1,175 @@
+{
+  "id": "domain-pipeline-design",
+  "kind": "skill",
+  "title": "Domain Pipeline Design",
+  "stack": "csharp-shared",
+  "domain": "data-oriented-pipeline",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "domain pipeline",
+      "telemetry to commands",
+      "snapshot analysis command",
+      "mechanics pipeline",
+      "dataflow for domain logic"
+    ],
+    "weak": [
+      "analysis stage",
+      "published state",
+      "telemetry snapshot",
+      "command output",
+      "domain update"
+    ]
+  },
+  "use_for": [
+    "designing domain-specific dataflow from sampled inputs to computed state and commands",
+    "separating telemetry, analysis, decisions, external mutation, and UI/debug publication",
+    "building deterministic mechanics pipelines",
+    "making domain state replayable or inspectable"
+  ],
+  "do_not_use_for": [
+    "generic runtime scheduler design",
+    "UI layout",
+    "external API reverse engineering by itself"
+  ],
+  "rules": [
+    "sample external inputs before domain stages run",
+    "keep analysis stages free of external mutation",
+    "publish stable read-only state for UI, diagnostics, and tests",
+    "route external changes through command or applier stages",
+    "make stage contracts explicit enough for replay and validation"
+  ],
+  "procedure": [
+    "Name the domain outcome the pipeline is responsible for.",
+    "Define input snapshots, configuration, persistent state, transient state, published state, and command outputs.",
+    "Split stages by responsibility: sample, normalize, analyze, decide, publish, apply.",
+    "Define stage order, invalidation rules, and ownership of each data structure.",
+    "Define diagnostics and replay artifacts for representative frames or events.",
+    "Validate that UI and external appliers consume published state or commands, not transient internals."
+  ],
+  "output": [
+    "domain pipeline stage map",
+    "data ownership model",
+    "published state contract",
+    "command application boundary",
+    "replay or diagnostics plan"
+  ],
+  "dependencies": {
+    "hard": [
+      "stage-boundaries",
+      "stage-contracts",
+      "dataflow-state"
+    ],
+    "optional": [
+      "incremental-recompute",
+      "change-batching",
+      "measurement-profiling"
+    ],
+    "contextual": [
+      "mechanics-infrastructure-separation"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about shaping domain dataflow and stage ownership"
+    ],
+    "must_not_own_when": [
+      "the task is only about runtime host lifecycle",
+      "the task is only about visual presentation"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to turn live input data into deterministic domain decisions",
+      "how to keep analysis separate from mutation",
+      "how to expose domain state safely to UI and diagnostics"
+    ],
+    "does_not_solve": [
+      "complete domain theory",
+      "raw host integration",
+      "general module lifecycle"
+    ]
+  },
+  "core_principles": [
+    "A domain pipeline should explain how data becomes decisions.",
+    "Stage boundaries should protect ownership and validation, not just organize files.",
+    "Published state is a contract for observers; transient state is an implementation detail.",
+    "External mutation belongs at the edge after decisions are made."
+  ],
+  "constraints": [
+    "Do not let analysis stages mutate external systems.",
+    "Do not let UI read transient working buffers.",
+    "Do not hide configuration reads inside unrelated stages.",
+    "Do not make stage order depend on incidental registration order."
+  ],
+  "decision_rules": [
+    "If data is sampled from outside the domain, convert it into an input snapshot.",
+    "If a stage makes a decision, name its required inputs and outputs.",
+    "If external state must change, emit a command and apply it at a boundary.",
+    "If UI needs visibility, publish a stable view model or diagnostic snapshot.",
+    "If a bug is hard to reproduce, add replayable inputs or frame diagnostics."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "sample-normalize-analyze-decide-publish-apply flow",
+      "read-only published state",
+      "command outputs for side effects",
+      "replayable input snapshots",
+      "diagnostic stage timing and state summaries"
+    ],
+    "avoid_patterns": [
+      "stage methods reaching into host APIs",
+      "UI and appliers sharing mutable domain internals",
+      "configuration spread through every stage",
+      "hidden writes to persistent state",
+      "decision logic inside rendering or logging code"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a mechanics pipeline",
+      "when": "Use when a domain capability depends on sampled runtime data and produces decisions or mutations.",
+      "steps": [
+        "Define the capability outcome in domain language.",
+        "Create input snapshots for all external data.",
+        "Split computation into analysis and decision stages.",
+        "Publish observer-safe state.",
+        "Apply external mutations through a final boundary stage."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Calling any update method a pipeline.",
+    "Letting stages own both analysis and side effects.",
+    "Publishing live mutable state to observers.",
+    "Skipping replay artifacts for complex runtime behavior."
+  ],
+  "review_checklist": [
+    "Are input snapshots explicit?",
+    "Are analysis and mutation separated?",
+    "Is published state stable and read-only?",
+    "Are commands applied at an edge boundary?",
+    "Can representative behavior be inspected or replayed?"
+  ],
+  "references": [
+    {
+      "title": "Stage Boundaries",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/stage-boundaries.md",
+      "interpretation": "Use for splitting sample, analysis, decision, publish, and apply stages.",
+      "why": "Domain pipelines depend on explicit stage ownership."
+    },
+    {
+      "title": "Dataflow State",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/csharp-shared/data-oriented-pipeline/references/dataflow-state.md",
+      "interpretation": "Use to separate input, transient, published, and command state.",
+      "why": "Domain pipeline state should be inspectable and deterministic."
+    }
+  ]
+}

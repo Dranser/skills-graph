@@ -5,22 +5,40 @@
   "entry_points": [
     "harmony-patching",
     "loader-integration",
-    "plugin-lifecycle"
+    "plugin-lifecycle",
+    "mod-runtime-architecture",
+    "game-boundary-design",
+    "runtime-degradation-policy",
+    "lifecycle-snapshot-modeling"
   ],
   "signals": [
     "harmony",
     "loader",
     "plugin lifecycle",
     "bepinex",
-    "patching"
+    "patching",
+    "mod runtime architecture",
+    "game boundary",
+    "hooks probes facades",
+    "degraded runtime",
+    "lifecycle snapshot",
+    "host lifecycle state"
   ],
   "use_for": [
     "mod loader integration",
     "runtime patching",
-    "plugin lifecycle handling"
+    "plugin lifecycle handling",
+    "designing Unity-hosted mod runtime foundations",
+    "isolating game hooks, probes, facades, adapters, and mutation scopes from domain logic",
+    "defining degraded behavior for missing or fragile integrations",
+    "modeling host lifecycle and entity availability as stable snapshots"
   ],
   "priority_order": [
     "harmony-patching",
+    "mod-runtime-architecture",
+    "game-boundary-design",
+    "lifecycle-snapshot-modeling",
+    "runtime-degradation-policy",
     "loader-integration",
     "plugin-lifecycle"
   ]

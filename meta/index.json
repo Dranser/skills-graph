@@ -18,7 +18,14 @@
           "manifest": "knowledge/csharp-shared/code-maintenance/code-maintenance_manifest.json",
           "skills": [
             "bug-investigation.json",
-            "refactoring.json"
+            "refactoring.json",
+            "legacy-archive-strategy.json",
+            "domain-model-extraction.json",
+            "architecture-pattern-extraction.json",
+            "greenfield-rewrite-planning.json",
+            "telemetry-replay-validation.json",
+            "test-harness-for-hosted-runtime.json",
+            "vehicle-mechanics-domain-modeling.json"
           ]
         },
         "data-oriented-pipeline": {
@@ -33,7 +40,10 @@
             "incremental-recompute.json",
             "change-batching.json",
             "structural-rerun-policy.json",
-            "stage-contracts.json"
+            "stage-contracts.json",
+            "data-oriented-runtime-adaptation.json",
+            "domain-pipeline-design.json",
+            "domain-command-mutation-model.json"
           ]
         },
         "framework": {
@@ -47,7 +57,12 @@
             "runtime-lifecycle.json",
             "extension-points.json",
             "composition-boundaries.json",
-            "service-lifetimes.json"
+            "service-lifetimes.json",
+            "mechanics-infrastructure-separation.json",
+            "module-runtime-design.json",
+            "build-boundary-hygiene.json",
+            "observability-first-runtime.json",
+            "config-resource-migration.json"
           ]
         },
         "neural": {
@@ -99,7 +114,11 @@
           "skills": [
             "harmony-patching.json",
             "loader-integration.json",
-            "plugin-lifecycle.json"
+            "plugin-lifecycle.json",
+            "mod-runtime-architecture.json",
+            "game-boundary-design.json",
+            "runtime-degradation-policy.json",
+            "lifecycle-snapshot-modeling.json"
           ]
         },
         "unity-ui": {
@@ -118,7 +137,8 @@
             "imgui-windowing.json",
             "imgui-styling.json",
             "imgui-performance.json",
-            "imgui-debugging.json"
+            "imgui-debugging.json",
+            "ui-surface-architecture.json"
           ]
         }
       }

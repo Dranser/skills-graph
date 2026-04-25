@@ -5,7 +5,11 @@
   "files": [
     "harmony-patching",
     "loader-integration",
-    "plugin-lifecycle"
+    "plugin-lifecycle",
+    "mod-runtime-architecture",
+    "game-boundary-design",
+    "runtime-degradation-policy",
+    "lifecycle-snapshot-modeling"
   ],
   "entry_file": "modding_entry.json",
   "manifest_file": "modding_manifest.json"

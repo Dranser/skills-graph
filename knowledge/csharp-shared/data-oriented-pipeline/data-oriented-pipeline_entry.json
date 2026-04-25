@@ -7,10 +7,14 @@
     "execution-model",
     "stage-boundaries",
     "dataflow-state",
+    "invalidation-propagation",
     "incremental-recompute",
     "change-batching",
     "structural-rerun-policy",
-    "stage-contracts"
+    "stage-contracts",
+    "data-oriented-runtime-adaptation",
+    "domain-pipeline-design",
+    "domain-command-mutation-model"
   ],
   "signals": [
     "data-oriented pipeline",
@@ -31,7 +35,12 @@
     "structural rerun",
     "full recompute policy",
     "stage contract",
-    "product contract"
+    "product contract",
+    "data-oriented runtime adaptation",
+    "domain pipeline",
+    "telemetry to commands",
+    "command mutation model",
+    "mutation boundary"
   ],
   "use_for": [
     "designing software around explicit data-oriented pipelines",
@@ -41,7 +50,10 @@
     "building change-driven incremental rerun paths with explicit fallback to full recompute",
     "coalescing bursts of local updates before incremental rerun",
     "defining explicit fallback from local reruns to structural rebuild",
-    "defining stable input and output contracts between stages"
+    "defining stable input and output contracts between stages",
+    "adapting data-oriented runtime concepts to constrained hosted runtimes",
+    "designing domain-specific pipelines from input snapshots to analysis, published state, and commands",
+    "separating domain command production from external mutation application"
   ],
   "priority_order": [
     "pipeline-architecture",
@@ -49,6 +61,9 @@
     "incremental-recompute",
     "change-batching",
     "structural-rerun-policy",
+    "data-oriented-runtime-adaptation",
+    "domain-pipeline-design",
+    "domain-command-mutation-model",
     "stage-contracts",
     "stage-boundaries",
     "dataflow-state",

@@ -1,0 +1,174 @@
+{
+  "id": "ui-surface-architecture",
+  "kind": "skill",
+  "title": "UI Surface Architecture",
+  "stack": "unity",
+  "domain": "unity-ui",
+  "role": "primary",
+  "signals": {
+    "strong": [
+      "ui surface architecture",
+      "mod UI surface",
+      "UI over domain state",
+      "debug surface",
+      "context panel architecture"
+    ],
+    "weak": [
+      "window controller",
+      "view model",
+      "menu injection",
+      "UI DTO",
+      "diagnostic UI"
+    ]
+  },
+  "use_for": [
+    "designing Unity mod UI as observer and command surface over domain/runtime state",
+    "separating UI rendering, UI state, domain state, and host UI integration",
+    "structuring windows, context panels, debug views, menu entries, and overlays",
+    "preventing UI code from becoming domain or infrastructure owner"
+  ],
+  "do_not_use_for": [
+    "pixel-level IMGUI layout only",
+    "pure domain mechanics",
+    "raw hook or probe design"
+  ],
+  "rules": [
+    "UI should read published state or view models, not transient domain internals",
+    "UI commands should call explicit application services or command boundaries",
+    "host UI insertion should be isolated from window/controller logic",
+    "debug surfaces should expose diagnostics without becoming required for correctness",
+    "UI state and domain state must remain separate"
+  ],
+  "procedure": [
+    "List UI surfaces: main windows, context panels, overlays, menu entries, debug views, and settings.",
+    "Define each surface's data source: published domain state, runtime diagnostics, configuration, or host context.",
+    "Define commands emitted by each surface and the boundary that handles them.",
+    "Separate host UI integration from rendering and controller logic.",
+    "Define refresh, invalidation, visibility, and input-routing rules.",
+    "Verify that UI cannot directly mutate domain internals or raw host state."
+  ],
+  "output": [
+    "UI surface map",
+    "view state and domain state separation",
+    "UI command boundary",
+    "host UI integration policy"
+  ],
+  "dependencies": {
+    "hard": [
+      "imgui-state-model",
+      "imgui-modular-windowing"
+    ],
+    "optional": [
+      "imgui-input-routing",
+      "imgui-performance",
+      "diagnostics"
+    ],
+    "contextual": [
+      "mechanics-infrastructure-separation",
+      "game-boundary-design"
+    ]
+  },
+  "conflicts": [],
+  "ownership": {
+    "can_be_primary": true,
+    "default_mode": "primary",
+    "primary_when": [
+      "the task is primarily about UI architecture as part of a mod runtime or domain system"
+    ],
+    "must_not_own_when": [
+      "the task is only about styling or manual layout",
+      "the task is only about domain pipeline design"
+    ]
+  },
+  "problem_space": {
+    "solves": [
+      "how to keep UI from owning domain logic",
+      "how to make runtime and domain state visible without exposing internals",
+      "how to isolate host UI integration from feature UI"
+    ],
+    "does_not_solve": [
+      "exact visual design",
+      "external game API discovery",
+      "low-level rendering optimization"
+    ]
+  },
+  "core_principles": [
+    "UI is a surface over state and commands, not the source of domain truth.",
+    "Debug UI should make runtime state inspectable without changing runtime ownership.",
+    "Host UI integration is infrastructure and should be isolated from feature presentation.",
+    "View models protect UI from transient domain internals."
+  ],
+  "constraints": [
+    "Do not let UI controls mutate raw host objects directly.",
+    "Do not store domain truth only in UI state.",
+    "Do not make diagnostics depend on debug windows being open.",
+    "Do not couple reusable UI architecture to a named game or project."
+  ],
+  "decision_rules": [
+    "If UI displays domain results, provide published state or view models.",
+    "If UI changes behavior, route the action through a command or application service.",
+    "If UI is inserted into host menus, isolate that insertion behind a surface adapter.",
+    "If UI shows diagnostics, read from diagnostic snapshots rather than module internals.",
+    "If a window grows too large, split by surface responsibility before splitting by visual rows."
+  ],
+  "architecture_guidance": {
+    "preferred_patterns": [
+      "published view models",
+      "command handlers",
+      "host surface adapters",
+      "window controllers separate from render elements",
+      "diagnostic snapshots for debug UI"
+    ],
+    "avoid_patterns": [
+      "UI as domain state store",
+      "host UI injection mixed with business logic",
+      "render methods calling raw game APIs",
+      "debug windows mutating internals without command boundaries",
+      "monolithic window controllers with unrelated feature ownership"
+    ]
+  },
+  "recipes": [
+    {
+      "name": "Design a UI surface over a domain pipeline",
+      "when": "Use when a UI must display runtime domain state and trigger domain commands.",
+      "steps": [
+        "Define the published state the UI may read.",
+        "Create a view model or DTO that matches presentation needs.",
+        "Route UI actions through explicit commands or services.",
+        "Keep host menu or window insertion behind an adapter.",
+        "Add diagnostics views from snapshots, not internal mutable state."
+      ]
+    }
+  ],
+  "pitfalls": [
+    "Letting a large window controller become the application architecture.",
+    "Using UI DTOs as domain models.",
+    "Mixing host UI injection with feature decisions.",
+    "Making debug-only state part of runtime correctness."
+  ],
+  "review_checklist": [
+    "Does UI read only published state or view models?",
+    "Are UI commands explicit?",
+    "Is host UI integration isolated?",
+    "Are UI state and domain state separate?",
+    "Can diagnostics render without owning module internals?"
+  ],
+  "references": [
+    {
+      "title": "IMGUI State Patterns",
+      "type": "local-reference",
+      "priority": "preferred",
+      "path": "knowledge/unity/unity-ui/references/imgui-state-patterns.md",
+      "interpretation": "Use for separating UI state from domain and runtime state.",
+      "why": "UI surfaces should observe state without becoming domain owners."
+    },
+    {
+      "title": "IMGUI Composition",
+      "type": "local-reference",
+      "priority": "supporting",
+      "path": "knowledge/unity/unity-ui/references/imgui-composition.md",
+      "interpretation": "Use for composing windows, panels, and debug surfaces.",
+      "why": "Surface architecture needs predictable composition and ownership."
+    }
+  ]
+}
